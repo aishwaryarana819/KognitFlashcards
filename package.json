@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@nozbe/watermelondb": "^0.28.0",
+    "@react-native-async-storage/async-storage": "^3.0.1",
+    "@supabase/supabase-js": "^2.99.2",
     "expo": "~55.0.6",
     "expo-constants": "~55.0.7",
     "expo-linking": "~55.0.7",
