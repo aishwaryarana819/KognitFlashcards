@@ -26,17 +26,17 @@ export const getTypography = (windowWidth: number): Typography => {
 
     return {
         fontFamilies: {
-            main: 'Urbanist',
-            secondary: 'Manrope',
-            handwritten: 'IndieFlower',
+            main: 'Urbanist_400Regular',
+            secondary: 'Manrope_400Regular',
+            handwritten: 'IndieFlower_400Regular',
         },
 
         fontSizes: {
-            heroL: isMobile ? 48 : 72,
-            heroR: isMobile ? 36 : 52,
-            heroS: isMobile ? 30 : 40,
-            heading: isMobile ? 20 : 24,
-            button: isMobile ? 18 : 20,
+            heroL: isMobile ? 48 : 64,
+            heroR: isMobile ? 36 : 48,
+            heroS: isMobile ? 28 : 36,
+            heading: isMobile ? 18 : 20,
+            button: isMobile ? 16 : 18,
             bodyL: isMobile ? 14 : 16,
             bodyS: isMobile ? 12 : 14,
             caption: isMobile ? 11 : 12,
