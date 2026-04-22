@@ -7,7 +7,9 @@ import { useFonts as useIndieFlower, IndieFlower_400Regular } from "@expo-google
 import { getTypography } from './src/theme/typography';
 import { lightPalette } from './src/theme/colors';
 
-export default function App() {
+import {AuthProvider} from "./src/context/AuthContext";
+
+const MainContent = ()=> {
   const {width} = useWindowDimensions();
   const typography = getTypography(width);
 
@@ -51,6 +53,14 @@ export default function App() {
         </Text>
       </View>
   );
+};
+
+export default function App() {
+    return (
+        <AuthProvider>
+            <MainContent/>
+        </AuthProvider>
+    );
 }
 
 const styles = StyleSheet.create({
