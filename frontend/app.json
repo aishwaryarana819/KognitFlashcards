@@ -1,6 +1,7 @@
 {
   "expo": {
-    "name": "frontend",
+    "name": "KognitFlashcards",
+    "shortName": "Kognit",
     "slug": "frontend",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -23,7 +24,9 @@
       "edgeToEdgeEnabled": true
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/favicon.png",
+      "name": "KognitFlashcards",
+      "shortName": "Kognit"
     },
     "plugins": [
       "expo-font"
