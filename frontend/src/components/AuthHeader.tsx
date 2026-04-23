@@ -25,7 +25,7 @@ export const AuthHeader: React.FC<AuthHeaderProps> = ({
 
     return (
         <View style={[styles.headerContainer, {
-            paddingHorizontal: isMobile ? 12 : 20
+            paddingHorizontal: isMobile ? 20 : 20
         }]}>
             <View style={styles.leftSection}>
                <Branding/>
@@ -76,7 +76,8 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         paddingHorizontal: 20,
-        paddingVertical: 20,
+        paddingTop: 20,
+        paddingBottom: 10,
     },
     leftSection: {
         flex: 1,

@@ -1,3 +1,5 @@
+import {BREAKPOINTS} from './breakpoints';
+
 export type FontFamilies = {
     main: string;
     secondary: string;
@@ -22,7 +24,7 @@ export type Typography = {
 };
 
 export const getTypography = (windowWidth: number): Typography => {
-    const isMobile = windowWidth < 768;
+    const isMobile = windowWidth < BREAKPOINTS.MOBILE_MAX;
 
     return {
         fontFamilies: {

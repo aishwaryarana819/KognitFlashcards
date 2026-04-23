@@ -10,6 +10,8 @@ import {ThemeProvider, useTheme} from "./src/context/ThemeContext";
 import {AuthProvider} from "./src/context/AuthContext";
 import {AuthHeader} from "./src/components/AuthHeader";
 
+import {RegisterOptions} from "./src/screens/auth/RegisterOptions";
+
 import {Splash} from "./src/screens/Splash";
 // import {useTheme} from "@react-navigation/native";
 
@@ -35,34 +37,11 @@ const MainContent = ()=> {
       <View style={{flex: 1}}>
           <View style={[styles.container, {backgroundColor: activePalette.bg}]}>
               <AuthHeader
-                  rightActionText="Register"
-                  onRightActionPress={()=> console.log("Did something wow")}
+                  rightActionText="Login"
+                  onRightActionPress={()=> console.log("Login clicked.")}
               />
 
-              <Text style={{
-                  fontFamily: 'Urbanist_400Regular',
-                  fontSize: typography.fontSizes.heroS,
-                  color: activePalette.darkest,
-                  marginBottom: 10
-              }}>
-                  Welcome to Kognit! Currently testing variables.
-              </Text>
-
-              <Text style={{
-                  fontFamily: 'Manrope_400Regular',
-                  fontSize: typography.fontSizes.bodyL,
-                  color: activePalette.regular
-              }}>
-                  Sign Up
-              </Text>
-
-              <Text style={{
-                  fontFamily: 'IndieFlower_400Regular',
-                  fontSize: typography.fontSizes.heading,
-                  color: activePalette.darker,
-              }}>
-                  This is handwritten font.
-              </Text>
+              <RegisterOptions/>
           </View>
       </View>
   );
