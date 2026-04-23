@@ -30,9 +30,9 @@ export const darkPalette: ColorPalette = {
     regular: '#B193DC',
     lighter: '#593683',
     lightest: '#2E184A',
-    bg: '#FFFFFF',
-    bg2: '#F3F3F3',
-    fg: '#FFFFFF',
+    bg: '#593683',
+    bg2: '#2E184A',
+    fg: '#593683',
     red: '#CF0000',
     green: '#09B500',
 };

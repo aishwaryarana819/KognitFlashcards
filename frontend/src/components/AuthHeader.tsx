@@ -3,26 +3,25 @@ import {Ionicons} from '@expo/vector-icons';
 import {Branding} from './Branding';
 import {getTypography} from '../theme/typography';
 import {getLayoutType} from "../theme/breakpoints";
-import {lightPalette, darkPalette} from "../theme/colors";
+import {useTheme} from "../context/ThemeContext";
 
-const isDark = false;
-const activePalette = isDark ? darkPalette : lightPalette;
+// const isDark = false;
+// const activePalette = isDark ? darkPalette : lightPalette;
 
 type AuthHeaderProps = {
     rightActionText: 'Login' | 'Register';
     onRightActionPress: () => void;
-    onToggleTheme: () => void;
 };
 
 export const AuthHeader: React.FC<AuthHeaderProps> = ({
     rightActionText,
     onRightActionPress,
-    onToggleTheme
 }) => {
     const {width} = useWindowDimensions();
     const layout = getLayoutType(width);
     const isMobile = layout === 'mobile';
     const typography = getTypography(width);
+    const {isDark, activePalette, toggleTheme} = useTheme();
 
     return (
         <View style={[styles.headerContainer, {
@@ -33,7 +32,7 @@ export const AuthHeader: React.FC<AuthHeaderProps> = ({
             </View>
             <View style={styles.rightSection}>
                 <TouchableOpacity
-                    onPress={onToggleTheme}
+                    onPress={toggleTheme}
                     style={styles.iconButton}
                     activeOpacity={0.8}
                 >

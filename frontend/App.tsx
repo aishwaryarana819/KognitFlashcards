@@ -5,14 +5,19 @@ import { useFonts as useManrope, Manrope_400Regular } from "@expo-google-fonts/m
 import { useFonts as useIndieFlower, IndieFlower_400Regular } from "@expo-google-fonts/indie-flower";
 
 import { getTypography } from './src/theme/typography';
-import { lightPalette } from './src/theme/colors';
+import {ThemeProvider, useTheme} from "./src/context/ThemeContext";
 
 import {AuthProvider} from "./src/context/AuthContext";
 import {AuthHeader} from "./src/components/AuthHeader";
 
+import {Splash} from "./src/screens/Splash";
+// import {useTheme} from "@react-navigation/native";
+
 const MainContent = ()=> {
   const {width} = useWindowDimensions();
   const typography = getTypography(width);
+
+  const {activePalette} = useTheme();
 
   const [urbanistLoaded] = useUrbanist({Urbanist_400Regular});
   const [manropeLoaded] = useManrope({Manrope_400Regular});
@@ -21,42 +26,44 @@ const MainContent = ()=> {
   if (!urbanistLoaded || !manropeLoaded || !indieFlowerLoaded) {
     return (
         <View style={[styles.container, {justifyContent: 'center'}]}>
-          <ActivityIndicator size="large" color={lightPalette.darker}/>
+          <ActivityIndicator size="large" color={activePalette.darker}/>
         </View>
     );
   }
 
   return (
-      <View style={styles.container}>
-        <AuthHeader
-            rightActionText="Register"
-            onRightActionPress={()=> console.log("Did something wow")}
-            onToggleTheme={() => console.log("theme toggled")}
-        />
-        <Text style={{
-          fontFamily: 'Urbanist_400Regular',
-          fontSize: typography.fontSizes.heroS,
-          color: lightPalette.darkest,
-          marginBottom: 10
-        }}>
-          Welcome to Kognit! Currently testing variables.
-        </Text>
+      <View style={{flex: 1}}>
+          <View style={[styles.container, {backgroundColor: activePalette.bg}]}>
+              <AuthHeader
+                  rightActionText="Register"
+                  onRightActionPress={()=> console.log("Did something wow")}
+              />
 
-        <Text style={{
-          fontFamily: 'Manrope_400Regular',
-          fontSize: typography.fontSizes.bodyL,
-          color: lightPalette.regular
-        }}>
-          Sign Up
-        </Text>
+              <Text style={{
+                  fontFamily: 'Urbanist_400Regular',
+                  fontSize: typography.fontSizes.heroS,
+                  color: activePalette.darkest,
+                  marginBottom: 10
+              }}>
+                  Welcome to Kognit! Currently testing variables.
+              </Text>
 
-        <Text style={{
-          fontFamily: 'IndieFlower_400Regular',
-          fontSize: typography.fontSizes.heading,
-          color: lightPalette.darker,
-        }}>
-          This is handwritten font.
-        </Text>
+              <Text style={{
+                  fontFamily: 'Manrope_400Regular',
+                  fontSize: typography.fontSizes.bodyL,
+                  color: activePalette.regular
+              }}>
+                  Sign Up
+              </Text>
+
+              <Text style={{
+                  fontFamily: 'IndieFlower_400Regular',
+                  fontSize: typography.fontSizes.heading,
+                  color: activePalette.darker,
+              }}>
+                  This is handwritten font.
+              </Text>
+          </View>
       </View>
   );
 };
@@ -64,7 +71,9 @@ const MainContent = ()=> {
 export default function App() {
     return (
         <AuthProvider>
-            <MainContent/>
+            <ThemeProvider>
+                <MainContent/>
+            </ThemeProvider>
         </AuthProvider>
     );
 }
@@ -72,7 +81,6 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: lightPalette.bg,
     alignItems: 'center',
     // paddingTop: 20,
   },
