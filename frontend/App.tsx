@@ -13,7 +13,6 @@ import {AuthHeader} from "./src/components/AuthHeader";
 import {RegisterOptions} from "./src/screens/auth/RegisterOptions";
 
 import {Splash} from "./src/screens/Splash";
-// import {useTheme} from "@react-navigation/native";
 
 const MainContent = ()=> {
   const {width} = useWindowDimensions();
@@ -61,6 +60,5 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    // paddingTop: 20,
   },
 });

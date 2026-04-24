@@ -1,7 +1,6 @@
 import {View, Text, TouchableOpacity, StyleSheet, useWindowDimensions} from 'react-native';
 import Svg, {Path, G, Rect, Defs, LinearGradient, Stop} from 'react-native-svg';
 
-// import {AuthHeader} from "../../components/AuthHeader";
 import {useTheme} from "../../context/ThemeContext";
 import {getTypography} from "../../theme/typography";
 import {lightPalette} from "../../theme/colors";
@@ -12,7 +11,7 @@ export const RegisterOptions = () => {
     const {isDark, activePalette} = useTheme();
     const isMobile = useWindowDimensions();
 
-    // Custom SVG for Branded Google Logo
+    // Custom SVG for Branded Google Logo - AI Generated
     const GoogleIcon = () => (
         <Svg width="24" height="24" viewBox="0 0 24 24">
             <Path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -22,7 +21,7 @@ export const RegisterOptions = () => {
         </Svg>
     );
 
-    // Custom SVG for HackClub Icon
+    // Custom SVG for HackClub Icon - AI Generated
     const HackClubIcon = () => (
         <Svg width="22.5" height="24" viewBox="0 0 22.5 24">
             <Defs>
@@ -37,7 +36,7 @@ export const RegisterOptions = () => {
         </Svg>
     );
 
-    // Custom SVG for "Glass Filled & Outlined" Envelope
+    // Custom SVG for "Glass Filled & Outlined" Envelope - AI Generated
     const EmailIcon = () => (
         <Svg width="28" height="24" viewBox="0 0 28 24">
             <Path

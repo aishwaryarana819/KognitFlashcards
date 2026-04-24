@@ -5,9 +5,6 @@ import {getTypography} from '../theme/typography';
 import {getLayoutType} from "../theme/breakpoints";
 import {useTheme} from "../context/ThemeContext";
 
-// const isDark = false;
-// const activePalette = isDark ? darkPalette : lightPalette;
-
 type AuthHeaderProps = {
     rightActionText: 'Login' | 'Register';
     onRightActionPress: () => void;
@@ -90,9 +87,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     iconButton: {
-        // marginRight: 10,
         padding: 20,
-        // borderRadius: 50,
     },
     actionButton: {
     }
