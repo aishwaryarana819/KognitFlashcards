@@ -1,15 +1,28 @@
-import {View, Text, TouchableOpacity, StyleSheet, useWindowDimensions} from 'react-native';
+import {useState, useRef, useEffect} from 'react';
+import {View, Text, TouchableOpacity, StyleSheet, useWindowDimensions, TextInput, Pressable} from 'react-native';
 import Svg, {Path, G, Rect, Defs, LinearGradient, Stop} from 'react-native-svg';
 
 import {useTheme} from "../../context/ThemeContext";
 import {getTypography} from "../../theme/typography";
 import {lightPalette} from "../../theme/colors";
+import {Ionicons} from "@expo/vector-icons";
 
 export const RegisterOptions = () => {
     const {width} = useWindowDimensions();
     const typography = getTypography(width);
     const {isDark, activePalette} = useTheme();
     const isMobile = useWindowDimensions();
+
+    const [step, setStep] = useState<'options' | 'email' | 'otp'>("options");
+    const [email, setEmail] = useState("");
+    const [otp, setOtp] = useState("");
+    const otpInputRef = useRef<TextInput>(null);
+
+    useEffect(() => {
+        if (step === 'otp') {
+            setTimeout(() => otpInputRef.current?.focus(), 100);
+        }
+    }, [step]);
 
     // Custom SVG for Branded Google Logo - AI Generated
     const GoogleIcon = () => (
@@ -50,86 +63,190 @@ export const RegisterOptions = () => {
         </Svg>
     );
 
+    const renderOptions = () => (
+        <>
+            <View style={styles.headerSection}>
+                <Text style={{
+                    fontFamily: typography.fontFamilies.main,
+                    fontSize: typography.fontSizes.heroS,
+                    color: activePalette.darkest,
+                    fontWeight: '800',
+                    marginBottom: 12,
+                }}>
+                    {"Your Memory Mastery\nStarts Here."}
+                </Text>
+                <Text style={{
+                    fontFamily: typography.fontFamilies.secondary,
+                    fontSize: typography.fontSizes.bodyL,
+                    color: activePalette.darker,
+                    lineHeight: 24,
+                }}>
+                    Let's build memory that lasts.
+                </Text>
+            </View>
+            <View style={styles.optionsContainer}>
+                <TouchableOpacity
+                    style={[styles.authButton, {borderColor: activePalette.darker, borderWidth: 1.5,
+                        backgroundColor: isDark ? activePalette.bg2 : lightPalette.lightest,}]}
+                    activeOpacity={0.7}
+                >
+                    <GoogleIcon/>
+                    <Text style={[styles.authButtonText, {
+                        fontFamily: typography.fontFamilies.main,
+                        color: activePalette.darker,
+                    }]}>
+                        Register with Google
+                    </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={[styles.authButton, {borderColor: activePalette.darker, borderWidth: 1.5,
+                        backgroundColor: isDark ? activePalette.bg2 : lightPalette.lightest,}]}
+                    activeOpacity={0.7}
+                >
+                    <HackClubIcon/>
+                    <Text style={[styles.authButtonText, {
+                        fontFamily: typography.fontFamilies.main,
+                        color: activePalette.darker,
+                    }]}>
+                        Register with HackClub
+                    </Text>
+                </TouchableOpacity>
+
+                <View style={[styles.dividerSection]}>
+                    <View style={[styles.dividerLine, {
+                        backgroundColor: activePalette.lighter }]}/>
+                    <Text style={[styles.dividerText, {
+                        fontFamily: typography.fontFamilies.secondary,
+                        color: activePalette.regular, fontWeight: '800'
+                    }]}>
+                        OR
+                    </Text>
+                    <View style={[styles.dividerLine, {
+                        backgroundColor: activePalette.lighter
+                    }]}/>
+                </View>
+
+                <TouchableOpacity
+                    style={[styles.authButton, {backgroundColor: activePalette.darkest}]}
+                    activeOpacity={0.7}
+                    onPress={() => setStep('email')}
+                >
+                    <EmailIcon/>
+                    <Text style={[styles.authButtonText, {
+                        fontFamily: typography.fontFamilies.main,
+                        color: activePalette.lightest,
+                    }]}>
+                        Register with Email
+                    </Text>
+                </TouchableOpacity>
+            </View>
+        </>
+    );
+
+    const renderEmailInput = () => (
+        <View style={{width: '100%'}}>
+            <TouchableOpacity onPress={() => setStep('options')}
+                              hitSlop={{top: 15, left: 15, bottom: 15, right: 15}}
+                              style={{alignSelf: 'flex-start', marginBottom: 20}}>
+                <Ionicons name="arrow-back" size={24} color={activePalette.darker}/>
+            </TouchableOpacity>
+            <Text style={[styles.subHeaderTitle,
+                {fontFamily: typography.fontFamilies.main, color: activePalette.darkest}]}>
+                Your Email Address
+            </Text>
+
+            <View style={[styles.inputBlock, {backgroundColor: isDark ? activePalette.bg : lightPalette.lightest,
+                borderColor: activePalette.regular}]}>
+                <Ionicons name="mail-outline" size={20} color={activePalette.darker}
+                          style={{marginRight: 12}}/>
+                    <TextInput style={[{flex: 1, height:'100%', color: activePalette.darkest,
+                        fontFamily: typography.fontFamilies.secondary,
+                        fontSize: typography.fontSizes.bodyL}]}
+                               placeholder="higurumaTakaba@jujutsu.com"
+                               placeholderTextColor={activePalette.regular}
+                               value={email}
+                               onChangeText={setEmail}
+                               autoCapitalize="none"
+                               autoCorrect={false}
+                               keyboardType="email-address"
+                               autoFocus
+                   />
+            </View>
+            <TouchableOpacity style={[styles.authButton, {backgroundColor: activePalette.darkest,
+                marginTop: 32}]} activeOpacity={0.7} onPress={() => setStep('otp')}>
+                <Text style={{fontSize: 18, fontWeight: '700', fontFamily: typography.fontFamilies.main,
+                    color: activePalette.lightest}}>
+                    Send Verification Code
+                </Text>
+            </TouchableOpacity>
+        </View>
+    );
+
+    const renderOtpInput = () => (
+        <View style={{width: '100%'}}>
+            <TouchableOpacity onPress={() => setStep('email')}
+            hitSlop={{top: 15, left: 15, bottom: 15, right: 15}}
+            style={{alignSelf: 'flex-start', marginBottom: 20}}>
+                <Ionicons name="arrow-back" size={24} color={activePalette.darker}/>
+            </TouchableOpacity>
+            <Text style={[styles.subHeaderTitle, {fontFamily: typography.fontFamilies.main,
+                color: activePalette.darkest}]}>
+                Please check your inbox and spam.
+            </Text>
+            <Text style={{fontSize: 16, lineHeight: 24, marginBottom: 32,
+                fontFamily: typography.fontFamilies.secondary, color: activePalette.regular}}>
+                {"We sent you a 6-digit OTP to "}
+                <Text style={{color: activePalette.regular, fontWeight: '700'}}>
+                    {email || 'your email'}
+                </Text>
+            </Text>
+            <Pressable style={styles.otpBoxesContainer} onPress={() => otpInputRef.current?.focus()}>
+                {new Array(6).fill(0).map((_, index) => {
+                    const digit = otp[index] || '';
+                    const isCurrent = otp.length === index;
+
+                    return(
+                        <View key={index} style={[styles.otpBox, {
+                            borderColor: isCurrent ? activePalette.darkest : activePalette.lighter,
+                            backgroundColor: isDark ? activePalette.bg : activePalette.lightest,
+                            borderWidth: isCurrent ? 2 : 1
+                        }]}>
+                            <Text style={{fontSize: 24, fontWeight: '700',
+                                fontFamily: typography.fontFamilies.main, color: activePalette.darkest}}>
+                                {digit}
+                            </Text>
+                        </View>
+                    );
+                })}
+            </Pressable>
+            <TextInput
+                ref={otpInputRef}
+                value={otp}
+                onChangeText={(val) => setOtp(val.replace
+                    (/[^0-9]/g, '').slice(0,6))}
+                keyboardType="number-pad"
+                style={{position: 'absolute', opacity: 0, height: 1, width: 1}}
+                autoFocus
+            />
+            <TouchableOpacity style={[styles.authButton, {backgroundColor: activePalette.darkest, marginTop: 32}]}
+                              activeOpacity={0.7} onPress={() => console.log('Validate!')}>
+                <Text style={{fontSize: 18, fontWeight: '700', fontFamily: typography.fontFamilies.main,
+                    color: activePalette.lightest}}>
+                    Verify & Continue
+                </Text>
+            </TouchableOpacity>
+        </View>
+    );
+
     return (
         <View style={styles.wrapper}>
             <View style={[styles.contentBox,
                 {backgroundColor: isDark ? activePalette.bg2 : lightPalette.lightest,
-                width: isMobile ? '100%' : 'auto',
-                minWidth: isMobile ? 'auto' : 300}]}>
-                <View style={styles.headerSection}>
-                    <Text style={{
-                        fontFamily: typography.fontFamilies.main,
-                        fontSize: typography.fontSizes.heroS,
-                        color: activePalette.darkest,
-                        fontWeight: '800',
-                        marginBottom: 12,
-                    }}>
-                        {"Your Memory Mastery\nStarts Here."}
-                    </Text>
-                    <Text style={{
-                        fontFamily: typography.fontFamilies.secondary,
-                        fontSize: typography.fontSizes.bodyL,
-                        color: activePalette.darker,
-                        lineHeight: 24,
-                    }}>
-                        Let's build memory that lasts.
-                    </Text>
-                </View>
-                <View style={styles.optionsContainer}>
-                    <TouchableOpacity
-                        style={[styles.authButton, {borderColor: activePalette.darker, borderWidth: 1.5,
-                            backgroundColor: isDark ? activePalette.bg2 : lightPalette.lightest,}]}
-                        activeOpacity={0.7}
-                    >
-                        <GoogleIcon/>
-                        <Text style={[styles.authButtonText, {
-                            fontFamily: typography.fontFamilies.main,
-                            color: activePalette.darker,
-                        }]}>
-                            Register with Google
-                        </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={[styles.authButton, {borderColor: activePalette.darker, borderWidth: 1.5,
-                            backgroundColor: isDark ? activePalette.bg2 : lightPalette.lightest,}]}
-                        activeOpacity={0.7}
-                    >
-                        <HackClubIcon/>
-                        <Text style={[styles.authButtonText, {
-                            fontFamily: typography.fontFamilies.main,
-                            color: activePalette.darker,
-                        }]}>
-                            Register with HackClub
-                        </Text>
-                    </TouchableOpacity>
-
-                    <View style={[styles.dividerSection]}>
-                        <View style={[styles.dividerLine, {
-                            backgroundColor: activePalette.lighter }]}/>
-                        <Text style={[styles.dividerText, {
-                            fontFamily: typography.fontFamilies.secondary,
-                            color: activePalette.regular, fontWeight: '800'
-                        }]}>
-                            OR
-                        </Text>
-                        <View style={[styles.dividerLine, {
-                            backgroundColor: activePalette.lighter
-                        }]}/>
-                    </View>
-
-                    <TouchableOpacity
-                        style={[styles.authButton, {backgroundColor: activePalette.darkest}]}
-                        activeOpacity={0.7}
-                    >
-                        <EmailIcon/>
-                        <Text style={[styles.authButtonText, {
-                            fontFamily: typography.fontFamilies.main,
-                            color: activePalette.lightest,
-                        }]}>
-                            Register with Email
-                        </Text>
-                    </TouchableOpacity>
-                </View>
+                    width: isMobile ? '100%' : 'auto',
+                    minWidth: isMobile ? 'auto' : 300}]}>
+                {step === 'options' && renderOptions()}
+                {step === 'email' && renderEmailInput()}
+                {step === 'otp' && renderOtpInput()}
             </View>
         </View>
     );
@@ -184,7 +301,39 @@ const styles = StyleSheet.create({
     dividerText: {
         paddingHorizontal: 16,
         fontSize: 16,
-    }
+    },
+    subHeaderTitle: {
+        fontSize: 28,
+        fontWeight: '800',
+        marginBottom: 8,
+    },
+    inputLabel: {
+        fontSize: 32,
+        fontWeight: '700',
+        letterSpacing: 1,
+        marginBottom: 10,
+        marginLeft: 4,
+    },
+    inputBlock: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderWidth: 1.5,
+        borderRadius: 20,
+        paddingHorizontal: 20,
+        height: 56,
+    },
+    otpBoxesContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '100%',
+    },
+    otpBox: {
+        width: 48,
+        height: 56,
+        borderRadius: 12,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
 });
 
 
