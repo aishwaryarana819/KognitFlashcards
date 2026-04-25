@@ -15,6 +15,7 @@ import RegisterProfile from "./src/screens/auth/RegisterProfile";
 import {LoginOptions} from "./src/screens/auth/LoginOptions";
 
 import {Splash} from "./src/screens/Splash";
+import {AccountRecovery} from "./src/screens/auth/AccountRecovery";
 
 const MainContent = ()=> {
   const {width} = useWindowDimensions();
@@ -37,7 +38,7 @@ const MainContent = ()=> {
   return (
       <View style={{flex: 1}}>
           <View style={[styles.container, {backgroundColor: activePalette.bg}]}>
-              <LoginOptions/>
+              <AccountRecovery/>
           </View>
       </View>
   );
