@@ -8,6 +8,7 @@ export type ColorPalette = {
     bg2: string;
     fg: string;
     red: string;
+    yellow: string;
     green: string;
 };
 
@@ -21,6 +22,7 @@ export const lightPalette: ColorPalette = {
     bg2: '#F3F3F3',
     fg: '#FFFFFF',
     red: '#CF0000',
+    yellow: '#eab308',
     green: '#09B500',
 };
 
@@ -34,5 +36,6 @@ export const darkPalette: ColorPalette = {
     bg2: '#2E184A',
     fg: '#593683',
     red: '#CF0000',
+    yellow: '#eab308',
     green: '#09B500',
 };

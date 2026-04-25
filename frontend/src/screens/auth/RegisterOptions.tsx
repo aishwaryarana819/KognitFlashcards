@@ -305,14 +305,7 @@ const styles = StyleSheet.create({
     subHeaderTitle: {
         fontSize: 28,
         fontWeight: '800',
-        marginBottom: 8,
-    },
-    inputLabel: {
-        fontSize: 32,
-        fontWeight: '700',
-        letterSpacing: 1,
-        marginBottom: 10,
-        marginLeft: 4,
+        marginBottom: 12,
     },
     inputBlock: {
         flexDirection: 'row',

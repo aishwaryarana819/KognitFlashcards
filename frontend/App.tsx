@@ -11,6 +11,7 @@ import {AuthProvider} from "./src/context/AuthContext";
 import {AuthHeader} from "./src/components/AuthHeader";
 
 import {RegisterOptions} from "./src/screens/auth/RegisterOptions";
+import RegisterProfile from "./src/screens/auth/RegisterProfile";
 
 import {Splash} from "./src/screens/Splash";
 
@@ -40,7 +41,7 @@ const MainContent = ()=> {
                   onRightActionPress={()=> console.log("Login clicked.")}
               />
 
-              <RegisterOptions/>
+              <RegisterProfile/>
           </View>
       </View>
   );
