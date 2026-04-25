@@ -6,6 +6,7 @@ import {useTheme} from "../../context/ThemeContext";
 import {getTypography} from "../../theme/typography";
 import {lightPalette} from "../../theme/colors";
 import {BREAKPOINTS} from "../../theme/breakpoints";
+import {AuthHeader} from "../../components/AuthHeader";
 
 const REGIONS = ["USA/Canada", "South America", "Western Europe", "Central/Eastern Europe", "Russia", "India", "Other Asia", "Africa", "Oceania", "Others"];
 const DOMAINS = ["Medical & Health", "Law & Humanities", "STEM & Engineering", "Languages", "Arts & Design", "General Productivity", "Others"];
@@ -73,7 +74,10 @@ const RegisterProfile = () => {
 
     return (
         <ScrollView style={{flex: 1, width: '100%'}} contentContainerStyle={styles.wrapper} showsVerticalScrollIndicator={false}>
-
+            <AuthHeader rightActionText="Login"
+                        onRightActionPress={() => console.log("Navigate to Login")}
+            />
+            
             <View style={[styles.contentBox1, {paddingBottom: isMobile ? 10 : 20}]}>
 
                 <View style={{alignItems: 'flex-end', transform: [{translateX: -20}]}}>
@@ -81,8 +85,7 @@ const RegisterProfile = () => {
                         {(state: any) => (
                         <Text style={{fontFamily: typography.fontFamilies.main, fontWeight: '700',
                             fontSize: typography.fontSizes.bodyL, opacity: state.pressed ? 0.5 : 1,
-                            color: state.hovered ? activePalette.darker :
-                                (isDark ? activePalette.regular : activePalette.lighter)
+                            color: state.hovered ? activePalette.darker : activePalette.regular
                         }}>
                             {"Do this later >"}
                         </Text>

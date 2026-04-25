@@ -1,17 +1,28 @@
 import {useState, useRef, useEffect} from 'react';
-import {View, Text, TouchableOpacity, StyleSheet, useWindowDimensions, TextInput, Pressable} from 'react-native';
+import {
+    View,
+    Text,
+    TouchableOpacity,
+    StyleSheet,
+    useWindowDimensions,
+    TextInput,
+    Pressable,
+    Platform
+} from 'react-native';
 import Svg, {Path, G, Rect, Defs, LinearGradient, Stop} from 'react-native-svg';
 
 import {useTheme} from "../../context/ThemeContext";
 import {getTypography} from "../../theme/typography";
 import {lightPalette} from "../../theme/colors";
 import {Ionicons} from "@expo/vector-icons";
+import {BREAKPOINTS} from "../../theme/breakpoints";
+import {AuthHeader} from "../../components/AuthHeader";
 
 export const RegisterOptions = () => {
     const {width} = useWindowDimensions();
     const typography = getTypography(width);
     const {isDark, activePalette} = useTheme();
-    const isMobile = useWindowDimensions();
+    const isMobile = width < BREAKPOINTS.MOBILE_MAX;
 
     const [step, setStep] = useState<'options' | 'email' | 'otp'>("options");
     const [email, setEmail] = useState("");
@@ -159,7 +170,7 @@ export const RegisterOptions = () => {
                 borderColor: activePalette.regular}]}>
                 <Ionicons name="mail-outline" size={20} color={activePalette.darker}
                           style={{marginRight: 12}}/>
-                    <TextInput style={[{flex: 1, height:'100%', color: activePalette.darkest,
+                    <TextInput style={[styles.textInputCore, {flex: 1, height:'100%', color: activePalette.darkest,
                         fontFamily: typography.fontFamilies.secondary,
                         fontSize: typography.fontSizes.bodyL}]}
                                placeholder="higurumaTakaba@jujutsu.com"
@@ -170,7 +181,7 @@ export const RegisterOptions = () => {
                                autoCorrect={false}
                                keyboardType="email-address"
                                autoFocus
-                   />
+                    />
             </View>
             <TouchableOpacity style={[styles.authButton, {backgroundColor: activePalette.darkest,
                 marginTop: 32}]} activeOpacity={0.7} onPress={() => setStep('otp')}>
@@ -239,14 +250,20 @@ export const RegisterOptions = () => {
     );
 
     return (
-        <View style={styles.wrapper}>
-            <View style={[styles.contentBox,
-                {backgroundColor: isDark ? activePalette.bg2 : lightPalette.lightest,
-                    width: isMobile ? '100%' : 'auto',
-                    minWidth: isMobile ? 'auto' : 300}]}>
-                {step === 'options' && renderOptions()}
-                {step === 'email' && renderEmailInput()}
-                {step === 'otp' && renderOtpInput()}
+        <View style={{flex: 1, width: '100%'}}>
+            <AuthHeader rightActionText="Login"
+                        onRightActionPress={() => console.log("Navigate to Login")}
+            />
+
+            <View style={styles.wrapper}>
+                <View style={[styles.contentBox,
+                    {backgroundColor: isDark ? activePalette.bg2 : lightPalette.lightest,
+                        width: isMobile ? '100%' : 'auto',
+                        minWidth: isMobile ? 'auto' : 300}]}>
+                    {step === 'options' && renderOptions()}
+                    {step === 'email' && renderEmailInput()}
+                    {step === 'otp' && renderOtpInput()}
+                </View>
             </View>
         </View>
     );
@@ -326,6 +343,14 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    textInputCore: {
+        flex: 1,
+        height: '100%',
+        ...Platform.select({
+            web: { outlineStyle: 'none' as any },
+            default: {},
+        }),
     },
 });
 

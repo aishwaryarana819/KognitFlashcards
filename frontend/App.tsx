@@ -12,6 +12,7 @@ import {AuthHeader} from "./src/components/AuthHeader";
 
 import {RegisterOptions} from "./src/screens/auth/RegisterOptions";
 import RegisterProfile from "./src/screens/auth/RegisterProfile";
+import {LoginOptions} from "./src/screens/auth/LoginOptions";
 
 import {Splash} from "./src/screens/Splash";
 
@@ -36,12 +37,7 @@ const MainContent = ()=> {
   return (
       <View style={{flex: 1}}>
           <View style={[styles.container, {backgroundColor: activePalette.bg}]}>
-              <AuthHeader
-                  rightActionText="Login"
-                  onRightActionPress={()=> console.log("Login clicked.")}
-              />
-
-              <RegisterProfile/>
+              <LoginOptions/>
           </View>
       </View>
   );
