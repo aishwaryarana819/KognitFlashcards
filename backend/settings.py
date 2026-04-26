@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'core',
 ]
 
 MIDDLEWARE = [
@@ -90,6 +92,13 @@ DATABASES = {
     }
 }
 
+SUPABASE_JWT_SECRET = env('SUPABASE_JWT_SECRET')
+SUPABASE_URL = env('SUPABASE_URL')
+SUPABASE_SERVICE_ROLE_KEY = env('SUPABASE_SERVICE_ROLE_KEY')
+HACKCLUB_CLIENT_ID = env('HACKCLUB_CLIENT_ID')
+HACKCLUB_CLIENT_SECRET = env('HACKCLUB_CLIENT_SECRET')
+
+HACKCLUB_REDIRECT_URI = env('HACKCLUB_REDIRECT_URI', default='http://localhost:8000/api/auth/hackclub/callback')
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
