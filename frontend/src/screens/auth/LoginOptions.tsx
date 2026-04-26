@@ -9,7 +9,12 @@ import {lightPalette} from "../../theme/colors";
 import {Ionicons} from "@expo/vector-icons";
 import {BREAKPOINTS} from "../../theme/breakpoints";
 
-export const LoginOptions = () => {
+type LoginOptionsProps = {
+    onNavigateRegister: () => void;
+    onNavigateRecovery: () => void;
+};
+
+export const LoginOptions = ({onNavigateRegister, onNavigateRecovery}: LoginOptionsProps) => {
     const {width} = useWindowDimensions();
     const typography = getTypography(width);
     const {isDark, activePalette} = useTheme();
@@ -143,7 +148,7 @@ export const LoginOptions = () => {
                         Login with Email
                     </Text>
                 </TouchableOpacity>
-                <TouchableOpacity activeOpacity={0.6} onPress={() => console.log("Account Recovery")}
+                <TouchableOpacity activeOpacity={0.7} onPress={onNavigateRecovery}
                                   style={{alignItems: 'center', marginTop: 8}}>
                     <Text style={{
                         fontFamily: typography.fontFamilies.secondary,
@@ -335,7 +340,7 @@ export const LoginOptions = () => {
     return (
         <View style={{flex: 1, width: '100%'}}>
             <AuthHeader rightActionText="Register"
-                        onRightActionPress={() => console.log("Navigate to Login")}
+                        onRightActionPress={onNavigateRegister}
             />
             <View style={styles.wrapper}>
                 <View style={[styles.contentBox,

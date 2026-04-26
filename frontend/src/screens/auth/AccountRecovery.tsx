@@ -7,7 +7,11 @@ import {getTypography} from "../../theme/typography";
 import {lightPalette} from "../../theme/colors";
 import {AuthHeader} from "../../components/AuthHeader";
 
-export const AccountRecovery = () => {
+type AccountRecoveryProps = {
+    onNavigateLogin: () => void;
+};
+
+export const AccountRecovery = ({onNavigateLogin}: AccountRecoveryProps) => {
     const {width} = useWindowDimensions();
     const typography = getTypography(width);
     const {isDark, activePalette} = useTheme();
@@ -297,7 +301,7 @@ export const AccountRecovery = () => {
             </Text>
 
             <TouchableOpacity style={[styles.submitButton, {backgroundColor: activePalette.darkest}]}
-                              activeOpacity={0.7} onPress={() => console.log("Navigate to Login")}>
+                              activeOpacity={0.7} onPress={onNavigateLogin}>
                 <Text style={{fontSize: typography.fontSizes.button, color: activePalette.lightest,
                     fontFamily: typography.fontFamilies.main, fontWeight: '700'
                 }}>
@@ -310,7 +314,7 @@ export const AccountRecovery = () => {
     return (
         <View style={{flex: 1, width: '100%'}}>
             <AuthHeader rightActionText="Login"
-                        onRightActionPress={() => console.log("Navigate to Login")}
+                        onRightActionPress={onNavigateLogin}
             />
 
             <View style={styles.wrapper}>

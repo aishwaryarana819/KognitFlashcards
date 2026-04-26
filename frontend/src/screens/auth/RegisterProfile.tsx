@@ -11,7 +11,11 @@ import {AuthHeader} from "../../components/AuthHeader";
 const REGIONS = ["USA/Canada", "South America", "Western Europe", "Central/Eastern Europe", "Russia", "India", "Other Asia", "Africa", "Oceania", "Others"];
 const DOMAINS = ["Medical & Health", "Law & Humanities", "STEM & Engineering", "Languages", "Arts & Design", "General Productivity", "Others"];
 
-const RegisterProfile = () => {
+type RegisterProfileProps = {
+    onNavigateLogin: () => void;
+};
+
+const RegisterProfile = ({onNavigateLogin}: RegisterProfileProps) => {
     const {width} = useWindowDimensions();
     const typography = getTypography(width);
     const {isDark, activePalette} = useTheme();
@@ -75,7 +79,7 @@ const RegisterProfile = () => {
     return (
         <ScrollView style={{flex: 1, width: '100%'}} contentContainerStyle={styles.wrapper} showsVerticalScrollIndicator={false}>
             <AuthHeader rightActionText="Login"
-                        onRightActionPress={() => console.log("Navigate to Login")}
+                        onRightActionPress={onNavigateLogin}
             />
             
             <View style={[styles.contentBox1, {paddingBottom: isMobile ? 10 : 20}]}>

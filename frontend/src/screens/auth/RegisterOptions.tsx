@@ -9,7 +9,12 @@ import {Ionicons} from "@expo/vector-icons";
 import {BREAKPOINTS} from "../../theme/breakpoints";
 import {AuthHeader} from "../../components/AuthHeader";
 
-export const RegisterOptions = () => {
+type RegisterOptionsProps = {
+    onNavigateLogin: () => void;
+    onNavigateProfile: () => void;
+};
+
+export const RegisterOptions = ({onNavigateLogin, onNavigateProfile}: RegisterOptionsProps) => {
     const {width} = useWindowDimensions();
     const typography = getTypography(width);
     const {isDark, activePalette} = useTheme();
@@ -231,7 +236,7 @@ export const RegisterOptions = () => {
                 autoFocus
             />
             <TouchableOpacity style={[styles.authButton, {backgroundColor: activePalette.darkest, marginTop: 32}]}
-                              activeOpacity={0.7} onPress={() => console.log('Validate!')}>
+                              activeOpacity={0.7} onPress={onNavigateProfile}>
                 <Text style={{fontSize: 18, fontWeight: '700', fontFamily: typography.fontFamilies.main,
                     color: activePalette.lightest}}>
                     Verify & Continue
@@ -243,14 +248,14 @@ export const RegisterOptions = () => {
     return (
         <View style={{flex: 1, width: '100%'}}>
             <AuthHeader rightActionText="Login"
-                        onRightActionPress={() => console.log("Navigate to Login")}
+                        onRightActionPress={onNavigateLogin}
             />
 
             <View style={styles.wrapper}>
                 <View style={[styles.contentBox,
                     {backgroundColor: isDark ? activePalette.bg2 : lightPalette.lightest,
                         width: isMobile ? '100%' : 'auto',
-                        minWidth: isMobile ? 'auto' : 300}]}>
+                        minWidth: isMobile ? 'auto' : 400}]}>
                     {step === 'options' && renderOptions()}
                     {step === 'email' && renderEmailInput()}
                     {step === 'otp' && renderOtpInput()}
@@ -272,7 +277,6 @@ const styles = StyleSheet.create({
     contentBox: {
         padding: 40,
         borderRadius: 25,
-        minWidth: 300,
         maxWidth: 450,
         transform: [{ translateY: -20 }],
     },
