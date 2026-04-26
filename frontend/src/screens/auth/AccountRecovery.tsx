@@ -26,6 +26,8 @@ export const AccountRecovery = ({onNavigateLogin}: AccountRecoveryProps) => {
     const [emailError, setEmailError] = useState("");
     const otpInputRef = useRef<TextInput>(null);
 
+    const isValidEmail = (val: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+
     useEffect(() => {
         if (step === 'otp') setTimeout(() => otpInputRef.current?.focus(), 100);
     }, [step]);
@@ -76,7 +78,7 @@ export const AccountRecovery = ({onNavigateLogin}: AccountRecoveryProps) => {
             <View style={[styles.inputBlock, {
                 backgroundColor: isDark ?
                     activePalette.bg : lightPalette.lightest,
-                borderColor: activePalette.regular
+                borderColor: emailError ? lightPalette.red : activePalette.regular
             }]}>
                 <Ionicons name="mail-outline" size={20} color={activePalette.darker}
                           style={{marginRight: 12}}/>
@@ -94,19 +96,24 @@ export const AccountRecovery = ({onNavigateLogin}: AccountRecoveryProps) => {
                            keyboardType="email-address"
                            autoFocus
                 />
-
-                {!!emailError && (
-                    <Text style={{color: lightPalette.red, fontSize: typography.fontSizes.caption,
-                        marginTop: 8, fontFamily: typography.fontFamilies.secondary, fontWeight: '700'}}>
-                        {emailError}
-                    </Text>
-                )}
             </View>
-
+            {!!emailError && (
+                <Text style={{color: lightPalette.red, fontSize: typography.fontSizes.caption,
+                    marginTop: 8, fontFamily: typography.fontFamilies.secondary, fontWeight: '700'}}>
+                    {emailError}
+                </Text>
+            )}
             <TouchableOpacity style={[styles.submitButton, {
                 backgroundColor: activePalette.darkest,
                 marginTop: 32
-            }]} activeOpacity={0.7} onPress={() => {setEmailError(""); setStep('otp');}}>
+            }]} activeOpacity={0.7} onPress={() => {
+                if (!isValidEmail(email)) {
+                    setEmailError("Please enter a valid email address");
+                    return;
+                }
+                setEmailError("");
+                setStep('otp');
+            }}>
                 <Text style={{
                     fontSize: typography.fontSizes.button, fontWeight: '700', fontFamily: typography.fontFamilies.main,
                     color: activePalette.lightest
@@ -275,7 +282,11 @@ export const AccountRecovery = ({onNavigateLogin}: AccountRecoveryProps) => {
             </View>
 
             <TouchableOpacity style={[styles.submitButton, {backgroundColor: activePalette.darkest,
-                marginTop: 32}]} activeOpacity={0.7} onPress={() => setStep('success')}>
+                marginTop: 32}]} activeOpacity={0.7} onPress={() => {
+                    if (password.length < 6) return;
+                    if (password !== confirmPassword) return;
+                    setStep('success');
+            }}>
                 <Text style={{fontSize: 18, fontWeight: '700', fontFamily: typography.fontFamilies.main,
                 color: activePalette.lightest}}>
                     Reset Password

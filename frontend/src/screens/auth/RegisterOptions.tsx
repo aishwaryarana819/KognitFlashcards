@@ -22,6 +22,7 @@ export const RegisterOptions = ({onNavigateLogin, onNavigateProfile}: RegisterOp
 
     const [step, setStep] = useState<'options' | 'email' | 'otp'>("options");
     const [email, setEmail] = useState("");
+    const [emailError, setEmailError] = useState("");
     const [otp, setOtp] = useState("");
     const otpInputRef = useRef<TextInput>(null);
 
@@ -30,6 +31,8 @@ export const RegisterOptions = ({onNavigateLogin, onNavigateProfile}: RegisterOp
             setTimeout(() => otpInputRef.current?.focus(), 100);
         }
     }, [step]);
+
+    const isValidEmail = (val: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
 
     // Custom SVG for Branded Google Logo - AI Generated
     const GoogleIcon = () => (
@@ -163,7 +166,7 @@ export const RegisterOptions = ({onNavigateLogin, onNavigateProfile}: RegisterOp
             </Text>
 
             <View style={[styles.inputBlock, {backgroundColor: isDark ? activePalette.bg : lightPalette.lightest,
-                borderColor: activePalette.regular}]}>
+                borderColor: emailError ? lightPalette.red : activePalette.regular}]}>
                 <Ionicons name="mail-outline" size={20} color={activePalette.darker}
                           style={{marginRight: 12}}/>
                     <TextInput style={[styles.textInputCore, {flex: 1, height:'100%', color: activePalette.darkest,
@@ -179,8 +182,22 @@ export const RegisterOptions = ({onNavigateLogin, onNavigateProfile}: RegisterOp
                                autoFocus
                     />
             </View>
+            {!!emailError && (
+                <Text style={{color: lightPalette.red, fontSize: typography.fontSizes.caption,
+                    marginTop: 8, fontFamily: typography.fontFamilies.secondary, fontWeight: '700'}}>
+                    {emailError}
+                </Text>
+            )}
+
             <TouchableOpacity style={[styles.authButton, {backgroundColor: activePalette.darkest,
-                marginTop: 32}]} activeOpacity={0.7} onPress={() => setStep('otp')}>
+                marginTop: 32}]} activeOpacity={0.7} onPress={() => {
+                    if (!isValidEmail(email)) {
+                        setEmailError("Please enter a valid email address");
+                        return;
+                    }
+                    setEmailError("");
+                    setStep('otp');
+            }}>
                 <Text style={{fontSize: 18, fontWeight: '700', fontFamily: typography.fontFamilies.main,
                     color: activePalette.lightest}}>
                     Send Verification Code
