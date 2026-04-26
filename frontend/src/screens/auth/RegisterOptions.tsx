@@ -1,14 +1,5 @@
 import {useState, useRef, useEffect} from 'react';
-import {
-    View,
-    Text,
-    TouchableOpacity,
-    StyleSheet,
-    useWindowDimensions,
-    TextInput,
-    Pressable,
-    Platform
-} from 'react-native';
+import {View, Text, TouchableOpacity, StyleSheet, useWindowDimensions, TextInput, Pressable, Platform, Alert} from 'react-native';
 import Svg, {Path, G, Rect, Defs, LinearGradient, Stop} from 'react-native-svg';
 
 import {useTheme} from "../../context/ThemeContext";
@@ -99,7 +90,7 @@ export const RegisterOptions = () => {
                 <TouchableOpacity
                     style={[styles.authButton, {borderColor: activePalette.darker, borderWidth: 1.5,
                         backgroundColor: isDark ? activePalette.bg2 : lightPalette.lightest,}]}
-                    activeOpacity={0.7}
+                    activeOpacity={0.7} onPress={() => Alert.alert("Google Login is Coming Soon. Please use HackClub or Email for now.")}
                 >
                     <GoogleIcon/>
                     <Text style={[styles.authButtonText, {
