@@ -13,28 +13,53 @@ const LAST_ACTIVITY_KEY = '@auth_last_activity';
 type AuthContextType = {
     session: Session | null;
     user: User | null;
+    profile: any | null;
     isLoading: boolean;
     signOut: () => Promise<void>;
+    refreshProfile: (session?: Session | null) => Promise<void>;
 };
 
 const AuthContext =
     createContext<AuthContextType>({
         session: null,
         user: null,
+        profile: null,
         isLoading: true,
         signOut: async () => {},
+        refreshProfile: async () => {},
     });
 
 export const AuthProvider = ({children}: {children: React.ReactNode}) => {
     const [session, setSession] = useState<Session | null>(null);
+    const [profile, setProfile] = useState<any | null>(null);
     const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+
+    const refreshProfile = async (providedSession?: Session | null) => {
+        const currentSession = providedSession || (await supabase.auth.getSession()).data.session;
+
+        if (currentSession?.access_token) {
+            try {
+                const res = await fetch('http://127.0.0.1:8000/api/auth/profile', {
+                    headers: {'Authorization': `Bearer ${currentSession.access_token}`}
+                });
+                if (res.ok) setProfile(await res.json());
+                else setProfile(null);
+            }
+            catch(error) {
+                console.error('Profile fetch failed: ', error);
+                setProfile(null);
+            }
+        }
+        else setProfile(null);
+    };
 
     const signOut = async () => {
         await supabase.auth.signOut();
         await AsyncStorage.multiRemove([LAST_LOGIN_KEY, LAST_ACTIVITY_KEY]);
         setSession(null);
         setUser(null);
+        setProfile(null);
     };
 
     const validateSessionExpiry = async () => {
@@ -67,6 +92,7 @@ export const AuthProvider = ({children}: {children: React.ReactNode}) => {
                 if (isValid) {
                     setSession(data.session);
                     setUser(data.session.user);
+                    await refreshProfile();
                 }
             }
             setIsLoading(false);
@@ -84,7 +110,11 @@ export const AuthProvider = ({children}: {children: React.ReactNode}) => {
                 ]);
             }
 
-            if (newSession) await validateSessionExpiry();
+            if (newSession) {
+                await validateSessionExpiry();
+                await refreshProfile(newSession);
+            }
+            else setProfile(null);
             setUser(newSession?.user ?? null);
         });
 
@@ -98,10 +128,12 @@ export const AuthProvider = ({children}: {children: React.ReactNode}) => {
             authListener.subscription.unsubscribe();
             appStateSubscription.remove();
         };
-    }, [session]);
+    }, []);
 
     return(
-        <AuthContext.Provider value={{session, user, isLoading, signOut}}>
+        <AuthContext.Provider value={{
+            session, user, profile,
+            isLoading, signOut, refreshProfile}}>
             {children}
         </AuthContext.Provider>
     );

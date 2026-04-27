@@ -7,21 +7,26 @@ import { useFonts as useIndieFlower, IndieFlower_400Regular } from "@expo-google
 
 import { getTypography } from './src/theme/typography';
 import {ThemeProvider, useTheme} from "./src/context/ThemeContext";
-
 import {AuthProvider, useAuth} from "./src/context/AuthContext";
+import {LoadingProvider} from "./src/context/LoadingContext";
+import LoadingBar from "./src/context/LoadingBar";
+import ErrorBoudnary from "./src/components/ErrorBoundary";
 
 import {RegisterOptions} from "./src/screens/auth/RegisterOptions";
 import RegisterProfile from "./src/screens/auth/RegisterProfile";
 import {LoginOptions} from "./src/screens/auth/LoginOptions";
 import {Splash} from "./src/screens/Splash";
 import {AccountRecovery} from "./src/screens/auth/AccountRecovery";
+import {SafeAreaProvider} from "react-native-safe-area-context";
 
 const MainContent = ()=> {
   const {width} = useWindowDimensions();
   const typography = getTypography(width);
 
   const {activePalette} = useTheme();
-  const {user, isLoading} = useAuth();
+  const {user, isLoading, profile} = useAuth();
+
+  console.log("Current Profile from django (for testing): ", profile);
 
   const [authScreen, setAuthScreen] = useState<
       'register' | 'login' | 'recovery' | 'profile'>
@@ -88,11 +93,18 @@ const MainContent = ()=> {
 
 export default function App() {
     return (
-        <AuthProvider>
-            <ThemeProvider>
-                <MainContent/>
-            </ThemeProvider>
-        </AuthProvider>
+        <ErrorBoudnary>
+            <SafeAreaProvider>
+                <LoadingProvider>
+                    <ThemeProvider>
+                        <AuthProvider>
+                            <LoadingBar />
+                            <MainContent />
+                        </AuthProvider>
+                    </ThemeProvider>
+                </LoadingProvider>
+            </SafeAreaProvider>
+        </ErrorBoudnary>
     );
 }
 

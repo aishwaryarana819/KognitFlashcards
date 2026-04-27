@@ -9,7 +9,7 @@ router.register(r'decks', DeckViewSet, basename='deck')
 router.register(r'cards', CardViewSet, basename='card')
 router.register(r'tags', TagViewSet, basename='tag')
 
-utlpatterns = [
+urlpatterns = [
     path('auth/check-username', check_username, name='check_username'),
     path('auth/finalize-profile', finalize_profile, name='finalize_profile'),
     path('auth/hackclub/callback', hackclub_callback, name='hackclub-callback'),
@@ -18,6 +18,6 @@ utlpatterns = [
     path('tags/assign/', TagViewSet.as_view({'post': 'assign'}), name='tag-assign'),
     path('tags/unassign/', TagViewSet.as_view({'post': 'unassign'}), name='tag-unassign'),
     path('trash/', TrashViewSet.as_view({'get': 'list'}), name='trash-list'),
-    path('trash/<str:item_type></int:item_id>/restore/', TrashViewSet.as_view({'post':'restore'}), name='trash-restore'),
-    path('trash/<str:item_type></int:item_id>/permanent/', TrashViewSet.as_view({'delete': 'permanent_delete'}), name='trash-permanent'),
+    path('trash/<str:item_type>/<int:item_id>/restore/', TrashViewSet.as_view({'post': 'restore'}), name='trash-restore'),
+    path('trash/<str:item_type>/<int:item_id>/permanent/', TrashViewSet.as_view({'delete': 'permanent_delete'}), name='trash-permanent'),
 ]

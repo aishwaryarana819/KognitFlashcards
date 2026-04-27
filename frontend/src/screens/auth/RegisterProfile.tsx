@@ -1,8 +1,9 @@
 import {useState, useEffect} from 'react';
-import {View, Text, TouchableOpacity, StyleSheet, useWindowDimensions, TextInput, ScrollView, Pressable, Platform} from 'react-native';
+import {View, Text, TouchableOpacity, StyleSheet, useWindowDimensions, TextInput, ScrollView, Pressable, Platform, Alert} from 'react-native';
 import {Ionicons} from "@expo/vector-icons";
 
 import {useTheme} from "../../context/ThemeContext";
+import {useAuth} from "../../context/AuthContext";
 import {getTypography} from "../../theme/typography";
 import {lightPalette} from "../../theme/colors";
 import {BREAKPOINTS} from "../../theme/breakpoints";
@@ -22,6 +23,7 @@ const RegisterProfile = ({onNavigateLogin, onNavigateDashboard}: RegisterProfile
     const typography = getTypography(width);
     const {isDark, activePalette} = useTheme();
     const isMobile = width < BREAKPOINTS.MOBILE_MAX;
+    const {refreshProfile} = useAuth();
 
     const [username, setUsername] = useState("");
     const [firstName, setFirstName] = useState("");
@@ -36,6 +38,7 @@ const RegisterProfile = ({onNavigateLogin, onNavigateDashboard}: RegisterProfile
 
     const [showPassword, setShowPassword] = useState(false);
     const [usernameError, setUsernameError] = useState("");
+    const [submitError, setSubmitError] = useState("");
     const [isCheckingUsername, setIsCheckingUsername] = useState(false);
     const [activeDropdown, setActiveDropdown] = useState<'region' | 'domain' | null>(null);
 
@@ -309,24 +312,35 @@ const RegisterProfile = ({onNavigateLogin, onNavigateDashboard}: RegisterProfile
                         </View>
                     </View>
 
+                    {!!submitError && (
+                        <Text style={{color: lightPalette.red, fontSize: typography.fontSizes.bodyL,
+                            textAlign: 'center', marginBottom: 12, fontFamily: typography.fontFamilies.secondary, fontWeight: '700'}}>
+                            {submitError}
+                        </Text>
+                    )}
+
                     <TouchableOpacity style={[styles.submitButton, {backgroundColor: activePalette.darkest}]} activeOpacity={0.8} disabled={isLoading}
                         onPress={async () => {
                             if (password.length < 6 || password !== confirmPassword || usernameError || !username || isCheckingUsername) {
-                                alert("Please enter valid details.");
+                                setSubmitError("Please enter valid details. Also, new password cannot be same as old password.");
                                 return;
                             }
 
+                            setSubmitError("");
                             setIsLoading(true);
 
                             try {
-                                const {error: authError} = await supabase.auth.updateUser({
-                                    password: password
-                                });
+                                console.log("[Profile] 1. Starting profile save...");
+                                const {error: authError} = await supabase.auth.updateUser({password: password});
 
-                                if (authError) throw new Error(authError.message);
+                                if (authError) throw new Error("Supabase Password Error: " + authError.message);
+                                console.log("[Profile] 2. Password updated.");
 
                                 const {data: sessionData} = await supabase.auth.getSession();
                                 const token = sessionData.session?.access_token;
+
+                                if (!token) throw new Error("Missing active session token. Are you logged in? ");
+                                console.log("[Profile] 3. Token retrieved.");
 
                                 const response = await fetch('http://127.0.0.1:8000/api/auth/finalize-profile', {
                                     method: 'POST',
@@ -343,15 +357,28 @@ const RegisterProfile = ({onNavigateLogin, onNavigateDashboard}: RegisterProfile
                                     })
                                 });
 
+                                console.log("[Profile] 4. Django response received:", response.status);
+
                                 if (!response.ok) {
-                                    const errData = await response.json();
-                                    throw new Error(errData.error || "Failed to sync profile");
+                                    let errText = await response.text();
+
+                                    try {
+                                        const errJson = JSON.parse(errText);
+                                        errText = errJson.error || errJson.detail;
+                                    } catch (e) {
+                                    }
+
+                                    throw new Error("Django Error: " + errText);
                                 }
 
+                                console.log("[Profile] 5. Successfully synced!");
+
+                                await refreshProfile();
                                 onNavigateDashboard();
                             }
                             catch (e: any) {
-                                alert(e.message);
+                                console.error("[Profile] Crash: ", e.message);
+                                setSubmitError(e.message);
                             }
                             finally {
                                 setIsLoading(false);

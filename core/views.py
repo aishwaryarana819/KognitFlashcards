@@ -190,8 +190,11 @@ def _hackclub_callback_inner(request):
         return Response({"error": "Failed to generate Supabase session: " + str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def get_profile(request):
+    if not request.user or not request.user.is_authenticated:
+        return Response({'detail': 'User token is valid but profile is not finalized yet.'}, status=status.HTTP_404_NOT_FOUND)
+
     try:
         profile = request.user.profile
         return Response({

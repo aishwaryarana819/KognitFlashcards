@@ -19,7 +19,7 @@ class ReviewLogSerializer(serializers.ModelSerializer):
 
 class CardSerializer(serializers.ModelSerializer):
     fsrs_state = CardReviewSerializer(read_only=True)
-    tags = serializers.SerializserMethodField()
+    tags = serializers.SerializerMethodField()
     deck_ids = serializers.SerializerMethodField()
 
     class Meta:
