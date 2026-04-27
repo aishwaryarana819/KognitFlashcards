@@ -42,7 +42,7 @@ const MainContent = ()=> {
   if (isLoading) return <Splash/>
 
 
-  if (!user) {
+  if (!user || authScreen === 'profile') {
       return (
           <View style={[styles.container, {backgroundColor: activePalette.bg}]}>
               {authScreen === 'register' && (
@@ -60,6 +60,7 @@ const MainContent = ()=> {
               {authScreen === 'profile' && (
                   <RegisterProfile
                       onNavigateLogin={() => setAuthScreen('login')}
+                      onNavigateDashboard={() => setAuthScreen('register')}
                   />
               )}
               {authScreen === 'recovery' && (

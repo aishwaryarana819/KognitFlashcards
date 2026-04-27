@@ -2,12 +2,17 @@ import {useState, useRef, useEffect} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet, useWindowDimensions, TextInput, Pressable, Platform, Alert} from 'react-native';
 import Svg, {Path, G, Rect, Defs, LinearGradient, Stop} from 'react-native-svg';
 
+import * as WebBrowser from 'expo-web-browser';
+import * as AuthSession from 'expo-auth-session';
+WebBrowser.maybeCompleteAuthSession();
+
 import {useTheme} from "../../context/ThemeContext";
 import {getTypography} from "../../theme/typography";
 import {lightPalette} from "../../theme/colors";
 import {Ionicons} from "@expo/vector-icons";
 import {BREAKPOINTS} from "../../theme/breakpoints";
 import {AuthHeader} from "../../components/AuthHeader";
+import {supabase} from "../../lib/supabase";
 
 type RegisterOptionsProps = {
     onNavigateLogin: () => void;
@@ -25,6 +30,55 @@ export const RegisterOptions = ({onNavigateLogin, onNavigateProfile}: RegisterOp
     const [emailError, setEmailError] = useState("");
     const [otp, setOtp] = useState("");
     const otpInputRef = useRef<TextInput>(null);
+
+    const [isLoading, setIsLoading] = useState(false);
+    const [apiError, setApiError] = useState("");
+
+    const hcRedirectUri = AuthSession.makeRedirectUri();
+    console.log("Redirect URI: ", hcRedirectUri);
+
+    const [request, response, promptAsync] = AuthSession.useAuthRequest(
+        {
+            clientId: '48a7f88795a10d6a19e879cf43829984',
+            redirectUri: hcRedirectUri,
+            scopes: ['openid', 'email'],
+        },
+        {authorizationEndpoint: 'https://auth.hackclub.com/oauth/authorize'}
+    );
+
+    useEffect(() => {
+        const handleHackClubBridge = async (code: string) => {
+            setIsLoading(true);
+            try {
+                const res = await fetch ('http://127.0.0.1:8000/api/auth/hackclub/callback', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        code: code,
+                        redirect_uri: hcRedirectUri,
+                    })
+                });
+
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.erro || "HackClub authentication failed.");
+
+                await supabase.auth.setSession({
+                    access_token: data.access_token,
+                    refresh_token: data.refresh_token,
+                });
+
+                onNavigateProfile?.();
+            }
+            catch (err: any) {
+                setApiError(err.message);
+                setIsLoading(false);
+            }
+        };
+
+        if (response?.type === 'success' && response.params.code) {
+            handleHackClubBridge(response.params.code);
+        }
+    }, [response]);
 
     useEffect(() => {
         if (step === 'otp') {
@@ -73,6 +127,24 @@ export const RegisterOptions = ({onNavigateLogin, onNavigateProfile}: RegisterOp
         </Svg>
     );
 
+    const verifyOTP = async (code: string) => {
+        setApiError("");
+        setIsLoading(true);
+
+        const {data, error} = await supabase.auth.verifyOtp({
+            email: email,
+            token: code,
+            type: 'email',
+        });
+
+        setIsLoading(false);
+
+        if (error) setApiError(error.message);
+        else {
+            onNavigateProfile();
+        }
+    };
+
     const renderOptions = () => (
         <>
             <View style={styles.headerSection}>
@@ -98,7 +170,12 @@ export const RegisterOptions = ({onNavigateLogin, onNavigateProfile}: RegisterOp
                 <TouchableOpacity
                     style={[styles.authButton, {borderColor: activePalette.darker, borderWidth: 1.5,
                         backgroundColor: isDark ? activePalette.bg2 : lightPalette.lightest,}]}
-                    activeOpacity={0.7} onPress={() => Alert.alert("Google Login is Coming Soon. Please use HackClub or Email for now.")}
+                    activeOpacity={0.7} onPress={() => {
+                    if (Platform.OS === 'web')
+                        window.alert("Google Login is Coming Soon. Please use HackClub or Email for now.");
+                    else
+                        Alert.alert("Google Login is Coming Soon. Please use HackClub or Email for now.");
+                }}
                 >
                     <GoogleIcon/>
                     <Text style={[styles.authButtonText, {
@@ -111,7 +188,7 @@ export const RegisterOptions = ({onNavigateLogin, onNavigateProfile}: RegisterOp
                 <TouchableOpacity
                     style={[styles.authButton, {borderColor: activePalette.darker, borderWidth: 1.5,
                         backgroundColor: isDark ? activePalette.bg2 : lightPalette.lightest,}]}
-                    activeOpacity={0.7}
+                    activeOpacity={0.7} onPress={() => promptAsync()}
                 >
                     <HackClubIcon/>
                     <Text style={[styles.authButtonText, {
@@ -190,17 +267,27 @@ export const RegisterOptions = ({onNavigateLogin, onNavigateProfile}: RegisterOp
             )}
 
             <TouchableOpacity style={[styles.authButton, {backgroundColor: activePalette.darkest,
-                marginTop: 32}]} activeOpacity={0.7} onPress={() => {
+                marginTop: 32}]} activeOpacity={0.7}
+                onPress={async () => {
                     if (!isValidEmail(email)) {
                         setEmailError("Please enter a valid email address");
                         return;
                     }
                     setEmailError("");
-                    setStep('otp');
+                    setIsLoading(true);
+
+                    const {error} = await supabase.auth.signInWithOtp({
+                        email: email,
+                    });
+
+                    setIsLoading(false);
+
+                    if (error) setEmailError(error.message);
+                    else setStep('otp');
             }}>
                 <Text style={{fontSize: 18, fontWeight: '700', fontFamily: typography.fontFamilies.main,
                     color: activePalette.lightest}}>
-                    Send Verification Code
+                    {isLoading ? "Sending..." : "Send Verification Code"}
                 </Text>
             </TouchableOpacity>
         </View>
@@ -246,19 +333,36 @@ export const RegisterOptions = ({onNavigateLogin, onNavigateProfile}: RegisterOp
             <TextInput
                 ref={otpInputRef}
                 value={otp}
-                onChangeText={(val) => setOtp(val.replace
-                    (/[^0-9]/g, '').slice(0,6))}
+                onChangeText={(val) => {
+                    const cleaned = val.replace(/[^0-9]/g, '').slice(0,6);
+                    setOtp(cleaned);
+                    if(cleaned.length === 6) verifyOTP(cleaned);
+                }}
                 keyboardType="number-pad"
                 style={{position: 'absolute', opacity: 0, height: 1, width: 1}}
                 autoFocus
             />
             <TouchableOpacity style={[styles.authButton, {backgroundColor: activePalette.darkest, marginTop: 32}]}
-                              activeOpacity={0.7} onPress={onNavigateProfile}>
+                              activeOpacity={0.7}
+                              onPress={() => {
+                                if (otp.length === 6) verifyOTP(otp);
+                                else setApiError("Please enter a 6-digit code.");
+                              }}
+                              disabled={isLoading}
+            >
                 <Text style={{fontSize: 18, fontWeight: '700', fontFamily: typography.fontFamilies.main,
                     color: activePalette.lightest}}>
-                    Verify & Continue
+                    {isLoading ? "Verifying..." : "Verify & Continue"}
                 </Text>
             </TouchableOpacity>
+
+            {!!apiError && (
+                <Text style={{color: lightPalette.red, fontSize: typography.fontSizes.caption,
+                    marginTop: 16, textAlign: 'center', fontFamily: typography.fontFamilies.secondary, fontWeight: '700'
+                }}>
+                    {apiError}
+                </Text>
+            )}
         </View>
     );
 

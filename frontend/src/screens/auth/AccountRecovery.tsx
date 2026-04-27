@@ -6,6 +6,7 @@ import {useTheme} from "../../context/ThemeContext";
 import {getTypography} from "../../theme/typography";
 import {lightPalette} from "../../theme/colors";
 import {AuthHeader} from "../../components/AuthHeader";
+import {supabase} from "../../lib/supabase";
 
 type AccountRecoveryProps = {
     onNavigateLogin: () => void;
@@ -26,6 +27,7 @@ export const AccountRecovery = ({onNavigateLogin}: AccountRecoveryProps) => {
     const [emailError, setEmailError] = useState("");
     const otpInputRef = useRef<TextInput>(null);
 
+    const [isLoading, setIsLoading] = useState(false);
     const isValidEmail = (val: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
 
     useEffect(() => {
@@ -60,6 +62,12 @@ export const AccountRecovery = ({onNavigateLogin}: AccountRecoveryProps) => {
 
     const renderEmailInput = () => (
         <View style={{width: '100%'}}>
+            <TouchableOpacity onPress={onNavigateLogin}
+                              hitSlop={{top: 15, left: 15, bottom: 15, right: 15}}
+                              style={{alignSelf: 'flex-start', marginBottom: 20}}
+            >
+                <Ionicons name="arrow-back" size={24} color={activePalette.darker}/>
+            </TouchableOpacity>
             <Text style={[styles.subHeaderTitle, {
                 fontFamily: typography.fontFamilies.main,
                 fontSize: typography.fontSizes.heading,
@@ -106,19 +114,24 @@ export const AccountRecovery = ({onNavigateLogin}: AccountRecoveryProps) => {
             <TouchableOpacity style={[styles.submitButton, {
                 backgroundColor: activePalette.darkest,
                 marginTop: 32
-            }]} activeOpacity={0.7} onPress={() => {
+            }]} activeOpacity={0.7} disabled={isLoading} onPress={async () => {
                 if (!isValidEmail(email)) {
                     setEmailError("Please enter a valid email address");
                     return;
                 }
                 setEmailError("");
+                setIsLoading(true);
+
+                await supabase.auth.resetPasswordForEmail(email);
+
+                setIsLoading(false);
                 setStep('otp');
             }}>
                 <Text style={{
                     fontSize: typography.fontSizes.button, fontWeight: '700', fontFamily: typography.fontFamilies.main,
                     color: activePalette.lightest
                 }}>
-                    Send Reset Code
+                    {isLoading ? "Sending..." : "Send Reset Code"}
                 </Text>
             </TouchableOpacity>
         </View>
@@ -177,7 +190,24 @@ export const AccountRecovery = ({onNavigateLogin}: AccountRecoveryProps) => {
                 autoFocus
             />
             <TouchableOpacity style={[styles.submitButton, {backgroundColor: activePalette.darkest, marginTop: 32}]}
-                              activeOpacity={0.7} onPress={() => setStep('newpassword')}>
+                              activeOpacity={0.7} disabled={isLoading}
+                              onPress={async () => {
+                                  if (otp.length !== 6) return;
+                                  setIsLoading(true);
+
+                                  const {error} = await supabase.auth.verifyOtp({
+                                      email: email,
+                                      token: otp,
+                                      type: 'recovery'
+                                  });
+
+                                  setIsLoading(false);
+                                  if (!error)
+                                      setStep('newpassword');
+                                  else
+                                      alert(error.message);
+                              }}
+            >
                 <Text style={{fontSize: 18, fontWeight: '700', fontFamily: typography.fontFamilies.main,
                     color: activePalette.lightest}}>
                     Verify & Continue
@@ -282,10 +312,16 @@ export const AccountRecovery = ({onNavigateLogin}: AccountRecoveryProps) => {
             </View>
 
             <TouchableOpacity style={[styles.submitButton, {backgroundColor: activePalette.darkest,
-                marginTop: 32}]} activeOpacity={0.7} onPress={() => {
+                marginTop: 32}]} activeOpacity={0.7} disabled={isLoading} onPress={async () => {
                     if (password.length < 6) return;
                     if (password !== confirmPassword) return;
-                    setStep('success');
+
+                    setIsLoading(true);
+                    const {error} = await supabase.auth.updateUser({password: password});
+                    setIsLoading(false);
+
+                    if (error) alert(error.message);
+                    else setStep('success');
             }}>
                 <Text style={{fontSize: 18, fontWeight: '700', fontFamily: typography.fontFamilies.main,
                 color: activePalette.lightest}}>

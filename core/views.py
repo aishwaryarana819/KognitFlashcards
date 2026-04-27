@@ -26,7 +26,7 @@ def check_username(request):
         return Response({"error" : "Username must be between 4 and 12 characters long"}, status=status.HTTP_400_BAD_REQUEST)
 
     import re
-    if not re.match(r'^[a-z0-9_-]+4', username):
+    if not re.match(r'^[a-z0-9_-]{4,12}$', username):
         return Response({"error": "Invalid characters used. It must be letters, numbers, underscore or hyphen."}, status=status.HTTP_400_BAD_REQUEST)
 
     is_taken = User.objects.filter(username__iexact=username).exists()
@@ -34,11 +34,13 @@ def check_username(request):
     return Response({"available": not is_taken}, status=status.HTTP_200_OK)
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 
 def finalize_profile(request):
-    data = request.data
+    if not request.auth:
+        return Response({'error': 'No valid Supabase token provided.'}, status=status.HTTP_401_UNAUTHORIZED)
 
+    data = request.data
     username = data.get('username')
     first_name = data.get('firstName', '')
     last_name = data.get('lastName' ,'')
@@ -57,7 +59,11 @@ def finalize_profile(request):
     if not supabase_uid:
         return Response({'error': 'Invalid token payload'}, status=status.HTTP_401_UNAUTHORIZED)
 
-    if profile:
+    try:
+        profile = Profile.objects.get(supabase_uid=supabase_uid)
+        if username.lower() != profile.user.username.lower() and User.objects.filter(username__iexact=username).exists():
+            return Response({'error': 'Username already exists'}, status=status.HTTP_400_BAD_REQUEST)
+
         user = profile.user
         user.username = username
         user.first_name = first_name
@@ -68,7 +74,10 @@ def finalize_profile(request):
         profile.domain = domain
         profile.save()
 
-    else:
+    except Profile.DoesNotExist:
+        if User.objects.filter(username__iexact=username).exists():
+            return Response({'error': 'Username already exists'}, status=status.HTTP_400_BAD_REQUEST)
+
         user = User.objects.create(
             username=username,
             first_name=first_name,
@@ -81,22 +90,38 @@ def finalize_profile(request):
             region=region,
             domain=domain
         )
-
     return Response({"message": "Profile finalized successfully."}, status=status.HTTP_200_OK)
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
 
 def hackclub_callback(request):
+    import traceback
+    try:
+        return _hackclub_callback_inner(request)
+    except Exception as e:
+        tb = traceback.format_exc()
+        return Response({"error": str(e), "traceback": tb}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+def _hackclub_callback_inner(request):
     code = request.data.get('code')
     if not code:
         return Response({"error": "Authorization code is required."}, status=status.HTTP_400_BAD_REQUEST)
 
+    """
+    code = request.data.get('code')
+    if not code:
+        return Response({"error": "Authorization code is required."}, status=status.HTTP_400_BAD_REQUEST)
+    """
+
     token_url = "https://auth.hackclub.com/oauth/token"
+
+    dynamic_redirect_uri = request.data.get('redirect_uri')
+
     token_data = {
         "client_id": settings.HACKCLUB_CLIENT_ID,
         "client_secret": settings.HACKCLUB_CLIENT_SECRET,
-        "redirect_uri": settings.HACKCLUB_CLIENT_REDIRECT_URI,
+        "redirect_uri": dynamic_redirect_uri,
         "code": code,
         "grant_type": "authorization_code"
     }
@@ -136,7 +161,7 @@ def hackclub_callback(request):
     except Exception as e:
         try:
             users = admin_auth.list_users()
-            existing_user = next((u for u in users.users if u.email == email), None)
+            existing_user = next((u for u in users if u.email == email), None)
 
             if existing_user:
                 admin_auth.update_user_by_id(existing_user.id, {
@@ -150,8 +175,6 @@ def hackclub_callback(request):
             return Response({"error": str(inner_e)},
                             status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    anon_client = create_client(settings.SUPABASE_URL, settings.SUPABASE_KEY)
-
     try:
         session_data = supabase_admin.auth.sign_in_with_password({
             "email": email,
@@ -162,7 +185,7 @@ def hackclub_callback(request):
             "access_token": session_data.session.access_token,
             "refresh_token": session_data.session.refresh_token,
             "user": session_data.user.model_dump()
-        }, statu=status.HTTP_200_OK)
+        }, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({"error": "Failed to generate Supabase session: " + str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 

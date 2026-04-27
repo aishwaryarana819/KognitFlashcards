@@ -28,9 +28,9 @@ export const getTypography = (windowWidth: number): Typography => {
 
     return {
         fontFamilies: {
-            main: 'Urbanist_400Regular',
-            secondary: 'Manrope_400Regular',
-            handwritten: 'IndieFlower_400Regular',
+            main: 'Urbanist_400Regular, sans-serif',
+            secondary: 'Manrope_400Regular, sans-serif',
+            handwritten: 'IndieFlower_400Regular, cursive',
         },
 
         fontSizes: {

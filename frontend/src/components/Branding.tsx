@@ -21,11 +21,23 @@ export const Branding = () => {
 
     const renderLogo = () => {
         if (isMobile) {
-            return isDark ? <IconDark width="40" height="40"/>
-                : <IconLight width="40" height="40"/>;
+            return (
+                <View style={{width: 36, height: 40}}>
+                    {
+                        isDark ? <IconDark style={{width: '100%', height: '100%'}}/>
+                            : <IconLight style={{width: '100%', height: '100%'}}/>
+                    }
+                </View>
+            );
         }
-        return isDark ? <LogoDark height="50"/>
-            : <LogoLight height="50"/>;
+        return (
+            <View style={{width: 132, height: 50}}>
+                {
+                    isDark ? <LogoDark style={{width: '100%', height: '100%'}}/>
+                        : <LogoLight style={{width: '100%', height: '100%'}}/>
+                }
+            </View>
+        );
     };
 
     const dynamicGlassStyle = [

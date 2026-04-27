@@ -7,15 +7,17 @@ import {getTypography} from "../../theme/typography";
 import {lightPalette} from "../../theme/colors";
 import {BREAKPOINTS} from "../../theme/breakpoints";
 import {AuthHeader} from "../../components/AuthHeader";
+import {supabase} from "../../lib/supabase";
 
 const REGIONS = ["USA/Canada", "South America", "Western Europe", "Central/Eastern Europe", "Russia", "India", "Other Asia", "Africa", "Oceania", "Others"];
 const DOMAINS = ["Medical & Health", "Law & Humanities", "STEM & Engineering", "Languages", "Arts & Design", "General Productivity", "Others"];
 
 type RegisterProfileProps = {
     onNavigateLogin: () => void;
+    onNavigateDashboard: () => void;
 };
 
-const RegisterProfile = ({onNavigateLogin}: RegisterProfileProps) => {
+const RegisterProfile = ({onNavigateLogin, onNavigateDashboard}: RegisterProfileProps) => {
     const {width} = useWindowDimensions();
     const typography = getTypography(width);
     const {isDark, activePalette} = useTheme();
@@ -30,8 +32,11 @@ const RegisterProfile = ({onNavigateLogin}: RegisterProfileProps) => {
     const [region, setRegion] = useState("");
     const [domain, setDomain] = useState("");
 
+    const [isLoading, setIsLoading] = useState(false);
+
     const [showPassword, setShowPassword] = useState(false);
     const [usernameError, setUsernameError] = useState("");
+    const [isCheckingUsername, setIsCheckingUsername] = useState(false);
     const [activeDropdown, setActiveDropdown] = useState<'region' | 'domain' | null>(null);
 
     useEffect(() => {
@@ -39,10 +44,34 @@ const RegisterProfile = ({onNavigateLogin}: RegisterProfileProps) => {
             const isValid = /^[A-Za-z0-9_-]{4,12}$/.test(username);
 
             if (username.length > 12) setUsernameError("Uh oh! Please keep it below 12 characters.");
-            else if (!isValid) setUsernameError("You may only use letters, numbers, underscore & hyphen");
-            else setUsernameError("");
+            else if (!isValid) setUsernameError("You may only use letters, numbers, underscore & hyphen and it should be at least 4 characters.");
+            else {
+                setUsernameError("");
+                setIsCheckingUsername(true);
 
-        } else setUsernameError("");
+                const delayDebounceFn = setTimeout(async () => {
+                    try {
+                        const response = await fetch(`http://127.0.0.1:8000/api/auth/check-username?q=${username}`);
+                        const data = await response.json();
+
+                        if (!response.ok) setUsernameError(data.error || "Failed to check availability");
+                        else if (!data.available) setUsernameError("This username is already taken.");
+                        else setUsernameError("");
+                    }
+                    catch(err) {
+                        setUsernameError("Failed to connect to server.");
+                    }
+                    finally {
+                        setIsCheckingUsername(false);
+                    }
+                }, 500);
+
+                return () => clearTimeout(delayDebounceFn);
+            }
+        } else {
+            setUsernameError("");
+            setIsCheckingUsername(false);
+        }
     }, [username]);
 
     useEffect(() => {
@@ -85,7 +114,7 @@ const RegisterProfile = ({onNavigateLogin}: RegisterProfileProps) => {
             <View style={[styles.contentBox1, {paddingBottom: isMobile ? 10 : 20}]}>
 
                 <View style={{alignItems: 'flex-end', transform: [{translateX: -20}]}}>
-                    <Pressable onPress={() => console.log("Profile details skipped.")}>
+                    <Pressable onPress={onNavigateDashboard}>
                         {(state: any) => (
                         <Text style={{fontFamily: typography.fontFamilies.main, fontWeight: '700',
                             fontSize: typography.fontSizes.bodyL, opacity: state.pressed ? 0.5 : 1,
@@ -280,9 +309,57 @@ const RegisterProfile = ({onNavigateLogin}: RegisterProfileProps) => {
                         </View>
                     </View>
 
-                    <TouchableOpacity style={[styles.submitButton, {backgroundColor: activePalette.darkest}]} activeOpacity={0.8}>
+                    <TouchableOpacity style={[styles.submitButton, {backgroundColor: activePalette.darkest}]} activeOpacity={0.8} disabled={isLoading}
+                        onPress={async () => {
+                            if (password.length < 6 || password !== confirmPassword || usernameError || !username || isCheckingUsername) {
+                                alert("Please enter valid details.");
+                                return;
+                            }
+
+                            setIsLoading(true);
+
+                            try {
+                                const {error: authError} = await supabase.auth.updateUser({
+                                    password: password
+                                });
+
+                                if (authError) throw new Error(authError.message);
+
+                                const {data: sessionData} = await supabase.auth.getSession();
+                                const token = sessionData.session?.access_token;
+
+                                const response = await fetch('http://127.0.0.1:8000/api/auth/finalize-profile', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'Authorization': `Bearer ${token}`
+                                    },
+                                    body: JSON.stringify({
+                                        username: username,
+                                        firstName: firstName,
+                                        lastName: lastName,
+                                        region: region,
+                                        domain: domain
+                                    })
+                                });
+
+                                if (!response.ok) {
+                                    const errData = await response.json();
+                                    throw new Error(errData.error || "Failed to sync profile");
+                                }
+
+                                onNavigateDashboard();
+                            }
+                            catch (e: any) {
+                                alert(e.message);
+                            }
+                            finally {
+                                setIsLoading(false);
+                            }
+                        }}
+                    >
                         <Text style={{fontSize: 18, fontWeight: '700', fontFamily: typography.fontFamilies.main, color: activePalette.lightest}}>
-                            Save Profile
+                            {isLoading? "Saving..." : "Save Profile"}
                         </Text>
                     </TouchableOpacity>
                 </View>
