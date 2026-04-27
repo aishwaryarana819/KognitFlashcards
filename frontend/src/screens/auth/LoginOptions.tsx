@@ -141,6 +141,29 @@ export const LoginOptions = ({onNavigateRegister, onNavigateRecovery}: LoginOpti
         if (error) setApiError(error.message);
     };
 
+    const passwordLogin = async () => {
+        if (!isValidEmail(email)) {
+            setApiError("Please enter a valid email address");
+            return;
+        }
+        if (!password || password.length < 6) {
+            setApiError("Please enter a valid password");
+            return;
+        }
+
+        setApiError("");
+        setIsLoading(true);
+
+        const {error} = await supabase.auth.signInWithPassword({
+            email: email,
+            password: password,
+        });
+
+        setIsLoading(false);
+
+        if (error) setApiError(error.message);
+    };
+
     const renderOptions = () => (
         <>
             <View style={styles.headerSection}>
@@ -431,11 +454,19 @@ export const LoginOptions = ({onNavigateRegister, onNavigateRecovery}: LoginOpti
                               color={activePalette.regular}/>
                 </TouchableOpacity>
             </View>
+
+            {!!apiError && (
+                <Text style={{color: lightPalette.red, fontSize: typography.fontSizes.caption,
+                    marginTop: 16, textAlign: 'center', fontFamily: typography.fontFamilies.secondary, fontWeight: '700'}}>
+                    {apiError}
+                </Text>
+            )}
+
             <TouchableOpacity style={[styles.authButton, {backgroundColor: activePalette.darkest,
-                marginTop: 32}]} activeOpacity={0.7} onPress={() => console.log('Password Login')}>
+                marginTop: 32}]} activeOpacity={0.7} onPress={passwordLogin}>
                 <Text style={{fontSize: typography.fontSizes.button, fontWeight: '700',
                     fontFamily: typography.fontFamilies.main, color: activePalette.lightest}}>
-                    Login
+                    {isLoading ? "Logging in..." : "Login"}
                 </Text>
             </TouchableOpacity>
             <TouchableOpacity activeOpacity={0.7} onPress={() => setStep('email')}
