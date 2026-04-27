@@ -189,3 +189,19 @@ def _hackclub_callback_inner(request):
     except Exception as e:
         return Response({"error": "Failed to generate Supabase session: " + str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_profile(request):
+    try:
+        profile = request.user.profile
+        return Response({
+            'username': request.user.username,
+            'first_name': request.user.first_name,
+            'last_name': request.user.last_name,
+            'email': request.user.email,
+            'region': profile.region,
+            'domain': profile.domain,
+            'supabase_uid': str(profile.supabase_uid),
+        })
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
