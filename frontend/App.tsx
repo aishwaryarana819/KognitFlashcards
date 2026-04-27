@@ -1,5 +1,6 @@
 import {useState} from "react";
-import { StyleSheet, Text, View, useWindowDimensions, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, useWindowDimensions, ActivityIndicator, TouchableOpacity } from 'react-native';
+import {SafeAreaProvider} from "react-native-safe-area-context";
 
 import { useFonts as useUrbanist, Urbanist_400Regular } from "@expo-google-fonts/urbanist";
 import { useFonts as useManrope, Manrope_400Regular } from "@expo-google-fonts/manrope";
@@ -17,37 +18,44 @@ import RegisterProfile from "./src/screens/auth/RegisterProfile";
 import {LoginOptions} from "./src/screens/auth/LoginOptions";
 import {Splash} from "./src/screens/Splash";
 import {AccountRecovery} from "./src/screens/auth/AccountRecovery";
-import {SafeAreaProvider} from "react-native-safe-area-context";
+
+import {Dashboard} from "./src/screens/Dashboard";
+import {ReviewSession} from "./src/modals/ReviewSession";
+import {Trash} from "./src/screens/Trash";
+import {Settings} from "./src/screens/Settings";
+import {UnderConstruction} from "./src/screens/UnderConstruction";
 
 const MainContent = ()=> {
-  const {width} = useWindowDimensions();
-  const typography = getTypography(width);
+    const {width} = useWindowDimensions();
+    const typography = getTypography(width);
 
-  const {activePalette} = useTheme();
-  const {user, isLoading, profile} = useAuth();
+    const {activePalette} = useTheme();
+    const {user, isLoading, profile} = useAuth();
 
-  console.log("Current Profile from django (for testing): ", profile);
+    console.log("Current Profile from django (for testing): ", profile);
 
-  const [authScreen, setAuthScreen] = useState<
-      'register' | 'login' | 'recovery' | 'profile'>
-  ('register');
+    const [authScreen, setAuthScreen] = useState<
+      'register' | 'login' | 'recovery' | 'profile'>('register');
 
-  const [urbanistLoaded] = useUrbanist({Urbanist_400Regular});
-  const [manropeLoaded] = useManrope({Manrope_400Regular});
-  const [indieFlowerLoaded] = useIndieFlower({IndieFlower_400Regular});
+    const [testRoute, setTestRoute] = useState<
+      'home' | 'dashboard' | 'reviewSession' | 'trash' | 'settings' | 'underConstruction'>('home');
 
-  if (!urbanistLoaded || !manropeLoaded || !indieFlowerLoaded) {
+    const [urbanistLoaded] = useUrbanist({Urbanist_400Regular});
+    const [manropeLoaded] = useManrope({Manrope_400Regular});
+    const [indieFlowerLoaded] = useIndieFlower({IndieFlower_400Regular});
+
+    if (!urbanistLoaded || !manropeLoaded || !indieFlowerLoaded) {
     return (
         <View style={[styles.container, {justifyContent: 'center'}]}>
           <ActivityIndicator size="large" color={activePalette.darker}/>
         </View>
     );
-  }
+    }
 
-  if (isLoading) return <Splash/>
+    if (isLoading) return <Splash/>
 
 
-  if (!user || authScreen === 'profile') {
+    if (!user || authScreen === 'profile') {
       return (
           <View style={[styles.container, {backgroundColor: activePalette.bg}]}>
               {authScreen === 'register' && (
@@ -75,9 +83,37 @@ const MainContent = ()=> {
               )}
           </View>
       );
-  }
+    }
 
-  return (
+    const goHome = () => setTestRoute('home');
+
+    if (testRoute === 'dashboard') return <Dashboard onBackTest={goHome}/>;
+    if (testRoute === 'reviewSession') return <ReviewSession onBackTest={goHome}/>;
+    if (testRoute === 'trash') return <Trash onBackTest={goHome}/>;
+    if (testRoute === 'settings') return <Settings onBackTest={goHome}/>;
+    if (testRoute === 'underConstruction') return <UnderConstruction title="Import" message="Coming soon." onBackTest={goHome}/>;
+
+    return (
+        <View style={[styles.container, {backgroundColor: activePalette.bg, justifyContent: 'center', gap: 15}]}>
+            <Text style={{fontFamily: typography.fontFamilies.main, fontSize: typography.fontSizes.heroS, color: activePalette.darkest, fontWeight: '800', marginBottom: 20}}>
+                Test Navigation Menu
+            </Text>
+
+            <TouchableOpacity activeOpacity={0.7} onPress={() => setTestRoute('dashboard')} style={{padding: 15, backgroundColor: activePalette.bg2, borderRadius: 12}}>
+                <Text style={{color: activePalette.darkest, fontFamily: typography.fontFamilies.main, fontSize: typography.fontSizes.button}}>Test Dashboard Core</Text>
+            </TouchableOpacity>
+            <TouchableOpacity activeOpacity={0.7} onPress={() => setTestRoute('reviewSession')} style={{padding: 15, backgroundColor: activePalette.bg2, borderRadius: 12}}>
+                <Text style={{color: activePalette.darkest, fontFamily: typography.fontFamilies.main, fontSize: typography.fontSizes.button}}>Test Library Core</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity activeOpacity={0.7} onPress={() => setTestRoute('underConstruction')} style={{padding: 15, backgroundColor: activePalette.bg2, borderRadius: 12}}>
+                <Text style={{color: activePalette.darkest, fontFamily: typography.fontFamilies.main, fontSize: typography.fontSizes.button}}>Test UnderConstruction Component</Text>
+            </TouchableOpacity>
+        </View>
+    );
+
+    /* Original Return before testing scaffolded screens
+    return (
       <View style={[styles.container, {backgroundColor: activePalette.bg, justifyContent: 'center'}]}>
           <Text style={{fontFamily: typography.fontFamilies.main,
               fontSize: typography.fontSizes.heading, color: activePalette.darkest, fontWeight: '800'}}>
@@ -88,7 +124,9 @@ const MainContent = ()=> {
               Dashboard under development.
           </Text>
       </View>
-  );
+    );
+    */
+
 };
 
 export default function App() {
