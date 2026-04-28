@@ -25,6 +25,7 @@ import {ReviewSession} from "./src/modals/ReviewSession";
 import {Trash} from "./src/screens/Trash";
 import {Settings} from "./src/screens/Settings";
 import {UnderConstruction} from "./src/screens/UnderConstruction";
+import {FloatingReviewPalette} from "./src/components/FloatingReviewPalette";
 
 const MainContent = ()=> {
     const {width} = useWindowDimensions();
@@ -129,7 +130,11 @@ const MainContent = ()=> {
                 </TouchableOpacity>
 
             </View>
+            <>
+                <FloatingReviewPalette/>
+            </>
         </View>
+
     );
 
     /* Original Return before testing scaffolded screens
