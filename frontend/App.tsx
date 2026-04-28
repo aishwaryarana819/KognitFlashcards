@@ -13,6 +13,7 @@ import {LoadingProvider} from "./src/context/LoadingContext";
 import LoadingBar from "./src/context/LoadingBar";
 import ErrorBoudnary from "./src/components/ErrorBoundary";
 
+import {TopBar} from "./src/components/TopBar";
 import {RegisterOptions} from "./src/screens/auth/RegisterOptions";
 import RegisterProfile from "./src/screens/auth/RegisterProfile";
 import {LoginOptions} from "./src/screens/auth/LoginOptions";
@@ -94,21 +95,40 @@ const MainContent = ()=> {
     if (testRoute === 'underConstruction') return <UnderConstruction title="Import" message="Coming soon." onBackTest={goHome}/>;
 
     return (
-        <View style={[styles.container, {backgroundColor: activePalette.bg, justifyContent: 'center', gap: 15}]}>
-            <Text style={{fontFamily: typography.fontFamilies.main, fontSize: typography.fontSizes.heroS, color: activePalette.darkest, fontWeight: '800', marginBottom: 20}}>
-                Test Navigation Menu
-            </Text>
+        <View style={[styles.container, {backgroundColor: activePalette.bg}]}>
+            <TopBar/>
 
-            <TouchableOpacity activeOpacity={0.7} onPress={() => setTestRoute('dashboard')} style={{padding: 15, backgroundColor: activePalette.bg2, borderRadius: 12}}>
-                <Text style={{color: activePalette.darkest, fontFamily: typography.fontFamilies.main, fontSize: typography.fontSizes.button}}>Test Dashboard Core</Text>
-            </TouchableOpacity>
-            <TouchableOpacity activeOpacity={0.7} onPress={() => setTestRoute('reviewSession')} style={{padding: 15, backgroundColor: activePalette.bg2, borderRadius: 12}}>
-                <Text style={{color: activePalette.darkest, fontFamily: typography.fontFamilies.main, fontSize: typography.fontSizes.button}}>Test Library Core</Text>
-            </TouchableOpacity>
+            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', gap: 15}}>
+                <Text style={{fontFamily: typography.fontFamilies.main, fontSize: typography.fontSizes.heroS,
+                    color: activePalette.darkest, fontWeight: '800', marginBottom: 20}}>
+                    Test Navigation Menu
+                </Text>
 
-            <TouchableOpacity activeOpacity={0.7} onPress={() => setTestRoute('underConstruction')} style={{padding: 15, backgroundColor: activePalette.bg2, borderRadius: 12}}>
-                <Text style={{color: activePalette.darkest, fontFamily: typography.fontFamilies.main, fontSize: typography.fontSizes.button}}>Test UnderConstruction Component</Text>
-            </TouchableOpacity>
+                <TouchableOpacity activeOpacity={0.7} onPress={() => setTestRoute('dashboard')}
+                                  style={{padding: 15, backgroundColor: activePalette.bg2, borderRadius: 12}}>
+                    <Text style={{color: activePalette.darkest, fontFamily: typography.fontFamilies.main,
+                        fontSize: typography.fontSizes.button}}>
+                        Test Dashboard Core
+                    </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity activeOpacity={0.7} onPress={() => setTestRoute('reviewSession')}
+                                  style={{padding: 15, backgroundColor: activePalette.bg2, borderRadius: 12}}>
+                    <Text style={{color: activePalette.darkest, fontFamily: typography.fontFamilies.main,
+                        fontSize: typography.fontSizes.button}}>
+                        Test Library Core
+                    </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity activeOpacity={0.7} onPress={() => setTestRoute('underConstruction')}
+                                  style={{padding: 15, backgroundColor: activePalette.bg2, borderRadius: 12}}>
+                    <Text style={{color: activePalette.darkest, fontFamily: typography.fontFamilies.main,
+                        fontSize: typography.fontSizes.button}}>
+                        Test UnderConstruction Component
+                    </Text>
+                </TouchableOpacity>
+
+            </View>
         </View>
     );
 
