@@ -8,6 +8,8 @@ export const ROUTES = {
     LIBRARY: 'Library',
     ANALYTICS: 'Analytics',
     DISCOVER: 'Discover',
+    IMPORT: 'Import',
+    EXPORT: 'Export',
     TRASH: 'Trash',
     PROFILE: 'Profile',
     SETTINGS: 'Settings',

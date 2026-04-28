@@ -16,11 +16,24 @@ export type FontSizes = {
     bodyS: number;
     caption: number;
     captionS: number;
+    micro: number;
+};
+
+export type FontWeights = {
+    thin: '300'
+    regular: '400'
+    medium: '500'
+    semibold: '600'
+    bold: '700'
+    extrabold: '800'
+    black: '900'
+    extrablack: '1000'
 };
 
 export type Typography = {
     fontFamilies: FontFamilies;
     fontSizes: FontSizes;
+    fontWeights: FontWeights;
 };
 
 export const getTypography = (windowWidth: number): Typography => {
@@ -43,6 +56,18 @@ export const getTypography = (windowWidth: number): Typography => {
             bodyS: isMobile ? 12 : 14,
             caption: isMobile ? 11 : 12,
             captionS: isMobile ? 10 : 11,
+            micro: isMobile ? 9 : 9,
+        },
+
+        fontWeights: {
+            thin: '300',
+            regular: '400',
+            medium: '500',
+            semibold: '600',
+            bold: '700',
+            extrabold: '800',
+            black: '900',
+            extrablack: '1000',
         }
     };
 };
