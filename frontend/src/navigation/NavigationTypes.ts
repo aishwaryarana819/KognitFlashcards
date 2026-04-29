@@ -13,6 +13,14 @@ export type AppChromeParamList = {
     [ROUTES.HELP]: undefined;
 };
 
+export type MobileTabParamList = {
+    [ROUTES.DASHBOARD]: undefined;
+    [ROUTES.LIBRARY]: undefined;
+    [ROUTES.ANALYTICS]: undefined;
+    [ROUTES.DISCOVER]: undefined;
+    More: undefined;
+};
+
 export type RootStackParamList = {
     AuthSplash: undefined;
     AuthStack: undefined;
