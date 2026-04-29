@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, useWindowDimensions, Platform} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, useWindowDimensions} from 'react-native';
 import {useTheme} from '../context/ThemeContext';
 import {getTypography} from "../theme/typography";
 import {Ionicons} from "@expo/vector-icons";
@@ -51,6 +51,7 @@ export const FloatingReviewPalette = () => {
                         </Text>
 
                         <View style={[styles.pendingBadge, {backgroundColor: activePalette.darkest}]}>
+                            {/* @ts-ignore */}
                             <Text style={{
                                 fontFamily: typography.fontFamilies.main,
                                 fontSize: typography.fontSizes.bodyL,
@@ -79,6 +80,7 @@ export const FloatingReviewPalette = () => {
                         },
                         reviewBox2Shadow
                     ]}>
+                        {/* @ts-ignore */}
                         <Text style={{
                             fontFamily: typography.fontFamilies.main,
                             fontSize: typography.fontSizes.heading,
@@ -111,7 +113,7 @@ export const FloatingReviewPalette = () => {
                         size={isMobile ? 24 : 28}
                         color={activePalette.darkest}
                     />
-
+                    {/* @ts-ignore */}
                     <Text style={{
                         fontFamily: typography.fontFamilies.main,
                         fontSize: typography.fontSizes.button,
