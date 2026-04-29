@@ -51,36 +51,37 @@ const MainContent = ()=> {
 
     if (isLoading) return <Splash/>
 
-
-    if (!user || authScreen === 'profile') {
-      return (
-          <View style={[styles.container, {backgroundColor: activePalette.bg}]}>
-              {authScreen === 'register' && (
-                  <RegisterOptions
-                      onNavigateLogin={() => setAuthScreen('login')}
-                      onNavigateProfile={() => setAuthScreen('profile')}
-                  />
-              )}
-              {authScreen === 'login' && (
-                  <LoginOptions
-                      onNavigateRegister={() => setAuthScreen('register')}
-                      onNavigateRecovery={() => setAuthScreen('recovery')}
-                  />
-              )}
-              {authScreen === 'profile' && (
-                  <RegisterProfile
-                      onNavigateLogin={() => setAuthScreen('login')}
-                      onNavigateDashboard={() => setAuthScreen('register')}
-                  />
-              )}
-              {authScreen === 'recovery' && (
-                  <AccountRecovery
-                      onNavigateLogin={() => setAuthScreen('login')}
-                  />
-              )}
-          </View>
-      );
-    }
+    const needsProfileSetup = user && !profile;
+// Updated via AI to save time
+        if (!user || needsProfileSetup || authScreen === 'profile') {
+                return (
+                        <View style={[styles.container, {backgroundColor: activePalette.bg}]}>
+                                {(!user && authScreen === 'register') && (
+                                    <RegisterOptions
+                                        onNavigateLogin={() => setAuthScreen('login')}
+                                        onNavigateProfile={() => setAuthScreen('profile')}
+                                    />
+                                )}
+                                {(!user && authScreen === 'login') && (
+                                    <LoginOptions
+                                        onNavigateRegister={() => setAuthScreen('register')}
+                                        onNavigateRecovery={() => setAuthScreen('recovery')}
+                                    />
+                                )}
+                                {(!user && authScreen === 'recovery') && (
+                                    <AccountRecovery
+                                        onNavigateLogin={() => setAuthScreen('login')}
+                                    />
+                                )}
+                                {(needsProfileSetup || authScreen === 'profile') && (
+                                    <RegisterProfile
+                                        onNavigateLogin={() => setAuthScreen('login')}
+                                        onNavigateDashboard={() => setAuthScreen('register')}
+                                    />
+                                )}
+                            </View>
+                    );
+            }
 
     const goHome = () => setTestRoute('home');
 
