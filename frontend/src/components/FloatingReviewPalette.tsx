@@ -19,7 +19,14 @@ export const FloatingReviewPalette = () => {
     const createBoxShadow = getCreateBoxShadow(activePalette);
 
     return (
-        <View style={[styles.floatingContainer, {bottom: isMobile ? 90 : 40, marginVertical: 10}]}>
+        <View style={[styles.floatingContainer,
+            {
+                bottom: isMobile ? 90 : 40,
+                marginVertical: 10,
+                left: isMobile ? 0 : (width <= BREAKPOINTS.DESKTOP_SMALL_MAX ? 102 : 211.5)
+            }]}
+            pointerEvents="box-none"
+        >
             <View style={[styles.paletteWraper, {gap: isMobile ? 6 : 20}]}>
                 <View style={styles.reviewSectionWrapper}>
                     <View style={[styles.reviewBox1, {
@@ -138,7 +145,6 @@ export const FloatingReviewPalette = () => {
 const styles=StyleSheet.create({
     floatingContainer: {
         position: 'absolute',
-        left: 0,
         right: 0,
         alignItems: 'center',
         zIndex: 100,
