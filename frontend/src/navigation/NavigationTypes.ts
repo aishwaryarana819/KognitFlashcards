@@ -21,6 +21,18 @@ export type MobileTabParamList = {
     More: undefined;
 };
 
+export type DesktopDrawerParamList = {
+    [ROUTES.DASHBOARD]: undefined;
+    [ROUTES.LIBRARY]: undefined;
+    [ROUTES.ANALYTICS]: undefined;
+    [ROUTES.DISCOVER]: undefined;
+    [ROUTES.IMPORT]: undefined;
+    [ROUTES.EXPORT]: undefined;
+    [ROUTES.TRASH]: undefined;
+    [ROUTES.SETTINGS]: undefined;
+    [ROUTES.HELP]: undefined;
+};
+
 export type RootStackParamList = {
     AuthSplash: undefined;
     AuthStack: undefined;

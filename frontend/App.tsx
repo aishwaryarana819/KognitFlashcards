@@ -21,6 +21,7 @@ import {Splash} from "./src/screens/Splash";
 import {AccountRecovery} from "./src/screens/auth/AccountRecovery";
 import {NavigationContainer} from "@react-navigation/native";
 import {BottomBar} from "./src/navigation/BottomBar";
+import {DesktopDrawer} from "./src/navigation/Sidebar";
 
 import {Dashboard} from "./src/screens/Dashboard";
 import {ReviewSession} from "./src/modals/ReviewSession";
@@ -101,68 +102,15 @@ const MainContent = ()=> {
 
     return (
         <View style={[styles.container, {backgroundColor: activePalette.bg}]}>
-            <TopBar/>
-            <View style={{flex: 1, width: '100%',  zIndex: 101}}>
-                {isMobile && (
-                        <NavigationContainer>
-                            <BottomBar/>
-                        </NavigationContainer>
-                )}
+            {isMobile && <TopBar/>}
+            <View style={{flex: 1, width: '100%', zIndex: 101}}>
+                <NavigationContainer>
+                    {isMobile ? <BottomBar/> : <DesktopDrawer/>}
+                </NavigationContainer>
+                <FloatingReviewPalette/>
             </View>
-            <FloatingReviewPalette/>
-            {/*
-            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', gap: 15}}>
-                <Text style={{fontFamily: typography.fontFamilies.main, fontSize: typography.fontSizes.heroS,
-                    color: activePalette.darkest, fontWeight: '800', marginBottom: 20}}>
-                    Test Navigation Menu
-                </Text>
-
-                <TouchableOpacity activeOpacity={0.7} onPress={() => setTestRoute('dashboard')}
-                                  style={{padding: 15, backgroundColor: activePalette.bg2, borderRadius: 12}}>
-                    <Text style={{color: activePalette.darkest, fontFamily: typography.fontFamilies.main,
-                        fontSize: typography.fontSizes.button}}>
-                        Test Dashboard Core
-                    </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity activeOpacity={0.7} onPress={() => setTestRoute('reviewSession')}
-                                  style={{padding: 15, backgroundColor: activePalette.bg2, borderRadius: 12}}>
-                    <Text style={{color: activePalette.darkest, fontFamily: typography.fontFamilies.main,
-                        fontSize: typography.fontSizes.button}}>
-                        Test Library Core
-                    </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity activeOpacity={0.7} onPress={() => setTestRoute('underConstruction')}
-                                  style={{padding: 15, backgroundColor: activePalette.bg2, borderRadius: 12}}>
-                    <Text style={{color: activePalette.darkest, fontFamily: typography.fontFamilies.main,
-                        fontSize: typography.fontSizes.button}}>
-                        Test UnderConstruction Component
-                    </Text>
-                </TouchableOpacity>
-
-            </View>
-
-            */}
         </View>
-
     );
-
-    /* Original Return before testing scaffolded screens
-    return (
-      <View style={[styles.container, {backgroundColor: activePalette.bg, justifyContent: 'center'}]}>
-          <Text style={{fontFamily: typography.fontFamilies.main,
-              fontSize: typography.fontSizes.heading, color: activePalette.darkest, fontWeight: '800'}}>
-              Welcome to Kognit!
-          </Text>
-          <Text style={{fontFamily: typography.fontFamilies.secondary,
-              fontSize: typography.fontSizes.bodyL, color: activePalette.regular, marginTop: 8}}>
-              Dashboard under development.
-          </Text>
-      </View>
-    );
-    */
-
 };
 
 export default function App() {

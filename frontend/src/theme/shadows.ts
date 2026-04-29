@@ -79,3 +79,33 @@ export const getCreateBoxShadow = (palette: ColorPalette): ViewStyle => {
     }
     return dropShadow;
 };
+
+export const getSidebarActiveIconShadow = (palette: ColorPalette): ViewStyle => {
+    if (Platform.OS === 'web') {
+        return {
+            filter: `drop-shadow(1px 1px 4px rgba(0,0,0,0.25))`,
+            boxShadow: `inset 0px 0px 2px 0px ${palette.regular}`,
+        } as any;
+    }
+    return {
+        shadowColor: 'rgba(0, 0, 0, 0.25)',
+        shadowOffset: {width: 1, height: 1},
+        shadowRadius: 4,
+        elevation: 3,
+    };
+};
+
+export const getSidebarActiveBarShadow = (palette: ColorPalette): ViewStyle => {
+    if (Platform.OS === 'web') {
+        return {
+            filter: `drop-shadow(0px 1px 5px rgba(0,0,0,0.25))`,
+            boxShadow: `inset 0px 0px 5px 0px ${palette.regular}`,
+        } as any;
+    }
+    return {
+        shadowColor: 'rgba(0, 0, 0, 0.25)',
+        shadowOffset: {width: 0, height: 1},
+        shadowRadius: 5,
+        elevation: 3,
+    };
+};
