@@ -19,8 +19,8 @@ export const FloatingReviewPalette = () => {
     const createBoxShadow = getCreateBoxShadow(activePalette);
 
     return (
-        <View style={[styles.floatingContainer, {bottom: isMobile ? 90 : 40}]}>
-            <View style={[styles.paletteWraper, {gap: 20}]}>
+        <View style={[styles.floatingContainer, {bottom: isMobile ? 90 : 40, marginVertical: 10}]}>
+            <View style={[styles.paletteWraper, {gap: isMobile ? 6 : 20}]}>
                 <View style={styles.reviewSectionWrapper}>
                     <View style={[styles.reviewBox1, {
                         backgroundColor: activePalette.fg,
@@ -29,7 +29,7 @@ export const FloatingReviewPalette = () => {
                         borderTopWidth: 0.2,
                         borderBottomWidth: 0.2,
                         borderRightWidth: 0,
-                        paddingHorizontal: isMobile ? 14 : 20,
+                        paddingHorizontal: isMobile ? 10 : 20,
                         paddingVertical: isMobile ? 7.75 : 12,
                     },
                     reviewBox1Shadow
@@ -40,7 +40,7 @@ export const FloatingReviewPalette = () => {
                             fontWeight: typography.fontWeights.semibold,
                             color: activePalette.darkest,
                         }}>
-                            To Review
+                            Review
                         </Text>
 
                         <View style={[styles.pendingBadge, {backgroundColor: activePalette.darkest}]}>
@@ -67,7 +67,7 @@ export const FloatingReviewPalette = () => {
                     <TouchableOpacity activeOpacity={0.8} style={[styles.reviewBox2,
                         {
                             backgroundColor: activePalette.darker,
-                            paddingHorizontal: isMobile ? 16 : 24,
+                            paddingHorizontal: isMobile ? 10 : 20,
                             paddingVertical: isMobile ? 12 : 16,
                         },
                         reviewBox2Shadow
@@ -94,8 +94,8 @@ export const FloatingReviewPalette = () => {
                             borderTopWidth: 0.2,
                             borderBottomWidth: 0.2,
                             borderRightWidth: 0,
-                            paddingHorizontal: isMobile ? 14 : 20,
-                            paddingVertical: isMobile ? 10 : 12,
+                            paddingHorizontal: isMobile ? 10 : 20,
+                            paddingVertical: isMobile ? 9 : 12,
                         },
                         createBoxShadow
                     ]}>
@@ -141,10 +141,13 @@ const styles=StyleSheet.create({
         right: 0,
         alignItems: 'center',
         zIndex: 100,
+        paddingHorizontal: 20
     },
     paletteWraper: {
         flexDirection: 'row',
         alignItems: 'center',
+        flexShrink: 1,
+        maxWidth: '100%',
     },
     reviewSectionWrapper: {
         flexDirection: 'row',

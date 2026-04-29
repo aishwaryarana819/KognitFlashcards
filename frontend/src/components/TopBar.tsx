@@ -47,15 +47,14 @@ export const TopBar = () => {
         }]}>
 
             {isMobile && (
-                <View style={{marginLeft: 15, marginRight: 15, marginTop: 5, alignSelf: 'center'}}>
+                <View style={{marginLeft: 10, marginRight: 10, marginTop: 5, alignSelf: 'center'}}>
                     <Branding />
                 </View>
             )}
 
             <View style={[styles.topBarIsland, {
                 backgroundColor: activePalette.bg2,
-
-                paddingHorizontal: 20,
+                paddingHorizontal: isMobile ? 10 : 20,
                 paddingVertical: isMobile ? 15 : 20,
                 borderBottomLeftRadius: isMobile ? 20 : 15,
                 borderTopLeftRadius: isMobile ? 0 : 15,
@@ -65,9 +64,9 @@ export const TopBar = () => {
 
                 <View style={[styles.searchPalette, {
                     backgroundColor: activePalette.bg,
-                    paddingHorizontal: isMobile ? 15 : 20,
+                    paddingHorizontal: isMobile ? 10 : 20,
                     // paddingVertical: isMobile ? 12 : 20,
-                    height: isMobile ? 36 : 48,
+                    height: isMobile ? 36 : 48
                 }]}>
                     <View style={{flexShrink: 0}}>
                         <SearchIcon width={20} height={20} color={activePalette.darkest}/>
@@ -78,7 +77,7 @@ export const TopBar = () => {
                             fontFamily: typography.fontFamilies.secondary,
                             fontSize: typography.fontSizes.caption,
                             color: activePalette.bg2,
-                            width: isMobile ? 120 : 300,
+                            width: isMobile ? 80 : 300,
                             flexShrink: 1,
                             minWidth: 0,
                         }, Platform.OS === 'web' && ({outlineStyle: 'none'} as any)]}
@@ -185,6 +184,7 @@ export const TopBar = () => {
 
                         {!isMobile && (
                             <View style={styles.profileTextWrapper}>
+                                {/* @ts-ignore */}
                                 <Text style={{fontFamily: typography.fontFamilies.main, fontSize: typography.fontSizes.bodyS, fontWeight: typography.fontWeights.extrablack, color: activePalette.darkest}}>
                                     {profile?.full_name || "Sukuna"}
                                 </Text>
@@ -218,6 +218,8 @@ const styles = StyleSheet.create({
         flexShrink: 1,
         height: 48,
         borderRadius: 24,
+        minWidth: 42,
+        overflow: 'hidden',
     },
     searchInput: {
         marginLeft: 12,
@@ -233,9 +235,9 @@ const styles = StyleSheet.create({
     actionSection: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 8,
-        marginLeft: 12,
-        flexShrink: 0
+        gap: 6,
+        marginLeft: 4,
+        flexShrink: 0,
     },
     actionBtn: {
         alignItems: 'center',
@@ -277,6 +279,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         marginLeft: 4,
+        flexShrink: 0,
     },
     profileTextWrapper: {
         marginLeft: 10,
