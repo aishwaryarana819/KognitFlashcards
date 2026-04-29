@@ -31,7 +31,7 @@ export const Branding = () => {
             );
         }
         return (
-            <View style={{width: 132, height: 50}}>
+            <View style={{width: 132, height: 54}}>
                 {
                     isDark ? <LogoDark style={{width: '100%', height: '100%'}}/>
                         : <LogoLight style={{width: '100%', height: '100%'}}/>

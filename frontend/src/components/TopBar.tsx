@@ -43,7 +43,8 @@ export const TopBar = () => {
     return (
         <View style={[styles.rootWrapper, {
             paddingTop: isMobile ? 0 : 20,
-            paddingHorizontal: isMobile ? 0 : 20,
+            paddingLeft: 0,
+            paddingRight: isMobile ? 0 : 20,
         }]}>
 
             {isMobile && (
