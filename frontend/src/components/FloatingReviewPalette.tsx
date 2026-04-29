@@ -113,15 +113,16 @@ export const FloatingReviewPalette = () => {
                         marginLeft: 4,
                         marginRight: 12,
                     }}>
-                        Card
+                        {isMobile ? "" : "Card" }
                     </Text>
 
-                    <View style={{
-                        width: 0.6,
-                        height: isMobile ? 16 : 20,
-                        backgroundColor: activePalette.darker + '80',
-                        marginRight: 12,
-                    }}/>
+                        <View style={{
+                            width: 0.6,
+                            height: isMobile ? 16 : 20,
+                            backgroundColor: activePalette.darker + '80',
+                            marginRight: 12,
+                        }}/>
+
 
                     <Ionicons
                         name={isChevronUp ? "chevron-up" : "chevron-down"}

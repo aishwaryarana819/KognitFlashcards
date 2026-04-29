@@ -1,5 +1,6 @@
 import React from "react";
 import {View, Text, TouchableOpacity, StyleSheet, Platform} from 'react-native';
+import {useWindowDimensions} from "react-native";
 import {createDrawerNavigator, DrawerContentComponentProps} from "@react-navigation/drawer";
 import {useTheme} from '../context/ThemeContext';
 import {getTypography} from "../theme/typography";
@@ -8,6 +9,7 @@ import {ROUTES} from './routes';
 import {Branding} from "../components/Branding";
 import {TopBar} from "../components/TopBar";
 import {UnderConstruction} from "../screens/UnderConstruction";
+import {BREAKPOINTS} from "../theme/breakpoints";
 
 import ActiveBar from '../../assets/icons/Active-bar.svg'
 import DashboardFill from '../../assets/icons/dashboard-fill.svg'
@@ -71,6 +73,8 @@ const HelpScreen = () => <ScreenWrapper title="Help"/>;
 
 const SidebarContent = (props: DrawerContentComponentProps) => {
     const {activePalette, isDark} = useTheme();
+    const {width} = useWindowDimensions();
+    const isCollapsed = width <= BREAKPOINTS.DESKTOP_SMALL_MAX;
     const typography = getTypography(1024);
     // const activeIconShadow = getSidebarActiveIconShadow(activePalette);
     // const activeBarShadow = getSidebarActiveBarShadow(activePalette);
@@ -104,28 +108,31 @@ const SidebarContent = (props: DrawerContentComponentProps) => {
                     />
                 </View>
 
-                <Text style={{
-                    fontFamily: typography.fontFamilies.main,
-                    fontSize: typography.fontSizes.bodyS,
-                    fontWeight: isActive
-                        ? typography.fontWeights.extrablack
-                        : typography.fontWeights.regular,
-                    color: activePalette.darkest,
-                    marginLeft: 15,
-                }}>
-                    {item.label}
-                </Text>
+                {!isCollapsed && (
+                    <Text style={{
+                        fontFamily: typography.fontFamilies.main,
+                        fontSize: typography.fontSizes.bodyS,
+                        fontWeight: isActive
+                            ? typography.fontWeights.extrablack
+                            : typography.fontWeights.regular,
+                        color: activePalette.darkest,
+                        marginLeft: 15,
+                    }}>
+                        {item.label}
+                    </Text>
+                )}
             </TouchableOpacity>
         );
     };
 
     return (
         <View style={styles.outerPadding}>
-            <View style={styles.logoArea, {paddingRight: 0, paddingBottom: 15}}>
+            <View style={styles.logoArea}>
                 <Branding/>
             </View>
             <View style={[
                 styles.sidebarBox,
+                isCollapsed && {width: 62},
                 {backgroundColor: activePalette.bg2 + (isDark ? 'E6' : 'CC')},
                 Platform.OS === 'web' && ({
                     backdropFilter: 'blur(20px)',
@@ -147,13 +154,17 @@ const SidebarContent = (props: DrawerContentComponentProps) => {
 
 export const DesktopDrawer = () => {
     const {activePalette} = useTheme();
+    const {width} = useWindowDimensions();
+    const isCollapsed = width <= BREAKPOINTS.DESKTOP_SMALL_MAX;
+    const sidebarWidth = 205;
+
     return (
         // @ts-ignore
         <Drawer.Navigator
             drawerContent={(props) => <SidebarContent {...props}/>}
             screenOptions={{
                 drawerType: 'permanent',
-                drawerStyle: {width: 205, backgroundColor: 'transparent', borderRightWidth: 0},
+                drawerStyle: {width: sidebarWidth, backgroundColor: 'transparent', borderRightWidth: 0, overflow: 'visible'},
                 headerShown: false,
                 sceneStyle: {backgroundColor: activePalette.bg},
                 overlayColor: 'transparent',
@@ -177,7 +188,7 @@ const styles = StyleSheet.create({
     outerPadding: {
         flex: 1,
         padding: 20,
-        width: 205,
+        width: 211.5,
     },
     sidebarBox: {
         flex: 1,
@@ -185,8 +196,8 @@ const styles = StyleSheet.create({
 
     },
     logoArea: {
-        paddingHorizontal: 15,
-        // paddingBottom: 15,
+        paddingHorizontal: 0,
+        paddingBottom: 15,
         // paddingTop: 10,
         justifyContent: 'center',
         alignItems: 'flex-start',
