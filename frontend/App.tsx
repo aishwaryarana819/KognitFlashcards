@@ -102,7 +102,7 @@ const MainContent = ()=> {
     return (
         <View style={[styles.container, {backgroundColor: activePalette.bg}]}>
             <TopBar/>
-            <View style={{flex: 1, width: '100%'}}>
+            <View style={{flex: 1, width: '100%',  zIndex: 101}}>
                 {isMobile && (
                         <NavigationContainer>
                             <BottomBar/>
