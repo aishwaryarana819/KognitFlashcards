@@ -20,14 +20,14 @@ export type FontSizes = {
 };
 
 export type FontWeights = {
-    thin: '300'
+    thin: '200'
     regular: '400'
-    medium: '500'
-    semibold: '600'
-    bold: '700'
-    extrabold: '800'
-    black: '900'
-    extrablack: '1000'
+    medium: '600'
+    semibold: '800'
+    bold: '1000'
+    extrabold: '1200'
+    black: '1400'
+    extrablack: '1600'
 };
 
 export type Typography = {
