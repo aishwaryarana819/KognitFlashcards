@@ -19,6 +19,8 @@ import RegisterProfile from "./src/screens/auth/RegisterProfile";
 import {LoginOptions} from "./src/screens/auth/LoginOptions";
 import {Splash} from "./src/screens/Splash";
 import {AccountRecovery} from "./src/screens/auth/AccountRecovery";
+import {NavigationContainer} from "@react-navigation/native";
+import {BottomBar} from "./src/navigation/BottomBar";
 
 import {Dashboard} from "./src/screens/Dashboard";
 import {ReviewSession} from "./src/modals/ReviewSession";
@@ -26,10 +28,12 @@ import {Trash} from "./src/screens/Trash";
 import {Settings} from "./src/screens/Settings";
 import {UnderConstruction} from "./src/screens/UnderConstruction";
 import {FloatingReviewPalette} from "./src/components/FloatingReviewPalette";
+import {BREAKPOINTS} from "./src/theme/breakpoints";
 
 const MainContent = ()=> {
     const {width} = useWindowDimensions();
     const typography = getTypography(width);
+    const isMobile = width <= BREAKPOINTS.MOBILE_MAX;
 
     const {activePalette} = useTheme();
     const {user, isLoading, profile} = useAuth();
@@ -98,7 +102,15 @@ const MainContent = ()=> {
     return (
         <View style={[styles.container, {backgroundColor: activePalette.bg}]}>
             <TopBar/>
-
+            <View style={{flex: 1, width: '100%'}}>
+                {isMobile && (
+                        <NavigationContainer>
+                            <BottomBar/>
+                        </NavigationContainer>
+                )}
+            </View>
+            <FloatingReviewPalette/>
+            {/*
             <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', gap: 15}}>
                 <Text style={{fontFamily: typography.fontFamilies.main, fontSize: typography.fontSizes.heroS,
                     color: activePalette.darkest, fontWeight: '800', marginBottom: 20}}>
@@ -130,9 +142,8 @@ const MainContent = ()=> {
                 </TouchableOpacity>
 
             </View>
-            <>
-                <FloatingReviewPalette/>
-            </>
+
+            */}
         </View>
 
     );
