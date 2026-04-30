@@ -190,7 +190,7 @@ export const TopBar = () => {
                             <View style={styles.profileTextWrapper}>
                                 {/* @ts-ignore */}
                                 <Text style={{fontFamily: typography.fontFamilies.main, fontSize: typography.fontSizes.bodyS, fontWeight: typography.fontWeights.extrablack, color: activePalette.darkest}}>
-                                    {profile?.full_name || "Sukuna"}
+                                    {profile? `${profile.first_name} ${profile.last_name}`.trim() : "Sukuna"}
                                 </Text>
                                 <Text style={{fontFamily: typography.fontFamilies.secondary, fontSize: typography.fontSizes.caption, color: activePalette.fg2}}>
                                     {profile?.username ? `@${profile.username}` : "ryomensukuna"}
