@@ -5,13 +5,50 @@ import {getTypography} from "../theme/typography";
 import {Ionicons} from '@expo/vector-icons';
 import {lightPalette} from "../theme/colors";
 
+//  edited with AI
 const SHELF_COLORS = [
-    '#B193DC', '#68D391', '#63B3ED', '#F6E05E',
-    '#F6AD55', '#FC8181', '#F687B3', '#A0AEC0'
+    '#5D5FEF', // Indigo (Tech/General)
+    '#10B981', // Emerald (Science/Nature)
+    '#F43F5E', // Rose (Medical/Urgent)
+    '#F59E0B', // Amber (History/Arts)
+    '#8B5CF6', // Violet (Literature/Theory)
+    '#0EA5E9', // Sky Blue (Mathematics)
+    '#F97316', // Orange (Creativity/Design)
+    '#14B8A6', // Teal (Languages)
+    '#64748B', // Slate (Reference/Admin)
+    '#DC2626', // Crimson (Law/Ethics)
+    '#84CC16', // Lime (Health/Sports)
+    '#D946EF', // Fuchsia (Music/Performing Arts)
+    '#06B6D4', // Cyan (Economics/Business)
 ];
+
+// edited with AI
 const SHELF_ICONS = [
     'library', 'folder-open', 'book', 'layers',
-    'grid', 'albums', 'cube', 'prism'
+    'grid', 'albums', 'cube', 'prism',
+    'book',          // General Studies / Humanities
+    'flask',         // Chemistry / Hard Sciences
+    'calculator',    // Math / Physics / Finance
+    'color-palette', // Arts / Design
+    'code-slash',    // Computer Science / IT
+    'globe',         // Geography / International Studies
+    'musical-notes', // Music / Media
+    'fitness',       // Health / Kinesiology
+    'business',      // Economics / Management (New 1)
+    'construct',     // Engineering / Lab work (New 2)
+    'school',        // General Education / Campus (New 3)
+    'calendar',      // Planning / Deadlines (New 4)
+    'language',      // Linguistics / Translation (New 5)
+    // --- Law ---
+    'scales',        // Justice / Legal Systems
+    'hammer',        // The Gavel / Litigation
+    'briefcase',     // Professional Practice / Bar
+    'document-lock', // Privacy / Intellectual Property
+    // --- Biology ---
+    'leaf',          // Botany / Ecology
+    'medkit',        // Medicine / Healthcare
+    'pulse',         // Physiology / Human Biology
+    'bug',           // Entomology / Microbiology
 ];
 
 interface AddShelfProps {
