@@ -18,15 +18,15 @@ export const MainContentContainer = ({children, style}:
         <ScrollView
             style={[
                 styles.container,
-                {backgroundColor: activePalette.bg2},
+                {backgroundColor: isMobile ? 'transparent' : activePalette.bg2},
                 {
-                    marginLeft: isMobile ? 15 : 0,
-                    marginRight: isMobile ? 15 : 20,
-                    marginBottom: isMobile ? 90 : 20,
+                    marginLeft: 0,
+                    marginRight: isMobile ? 0 : 20,
+                    marginBottom: isMobile ? 0 : 20,
                 },
                 style
             ]}
-            contentContainerStyle={styles.content}
+            contentContainerStyle={[styles.content, {paddingBottom: isMobile ? 120 : 40}]}
             showsVerticalScrollIndicator={false}
         >
             {children}
