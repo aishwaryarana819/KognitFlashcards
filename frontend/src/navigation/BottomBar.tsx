@@ -9,6 +9,7 @@ import {ROUTES} from './routes';
 
 import {UnderConstruction} from "../screens/UnderConstruction";
 import {getTypography} from "../theme/typography";
+import {MainContentContainer} from "../components/MainContentContainer";
 
 import DashboardIcon from '../../assets/icons/dashboard-fill.svg'
 import LibraryIcon from '../../assets/icons/library-fill.svg'
@@ -31,12 +32,26 @@ const TAB_ICONS: Record<string, React.FC<any>> = {
     More: MoreIcon,
 };
 
-const DashboardScreen = () => <UnderConstruction title="Dashboard" message="Coming soon."/>
-const LibraryScreen = () => <UnderConstruction title="Library" message="Coming soon."/>
-const AnalyticsScreen = () => <UnderConstruction title="Analytics" message="Coming soon."/>
-const DiscoverScreen = () => <UnderConstruction title="Discover" message="Coming soon."/>
+const DashboardScreen = () =>
+    <MainContentContainer>
+        <UnderConstruction title="Dashboard" message="Coming soon."/>
+    </MainContentContainer>
+const LibraryScreen = () =>
+    <MainContentContainer>
+        <UnderConstruction title="Library" message="Coming soon."/>
+    </MainContentContainer>
+const AnalyticsScreen = () =>
+    <MainContentContainer>
+        <UnderConstruction title="Analytics" message="Coming soon."/>
+    </MainContentContainer>
+const DiscoverScreen = () =>
+    <MainContentContainer>
+        <UnderConstruction title="Discover" message="Coming soon."/>
+    </MainContentContainer>
 const MoreScreen = ({route}: any) => (
-    <UnderConstruction title={route?.params?.title || 'More'} message="Coming soon."/>
+    <MainContentContainer>
+        <UnderConstruction title={route?.params?.title || 'More'} message="Coming soon."/>
+    </MainContentContainer>
 );
 
 const DRAWER_ITEMS = [

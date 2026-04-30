@@ -10,6 +10,7 @@ import {Branding} from "../components/Branding";
 import {TopBar} from "../components/TopBar";
 import {UnderConstruction} from "../screens/UnderConstruction";
 import {BREAKPOINTS} from "../theme/breakpoints";
+import {MainContentContainer} from "../components/MainContentContainer";
 
 import ActiveBar from '../../assets/icons/Active-bar.svg'
 import DashboardFill from '../../assets/icons/dashboard-fill.svg'
@@ -54,12 +55,17 @@ const LOWER_ITEMS: MenuItem[] = [
     {route: ROUTES.HELP, label: 'Help', outline: HelpIcon, fill: HelpIcon, w: 16, h: 16},
 ];
 
-const ScreenWrapper = ({title}: {title: string}) => (
-    <View style={{flex: 1}}>
-        <TopBar/>
-        <UnderConstruction title={title} message="Coming soon."/>
-    </View>
-);
+const ScreenWrapper = ({title}: {title: string}) => {
+    const {activePalette} = useTheme();
+    return (
+        <View style={{flex: 1, backgroundColor: activePalette.bg}}>
+            <TopBar/>
+            <MainContentContainer>
+                <UnderConstruction title={title} message="Coming soon."/>
+            </MainContentContainer>
+        </View>
+    );
+};
 
 const DashboardScreen = () => <ScreenWrapper title="Dashboard"/>;
 const LibraryScreen = () => <ScreenWrapper title="Library"/>;
