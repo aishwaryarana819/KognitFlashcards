@@ -113,9 +113,9 @@ const RegisterProfile = ({onNavigateLogin, onNavigateDashboard}: RegisterProfile
             <AuthHeader rightActionText="Login"
                         onRightActionPress={onNavigateLogin}
             />
-            
-            <View style={[styles.contentBox1, {paddingBottom: isMobile ? 10 : 20}]}>
 
+            {/* Deprecated do this later button
+            <View style={[styles.contentBox1, {paddingBottom: isMobile ? 10 : 20}]}>
                 <View style={{alignItems: 'flex-end', transform: [{translateX: -20}]}}>
                     <Pressable onPress={onNavigateDashboard}>
                         {(state: any) => (
@@ -129,6 +129,7 @@ const RegisterProfile = ({onNavigateLogin, onNavigateDashboard}: RegisterProfile
                     </Pressable>
                 </View>
             </View>
+            */}
 
             <View style={[styles.contentBox, {backgroundColor: isDark ? activePalette.bg2 : lightPalette.lightest,
                 padding: isMobile ? 24 : 40, paddingBottom: isMobile ? 12 : 20}]}>
