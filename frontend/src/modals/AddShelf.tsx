@@ -67,6 +67,7 @@ export const AddShelf = ({visible, onClose, onSubmit, initialData}: AddShelfProp
     const [description, setDescription] = useState("");
     const [selectedColor, setSelectedColor] = useState(SHELF_COLORS[0]);
     const [selectedIcon, setSelectedIcon] = useState(SHELF_ICONS[0]);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     React.useEffect(() => {
         if (visible && initialData) {
@@ -83,18 +84,22 @@ export const AddShelf = ({visible, onClose, onSubmit, initialData}: AddShelfProp
     }, [visible, initialData]);
 
     const handleCreate = async () => {
-        if (!name.trim()) return;
-        await onSubmit({
-            name: name.trim(),
-            description: description.trim(),
-            color: selectedColor,
-            icon: selectedIcon
-        });
-
-        setName('');
-        setDescription('');
-        setSelectedColor(SHELF_COLORS[0]);
-        setSelectedIcon(SHELF_ICONS[0]);
+        if (!name.trim() || isSubmitting) return;
+        setIsSubmitting(true);
+        try {
+            await onSubmit({
+                name: name.trim(),
+                description: description.trim(),
+                color: selectedColor,
+                icon: selectedIcon
+            });
+            setName('');
+            setDescription('');
+            setSelectedColor(SHELF_COLORS[0]);
+            setSelectedIcon(SHELF_ICONS[0]);
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -247,16 +252,16 @@ export const AddShelf = ({visible, onClose, onSubmit, initialData}: AddShelfProp
                                 styles.primaryBtn,
                                 {
                                     backgroundColor: activePalette.darkest,
-                                    opacity: name.trim() ? 1 : 0.5
+                                    opacity: name.trim() && !isSubmitting ? 1 : 0.5
                                 }]}
                             onPress={handleCreate}
-                            disabled={!name.trim()}
+                            disabled={!name.trim() || isSubmitting}
                         >
                             <Text style={{
                                 color: activePalette.bg,
                                 fontFamily: typography.fontFamilies.secondary,
                                 fontWeight: 'bold'}}>
-                                { initialData ? "Save Changes" : "Create Shelf"}
+                                { isSubmitting ? (initialData ? "Saving..." : "Creating...") : (initialData ? "Save Changes" : "Create Shelf")}
                             </Text>
                         </TouchableOpacity>
                     </View>

@@ -58,7 +58,7 @@ class DeckViewSet(OwnershipMixin, viewsets.ModelViewSet):
             try:
                 shelf = Shelf.objects.get(id=shelf_id, user=self.request.user)
                 ShelfDeck.objects.create(shelf=shelf, deck=serializer.instance)
-            except ShelfDeck.DoesNotExist:
+            except Shelf.DoesNotExist:
                 pass
 
     def perform_destroy(self, instance):
@@ -82,7 +82,7 @@ class CardViewSet(OwnershipMixin, viewsets.ModelViewSet):
             try:
                 deck = Deck.objects.get(id=deck_id, user=self.request.user)
                 DeckCard.objects.create(deck=deck, card=card)
-            except DeckCard.DoesNotExist:
+            except Deck.DoesNotExist:
                 pass
 
         if card.card_type == 'reversed':

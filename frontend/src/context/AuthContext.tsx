@@ -116,6 +116,7 @@ export const AuthProvider = ({children}: {children: React.ReactNode}) => {
             }
             else setProfile(null);
             setUser(newSession?.user ?? null);
+            setSession(newSession);
         });
 
         const appStateSubscription = AppState.addEventListener('change',

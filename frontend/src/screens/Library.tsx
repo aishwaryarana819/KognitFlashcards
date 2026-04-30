@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, useWindowDimensions, ScrollView, ActivityIndicator} from 'react-native';
+import {View, Text, DeviceEventEmitter, StyleSheet, TouchableOpacity, useWindowDimensions, ScrollView, ActivityIndicator} from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
 import {useTheme} from '../context/ThemeContext';
 import {getTypography} from '../theme/typography';
@@ -8,6 +8,7 @@ import {lightPalette} from '../theme/colors';
 import {ShelfCard, DeckCard} from '../components/LibraryCards';
 import {useAuth} from '../context/AuthContext';
 import {AddShelf} from "../modals/AddShelf";
+import {AddDeck} from "../modals/AddDeck";
 import {ConfirmModal} from "../modals/ConfirmModal";
 
 export const Library = () => {
@@ -24,6 +25,9 @@ export const Library = () => {
     const [isAddShelfVisible, setIsAddShelfVisible] = useState(false);
     const [editingShelf, setEditingShelf] = useState<any>(null);
     const [deletingShelf, setDeletingShelf] = useState<any>(null);
+    const [isAddDeckVisible, setIsAddDeckVisible] = useState(false);
+    const [editingDeck, setEditingDeck] = useState<any>(null);
+    const [deletingDeck, setDeletingDeck] = useState<any>(null);
 
     const getColWidth = () => {
         if (viewMode === 'list') return '100%';
@@ -31,35 +35,40 @@ export const Library = () => {
         return isMobile ? '48%' : '31%';
     };
 
-    useEffect(() => {
-        const fetchLibraryData = async () => {
-            if (!session?.access_token) return;
-            try {
-                const [shelvesRes, decksRes] = await Promise.all([
-                    fetch('http://127.0.0.1:8000/api/shelves/', {
-                        headers: {'Authorization': `Bearer ${session.access_token}`}
-                    }),
-                    fetch('http://127.0.0.1:8000/api/decks/', {
-                        headers: {'Authorization': `Bearer ${session.access_token}`}
-                    })
-                ]);
+    const fetchLibraryData = React.useCallback(async () => {
+        if (!session?.access_token) return;
+        try {
+            const [shelvesRes, decksRes] = await Promise.all([
+                fetch('http://127.0.0.1:8000/api/shelves/', { headers: {'Authorization': `Bearer ${session.access_token}`} }),
+                fetch('http://127.0.0.1:8000/api/decks/', { headers: {'Authorization': `Bearer ${session.access_token}`} })
+            ]);
 
-                if (shelvesRes.ok && decksRes.ok) {
-                    const sData = await shelvesRes.json();
-                    const dData = await decksRes.json();
+            if (shelvesRes.ok && decksRes.ok) {
+                const sData = await shelvesRes.json();
+                const dData = await decksRes.json();
 
-                    setShelves(Array.isArray(sData) ? sData : (sData.results || []));
-                    setDecks(Array.isArray(dData) ? sData : (dData.results || []));
-                }
-            } catch (error) {
-                console.error("Failed to fetch library data: ", error);
-            } finally {
-                setIsLoading(false);
+                setShelves(Array.isArray(sData) ? sData : (sData.results || []));
+                setDecks(Array.isArray(dData) ? dData : (dData.results || []));
             }
-        };
-
-        fetchLibraryData();
+        } catch (error) {
+            console.error("Failed to fetch library data: ", error);
+        } finally {
+            setIsLoading(false);
+        }
     }, [session]);
+
+    useEffect(() => {
+        fetchLibraryData();
+    }, [fetchLibraryData]);
+
+    useEffect(() => {
+        const sub1 = DeviceEventEmitter.addListener('open_add_shelf', () => setIsAddShelfVisible(true));
+        const sub2 = DeviceEventEmitter.addListener('open_add_deck', () => setIsAddDeckVisible(true));
+        return () => {
+            sub1.remove();
+            sub2.remove();
+        };
+    }, []);
 
     const handleCreateShelf = async (data: any) => {
         try {
@@ -133,6 +142,29 @@ export const Library = () => {
         }
     };
 
+    const handleCreateDeck = async (data: any) => {
+        try {
+            const res = await fetch('http://127.0.0.1:8000/api/decks/', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${session?.access_token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (res.ok) {
+                await fetchLibraryData();
+                setIsAddDeckVisible(false);
+            } else {
+                const errText = await res.text();
+                alert(`Something went wrong: ${res.status}\n${errText}`);
+            }
+        } catch (error: any) {
+            alert(`Something went wrong: ${error.message}`);
+        }
+    };
+
     return (
         <View style={styles.container}>
             <View style={[styles.headerRow, {
@@ -150,28 +182,6 @@ export const Library = () => {
                 </Text>
 
                 <View style={[styles.controls, {marginTop: isMobile ? 12 : 0}]}>
-                    <TouchableOpacity
-                        activeOpacity={0.7}
-                        style={[
-                            styles.iconButton, {
-                                backgroundColor: activePalette.darkest,
-                                borderWidth: 1,
-                                borderColor: activePalette.darkest,
-                            }
-                        ]}
-                        onPress={() => setIsAddShelfVisible(true)}
-                    >
-                        <Ionicons name="add" size={20} color={activePalette.bg2}/>
-                        <Text style={{
-                            fontFamily: typography.fontFamilies.secondary,
-                            color: activePalette.bg2,
-                            marginLeft: 6,
-                            fontWeight: typography.fontWeights.semibold,
-                        }}>
-                            New Shelf
-                        </Text>
-                    </TouchableOpacity>
-
                     <TouchableOpacity
                         activeOpacity={0.7}
                         style={[
@@ -313,6 +323,17 @@ export const Library = () => {
                 }}
                 initialData={editingShelf}
                 onSubmit={editingShelf ? handleEditShelf : handleCreateShelf}
+            />
+
+            <AddDeck
+                visible={isAddDeckVisible}
+                onClose={() => {
+                    setIsAddDeckVisible(false);
+                    setEditingDeck(null);
+                }}
+                initialData={editingDeck}
+                onSubmit={editingDeck ? handleCreateDeck : handleCreateDeck}
+                availableShelves={shelves}
             />
 
             <ConfirmModal

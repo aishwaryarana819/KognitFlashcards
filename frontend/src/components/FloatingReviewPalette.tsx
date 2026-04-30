@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, useWindowDimensions} from 'react-native';
+import {View, Text, DeviceEventEmitter, StyleSheet, TouchableOpacity, useWindowDimensions} from 'react-native';
 import {useTheme} from '../context/ThemeContext';
 import {getTypography} from "../theme/typography";
-import {Ionicons} from "@expo/vector-icons";
+import {Ionicons, MaterialCommunityIcons} from "@expo/vector-icons";
 import {BREAKPOINTS} from "../theme/breakpoints";
 import {getReviewBox1Shadow, getReviewBox2Shadow, getCreateBoxShadow} from "../theme/shadows";
 
@@ -122,7 +122,7 @@ export const FloatingReviewPalette = () => {
                         marginLeft: 4,
                         marginRight: 12,
                     }}>
-                        {isMobile ? "" : "Card" }
+                        {isMobile ? "" : "New" }
                     </Text>
 
                         <View style={{
@@ -139,6 +139,53 @@ export const FloatingReviewPalette = () => {
                         color={activePalette.darkest}
                     />
                 </TouchableOpacity>
+
+                {isChevronUp && (
+                    <View style={[
+                        styles.createMenu,
+                        {
+                            backgroundColor: activePalette.fg,
+                            borderColor: activePalette.darker + '20',
+                        }
+                    ]}>
+                        <TouchableOpacity style={styles.menuItem} onPress={() => { setIsChevronUp(false); DeviceEventEmitter.emit('open_add_card'); }}>
+                            <Text style={[styles.menuText, {color: activePalette.darker, fontFamily: typography.fontFamilies.main}]}>
+                                Card
+                            </Text>
+                            <MaterialCommunityIcons
+                                name="cards-outline"
+                                size={24}
+                                color={activePalette.darker}
+                                style={styles.iconShadow}
+                            />
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={styles.menuItem} onPress={() => { setIsChevronUp(false); DeviceEventEmitter.emit('open_add_deck'); }}>
+                            <Text style={[styles.menuText, {color: activePalette.darker, fontFamily: typography.fontFamilies.main}]}>
+                                Deck
+                            </Text>
+                            <Ionicons
+                                name="albums-outline"
+                                size={24}
+                                color={activePalette.darker}
+                                style={styles.iconShadow}
+                            />
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={styles.menuItem} onPress={() => { setIsChevronUp(false); DeviceEventEmitter.emit('open_add_shelf'); }}>
+                            <Text style={[styles.menuText, {color: activePalette.darker, fontFamily: typography.fontFamilies.main}]}>
+                                Shelf
+                            </Text>
+                            <MaterialCommunityIcons
+                                name="bookshelf"
+                                size={24}
+                                color={activePalette.darker}
+                                style={styles.iconShadow}
+                            />
+                        </TouchableOpacity>
+                    </View>
+                )}
+
             </View>
         </View>
     );
@@ -151,6 +198,41 @@ const styles=StyleSheet.create({
         alignItems: 'center',
         zIndex: 100,
         paddingHorizontal: 20
+    },
+    createMenu: {
+        position: 'absolute',
+        bottom: '100%',
+        right: 0,
+        marginBottom: 12,
+        borderRadius: 16,
+        padding: 8,
+        borderWidth: 1,
+        shadowColor: '#000',
+        shadowOffset: {width: 0, height: 4},
+        shadowOpacity: 0.1,
+        shadowRadius: 12,
+        elevation: 10,
+        gap: 4,
+        minWidth: 150,
+    },
+    menuItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingVertical: 10,
+        paddingHorizontal: 12,
+        borderRadius: 8,
+    },
+    menuText: {
+        fontWeight: '800',
+        fontSize: 16,
+        marginRight: 16,
+    },
+    iconShadow: {
+        textShadowColor: 'rgba(0,0,0,0.1)',
+        textShadowOffset: {width: 1, height: 2},
+        textShadowRadius: 2,
+        opacity: 0.6
     },
     paletteWraper: {
         flexDirection: 'row',
