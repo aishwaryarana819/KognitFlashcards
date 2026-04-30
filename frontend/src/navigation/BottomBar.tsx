@@ -22,6 +22,8 @@ import TrashIcon from '../../assets/icons/trash-fill.svg'
 import SettingsIcon from '../../assets/icons/settings-fill.svg'
 import HelpIcon from '../../assets/icons/help.svg'
 
+import {Library} from "../screens/Library";
+
 const Tab = createBottomTabNavigator<MobileTabParamList>();
 
 const TAB_ICONS: Record<string, React.FC<any>> = {
@@ -36,10 +38,13 @@ const DashboardScreen = () =>
     <MainContentContainer>
         <UnderConstruction title="Dashboard" message="Coming soon."/>
     </MainContentContainer>
-const LibraryScreen = () =>
+
+const LibraryScreen = () => (
     <MainContentContainer>
-        <UnderConstruction title="Library" message="Coming soon."/>
+        <Library/>
     </MainContentContainer>
+);
+
 const AnalyticsScreen = () =>
     <MainContentContainer>
         <UnderConstruction title="Analytics" message="Coming soon."/>
@@ -224,7 +229,7 @@ const CustomTabBar =
     );
 };
 
-export const BottomBar =  () => {
+export const BottomBar =  ({initialRoute = ROUTES.DASHBOARD}:{initialRoute?:string}) => {
     const [showMore, setShowMore] = useState(false);
 
     return (
@@ -237,7 +242,8 @@ export const BottomBar =  () => {
                         onToggleMore={() => setShowMore(prev => !prev)}
                     />
                     )}
-                    initialRouteName={ROUTES.DASHBOARD}
+                    /* @ts-ignore */
+                    initialRouteName={initialRoute}
                     screenOptions={{headerShown: false, sceneStyle: {backgroundColor: 'transparent'}}}
                 >
                 <Tab.Screen name={ROUTES.ANALYTICS} component={AnalyticsScreen}/>

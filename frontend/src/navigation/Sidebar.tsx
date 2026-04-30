@@ -29,6 +29,8 @@ import SettingsFill from '../../assets/icons/settings-fill.svg'
 import SettingsOutline from '../../assets/icons/settings-outline.svg'
 import HelpIcon from '../../assets/icons/help.svg'
 
+import {Library} from "../screens/Library";
+
 const Drawer = createDrawerNavigator();
 
 type MenuItem = {
@@ -68,7 +70,17 @@ const ScreenWrapper = ({title}: {title: string}) => {
 };
 
 const DashboardScreen = () => <ScreenWrapper title="Dashboard"/>;
-const LibraryScreen = () => <ScreenWrapper title="Library"/>;
+const LibraryScreen = () => {
+    const {activePalette} = useTheme();
+    return (
+        <View style={{flex: 1, backgroundColor: activePalette.bg}}>
+            <TopBar/>
+            <MainContentContainer>
+                <Library/>
+            </MainContentContainer>
+        </View>
+    );
+};
 const AnalyticsScreen = () => <ScreenWrapper title="Analytics"/>;
 const DiscoverScreen = () => <ScreenWrapper title="Discover"/>;
 const ImportScreen = () => <ScreenWrapper title="Import"/>;
@@ -159,7 +171,7 @@ const SidebarContent = (props: DrawerContentComponentProps) => {
     );
 };
 
-export const DesktopDrawer = () => {
+export const DesktopDrawer = ({initialRoute = ROUTES.DASHBOARD}:{initialRoute?:string}) => {
     const {activePalette} = useTheme();
     const {width} = useWindowDimensions();
     const isCollapsed = width <= BREAKPOINTS.DESKTOP_SMALL_MAX;
@@ -176,7 +188,7 @@ export const DesktopDrawer = () => {
                 sceneStyle: {backgroundColor: activePalette.bg},
                 overlayColor: 'transparent',
             }}
-            initialRouteName={ROUTES.DASHBOARD}
+            initialRouteName={initialRoute}
         >
             <Drawer.Screen name={ROUTES.DASHBOARD} component={DashboardScreen}/>
             <Drawer.Screen name={ROUTES.LIBRARY} component={LibraryScreen}/>
