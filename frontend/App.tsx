@@ -24,6 +24,7 @@ import {ReviewSession} from "./src/modals/ReviewSession";
 import {Trash} from "./src/screens/Trash";
 import {Settings} from "./src/screens/Settings";
 import {UnderConstruction} from "./src/screens/UnderConstruction";
+import {supabase} from "./src/lib/supabase";
 
 const MainContent = ()=> {
     const {activePalette} = useTheme();
@@ -75,7 +76,10 @@ const MainContent = ()=> {
                                 )}
                                 {(needsProfileSetup || authScreen === 'profile') && (
                                     <RegisterProfile
-                                        onNavigateLogin={() => setAuthScreen('login')}
+                                        onNavigateLogin={async () => {
+                                            await supabase.auth.signOut();
+                                            setAuthScreen('login');
+                                        }}
                                         onNavigateDashboard={() => setAuthScreen('register')}
                                     />
                                 )}

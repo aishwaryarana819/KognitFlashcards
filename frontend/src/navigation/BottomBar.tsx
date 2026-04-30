@@ -238,7 +238,7 @@ export const BottomBar =  () => {
                     />
                     )}
                     initialRouteName={ROUTES.DASHBOARD}
-                    screenOptions={{headerShown: false}}
+                    screenOptions={{headerShown: false, sceneStyle: {backgroundColor: 'transparent'}}}
                 >
                 <Tab.Screen name={ROUTES.ANALYTICS} component={AnalyticsScreen}/>
                 <Tab.Screen name={ROUTES.LIBRARY} component={LibraryScreen}/>

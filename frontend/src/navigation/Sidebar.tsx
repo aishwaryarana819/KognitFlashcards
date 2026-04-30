@@ -161,7 +161,9 @@ const SidebarContent = (props: DrawerContentComponentProps) => {
 
 export const DesktopDrawer = () => {
     const {activePalette} = useTheme();
-    const sidebarWidth = 211.5;
+    const {width} = useWindowDimensions();
+    const isCollapsed = width <= BREAKPOINTS.DESKTOP_SMALL_MAX;
+    const sidebarWidth = isCollapsed ? 102 : 211.5;
 
     return (
         // @ts-ignore

@@ -31,6 +31,7 @@ export const TopBar = () => {
 
     const typography = getTypography(width);
     const isMobile = width <= BREAKPOINTS.MOBILE_MAX;
+    const isCollapsed = width <= BREAKPOINTS.DESKTOP_SMALL_MAX && !isMobile;
     const innerShadow = getInnerShadow(activePalette);
     const iconShadow = getIconShadow(activePalette);
 
@@ -43,7 +44,7 @@ export const TopBar = () => {
     return (
         <View style={[styles.rootWrapper, {
             paddingTop: isMobile ? 0 : 20,
-            paddingLeft: 0,
+            paddingLeft: isCollapsed ? 109.5 : 0,
             paddingRight: isMobile ? 0 : 20,
         }]}>
 
@@ -97,6 +98,7 @@ export const TopBar = () => {
                             }}>
                                 {isMac ? '⌘' : 'Ctrl'}
                             </Text>
+                            {/* @ts-ignore */}
                             <Text style={{
                                 fontFamily: typography.fontFamilies.main,
                                 fontSize: typography.fontSizes.bodyS,
@@ -166,6 +168,7 @@ export const TopBar = () => {
 
                         {showNotifSoon && (
                             <View style={[styles.tooltipCard, {backgroundColor: activePalette.darkest}]}>
+                                {/* @ts-ignore */}
                                 <Text style={{fontFamily: typography.fontFamilies.main, fontSize: typography.fontSizes.captionS, color: activePalette.bg, fontWeight: typography.fontWeights.bold}}>
                                     Coming Soon
                                 </Text>

@@ -23,7 +23,7 @@ export const Dashboard = ({onBackTest}) => {
                 <Ionicons name={isDark ? "sunny-outline" : "moon-outline"} size={24} color={activePalette.darker}/>
             </TouchableOpacity>
 
-            <View style={[styles.contentBox, {backgroundColor: activePalette.bg2, padding: 40, borderRadius: 24}]}>
+            <View style={[styles.contentBox, {backgroundColor: activePalette.bg2, padding: 20, borderRadius: 15}]}>
                 <Text style={{fontSize: typography.fontSizes.heroS,
                     fontFamily: typography.fontFamilies.main, fontWeight: '800',
                     color: activePalette.darkest}}>
