@@ -16,6 +16,17 @@ export interface ShelfCardProps {
     viewMode?: 'grid' | 'list',
 }
 
+interface DeckCardProps {
+    name: string;
+    cardCount: number;
+    dueCount: number;
+    colorHex: string;
+    onPress: () => void;
+    onEdit?: () => void;
+    onDelete?: () => void;
+    viewMode?: 'grid' | 'list';  // Add this line
+}
+
 export const ShelfCard = (
     { name, deckCount, colorHex, onPress, onEdit, onDelete, viewMode='list' }: ShelfCardProps) => {
     const { activePalette, isDark } = useTheme();
@@ -97,13 +108,17 @@ interface DeckCardProps {
     dueCount: number;
     colorHex: string;
     onPress: () => void;
+    onEdit?: () => void;
+    onDelete?: () => void;
 }
 
-export const DeckCard = ({ name, cardCount, dueCount, colorHex, onPress }: DeckCardProps) => {
+export const DeckCard = ({ name, cardCount, dueCount, colorHex, onPress, onEdit, onDelete, viewMode='list' }: DeckCardProps) => {
     const { activePalette, isDark } = useTheme();
     const { width } = useWindowDimensions();
     const isMobile = width <= BREAKPOINTS.MOBILE_MAX;
     const typography = getTypography(width);
+
+    const isGrid = viewMode === 'grid';
 
     const cardBg = isMobile
         ? (isDark ? activePalette.bg2 : activePalette.bg)
@@ -116,22 +131,38 @@ export const DeckCard = ({ name, cardCount, dueCount, colorHex, onPress }: DeckC
             style={[styles.cardBase, { backgroundColor: cardBg, flexDirection: 'column' }]}
         >
             <View style={styles.deckHeader}>
-                <View style={[styles.iconBox, { backgroundColor: colorHex + '20', width: 36, height: 36, borderRadius: 12 }]}>
-                    <Ionicons name="albums" size={18} color={colorHex} />
-                </View>
-                {dueCount > 0 && (
-                    <View style={[styles.dueBadge, { backgroundColor: activePalette.red + '20' }]}>
-                        {/* @ts-ignore */}
-                        <Text style={{
-                            fontFamily: typography.fontFamilies.main,
-                            fontSize: typography.fontSizes.micro,
-                            fontWeight: typography.fontWeights.bold,
-                            color: activePalette.red
-                        }}>
-                            {dueCount} Due
-                        </Text>
+                <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
+                    <View style={[styles.iconBox, { backgroundColor: colorHex + '20', width: 36, height: 36, borderRadius: 12 }]}>
+                        <Ionicons name="albums" size={18} color={colorHex} />
                     </View>
-                )}
+                    {dueCount > 0 && (
+                        <View style={[styles.dueBadge, { backgroundColor: activePalette.red + '20' }]}>
+                            {/* @ts-ignore */}
+                            <Text style={{
+                                fontFamily: typography.fontFamilies.main,
+                                fontSize: typography.fontSizes.micro,
+                                fontWeight: typography.fontWeights.bold,
+                                color: activePalette.red
+                            }}>
+                                {dueCount} Due
+                            </Text>
+                        </View>
+                    )}
+                </View>
+
+                <View style={{flexDirection: isGrid ? 'column' : 'row', gap: 4}}>
+                    {onEdit && (
+                        <TouchableOpacity activeOpacity={0.6} style={{padding: 4}} onPress={onEdit}>
+                            <Ionicons name="create-outline" size={18} color={activePalette.darkest}/>
+                        </TouchableOpacity>
+                    )}
+                    {onDelete && (
+                        <TouchableOpacity activeOpacity={0.6} style={{padding: 4}} onPress={onDelete}>
+                            <Ionicons name="trash-outline" size={18} color={activePalette.red}/>
+                        </TouchableOpacity>
+                    )}
+                </View>
+
             </View>
 
             <View style={{ marginTop: 16 }}>

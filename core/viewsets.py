@@ -73,6 +73,13 @@ class CardViewSet(OwnershipMixin, viewsets.ModelViewSet):
             return CardCreateSerializer
         return CardSerializer
 
+    def get_queryset(self):
+        qs = super().get_queryset()
+        deck_id = self.request.query_params.get('deck_id')
+        if deck_id:
+            qs = qs.filter(card_decks__deck_id=deck_id).distinct()
+        return qs
+
     def perform_create(self, serializer):
         super().perform_create(serializer)
         card = serializer.instance

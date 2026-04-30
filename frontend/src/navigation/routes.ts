@@ -6,6 +6,8 @@ export const ROUTES = {
 
     DASHBOARD: 'Dashboard',
     LIBRARY: 'Library',
+    DECK_DETAIL: 'DeckDetail',
+    SHELF_DETAIL: 'ShelfDetail',
     ANALYTICS: 'Analytics',
     DISCOVER: 'Discover',
     IMPORT: 'Import',

@@ -44,3 +44,8 @@ export type RootStackParamList = {
     [ROUTES.ADD_SHELF]: undefined;
 };
 
+export type LibraryStackParamList = {
+    [ROUTES.LIBRARY]: undefined;
+    [ROUTES.DECK_DETAIL]: {deckId: number; deckName: string; colorHex: string};
+    [ROUTES.SHELF_DETAIL]: {shelfId: number; shelfName: string; colorHex: string};
+};

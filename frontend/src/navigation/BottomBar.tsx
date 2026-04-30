@@ -22,7 +22,7 @@ import TrashIcon from '../../assets/icons/trash-fill.svg'
 import SettingsIcon from '../../assets/icons/settings-fill.svg'
 import HelpIcon from '../../assets/icons/help.svg'
 
-import {Library} from "../screens/Library";
+import {LibraryStack} from "./LibraryStack";
 
 const Tab = createBottomTabNavigator<MobileTabParamList>();
 
@@ -41,7 +41,7 @@ const DashboardScreen = () =>
 
 const LibraryScreen = () => (
     <MainContentContainer>
-        <Library/>
+        <LibraryStack/>
     </MainContentContainer>
 );
 

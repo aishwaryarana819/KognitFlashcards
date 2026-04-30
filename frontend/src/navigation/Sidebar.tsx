@@ -29,7 +29,7 @@ import SettingsFill from '../../assets/icons/settings-fill.svg'
 import SettingsOutline from '../../assets/icons/settings-outline.svg'
 import HelpIcon from '../../assets/icons/help.svg'
 
-import {Library} from "../screens/Library";
+import {LibraryStack} from "./LibraryStack";
 
 const Drawer = createDrawerNavigator();
 
@@ -76,7 +76,7 @@ const LibraryScreen = () => {
         <View style={{flex: 1, backgroundColor: activePalette.bg}}>
             <TopBar/>
             <MainContentContainer>
-                <Library/>
+                <LibraryStack/>
             </MainContentContainer>
         </View>
     );

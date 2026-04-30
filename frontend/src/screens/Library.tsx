@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react';
+import {useNavigation} from "@react-navigation/native";
 import {View, Text, DeviceEventEmitter, StyleSheet, TouchableOpacity, useWindowDimensions, ScrollView, ActivityIndicator} from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
 import {useTheme} from '../context/ThemeContext';
@@ -17,6 +18,7 @@ export const Library = () => {
     const typography = getTypography(width);
     const isMobile = width <= BREAKPOINTS.MOBILE_MAX;
     const {session} = useAuth();
+    const navigation = useNavigation<any>();
 
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
     const [shelves, setShelves] = useState<any[]>([]);
@@ -72,7 +74,6 @@ export const Library = () => {
 
     const handleCreateShelf = async (data: any) => {
         try {
-            // NOTE: Make sure this URL has the trailing slash / at the end!
             const res = await fetch('http://127.0.0.1:8000/api/shelves/', {
                 method: 'POST',
                 headers: {
@@ -85,9 +86,8 @@ export const Library = () => {
             if (res.ok) {
                 const newShelf = await res.json();
                 setShelves(prev => [newShelf, ...prev]);
-                setIsAddShelfVisible(false); // Close modal ONLY on success
+                setIsAddShelfVisible(false);
             } else {
-                // If Django rejects it, show the exact error!
                 const errText = await res.text();
                 alert(`Backend Error: ${res.status}\n${errText}`);
             }
@@ -162,6 +162,51 @@ export const Library = () => {
             }
         } catch (error: any) {
             alert(`Something went wrong: ${error.message}`);
+        }
+    };
+
+    const handleEditDeck = async (data: any) => {
+        if (!editingDeck) return;
+        try {
+            const res = await fetch(`http://127.0.0.1:8000/api/decks/${editingDeck.id}/`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${session?.access_token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (res.ok) {
+                await fetchLibraryData();
+                setIsAddDeckVisible(false);
+                setEditingDeck(null);
+            } else {
+                const errText = await res.text();
+                alert(`Unable to edit: ${res.status}\n${errText}`);
+            }
+        } catch (error: any) {
+            alert(`Network Error: ${error.message}`);
+        }
+    };
+
+    const handleDeleteDeck = async (deckId: number) => {
+        try {
+            const res = await fetch(`http://127.0.0.1:8000/api/decks/${deckId}/`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${session?.access_token}`,
+                }
+            });
+
+            if (res.ok) {
+                setDecks(prev => prev.filter(d => d.id !== deckId));
+            } else {
+                const errText = await res.text();
+                alert(`Delete Failed: ${res.status}\n${errText}`);
+            }
+        } catch (error: any) {
+            alert(`Network Error: ${error.message}`);
         }
     };
 
@@ -264,7 +309,11 @@ export const Library = () => {
                                             deckCount={shelf.deck_count || 0}
                                             colorHex={shelf.color}
                                             viewMode={viewMode}
-                                            onPress={() => console.log('Open shelf', shelf.id)}
+                                            onPress={() => navigation.navigate('ShelfDetail', {
+                                                shelfId: shelf.id,
+                                                shelfName: shelf.name,
+                                                colorHex: shelf.color,
+                                            })}
                                             onDelete={() => setDeletingShelf(shelf)}
                                             onEdit={() => {
                                                 setEditingShelf(shelf);
@@ -302,7 +351,17 @@ export const Library = () => {
                                                     cardCount={deck.card_count || 0}
                                                     dueCount={0}
                                                     colorHex={deck.color}
-                                                    onPress={() => console.log('Open deck', deck.id)}
+                                                    viewMode={viewMode}
+                                                    onPress={() => navigation.navigate('DeckDetail', {
+                                                        deckId: deck.id,
+                                                        deckName: deck.name,
+                                                        colorHex: deck.color,
+                                                    })}
+                                                    onEdit={() =>  {
+                                                        setEditingDeck(deck);
+                                                        setIsAddDeckVisible(true);
+                                                    }}
+                                                    onDelete={() => setDeletingDeck(deck)}
                                                 />
                                             </View>
                                         );
@@ -332,7 +391,7 @@ export const Library = () => {
                     setEditingDeck(null);
                 }}
                 initialData={editingDeck}
-                onSubmit={editingDeck ? handleCreateDeck : handleCreateDeck}
+                onSubmit={editingDeck ? handleEditDeck : handleCreateDeck}
                 availableShelves={shelves}
             />
 
@@ -349,6 +408,21 @@ export const Library = () => {
                 }}
                 onCancel={() => setDeletingShelf(null)}
             />
+
+            <ConfirmModal
+                visible={!!deletingDeck}
+                title="Delete Deck"
+                message={`Are you sure? This will soft-delete the deck and its cards. They can be restored from the Trash.`}
+                confirmText={"Delete"}
+                onConfirm={() => {
+                    if (deletingDeck) {
+                        handleDeleteDeck(deletingDeck.id);
+                        setDeletingDeck(null);
+                    }
+                }}
+                onCancel={() => setDeletingDeck(null)}
+            />
+
         </View>
     );
 };
