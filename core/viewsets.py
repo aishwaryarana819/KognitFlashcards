@@ -4,14 +4,18 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import PermissionDenied, NotFound
 from rest_framework.decorators import action
 from django.utils import timezone
-from .models import Shelf, Deck, Card, Tag, TaggedItem, ShelfDeck, DeckCard
+from .models import Shelf, Deck, Card, Tag, TaggedItem, ShelfDeck, DeckCard, ScratchNote
 from .serializers import (
     ShelfSerializer, ShelfCreateSerializer,
     DeckSerializer, DeckCreateSerializer,
     CardSerializer, CardCreateSerializer,
-    TagSerializer
+    TagSerializer, ScratchNoteSerializer
 )
 from django.contrib.contenttypes.models import ContentType
+
+# class ScratchNoteViewSet(OwnershipMixin, viewsets.ModelViewSet):
+#     queryset = ScratchNote.objects.all().order_by('-created_at')
+#     serializer_class = ScratchNoteSerializer
 
 class OwnershipMixin:
     permission_classes = [IsAuthenticated]

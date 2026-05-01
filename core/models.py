@@ -139,3 +139,13 @@ class TaggedItem(models.Model):
     class Meta:
         unique_together = ('tag', 'content_type', 'object_id')
 
+class ScratchNote(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='scratch_notes')
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Note: {self.content[:20]}..."
+
+

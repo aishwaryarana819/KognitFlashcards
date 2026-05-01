@@ -1,6 +1,12 @@
 from rest_framework import serializers
-from .models import Shelf, Deck, Card, Tag, TaggedItem, ShelfDeck, DeckCard, CardReview, ReviewLog
+from .models import Shelf, Deck, Card, Tag, TaggedItem, ShelfDeck, DeckCard, CardReview, ReviewLog, ScratchNote
 from django.contrib.contenttypes.models import ContentType
+
+class ScratchNoteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ScratchNote
+        fields = ['id', 'content', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'created_at', 'updated_at']
 
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
