@@ -11,7 +11,10 @@ const Stack = createNativeStackNavigator<LibraryStackParamList>();
 export const LibraryStack = () => {
     return (
         /* @ts-ignore */
-        <Stack.Navigator screenOptions={{ headerShown: false, contentStyle: { backgroundColor: 'transparent' } }}>
+        <Stack.Navigator screenOptions={{
+            headerShown: false,
+            contentStyle: { backgroundColor: 'transparent' },
+        }}>
             <Stack.Screen name={ROUTES.LIBRARY} component={Library} />
             <Stack.Screen name={ROUTES.DECK_DETAIL} component={DeckDetail} />
             <Stack.Screen name={ROUTES.SHELF_DETAIL} component={ShelfDetail} />

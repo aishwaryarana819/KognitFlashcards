@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {View, useWindowDimensions, StyleSheet} from "react-native";
-import {NavigationContainer} from "@react-navigation/native";
+import {NavigationContainer, DefaultTheme} from "@react-navigation/native";
 import {useTheme} from "../context/ThemeContext";
 import {BREAKPOINTS} from "../theme/breakpoints";
 import {TopBar} from "../components/TopBar";
@@ -15,11 +15,20 @@ export const AdaptiveRouter = () => {
     const {activePalette} = useTheme();
     const [currentRoute, setCurrentRoute] = useState<string>(ROUTES.DASHBOARD);
 
+    const TransparentTheme = {
+        ...DefaultTheme,
+        colors: {
+            ...DefaultTheme.colors,
+            background: 'transparent',
+        },
+    };
+
     return (
         <View style={[styles.container, {backgroundColor: activePalette.bg}]}>
             {isMobile && <TopBar />}
             <View style={styles.engineWrapper}>
                 <NavigationContainer
+                    theme={TransparentTheme}
                     onStateChange={(state) => {
                         const routeName = state?.routes[state.index]?.name;
                         if (routeName && routeName !== 'More')

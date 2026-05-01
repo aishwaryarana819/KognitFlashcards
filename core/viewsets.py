@@ -51,6 +51,13 @@ class DeckViewSet(OwnershipMixin, viewsets.ModelViewSet):
             return DeckCreateSerializer
         return DeckSerializer
 
+    def get_queryset(self):
+        qs = super().get_queryset()
+        shelf_id = self.request.query_params.get('shelf_id')
+        if shelf_id:
+            qs = qs.filter(deck_shelves__shelf_id=shelf_id).distinct()
+        return qs
+
     def perform_create(self, serializer):
         super().perform_create(serializer)
         shelf_ids = self.request.data.get('shelf_ids', [])

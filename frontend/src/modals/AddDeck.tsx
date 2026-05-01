@@ -223,7 +223,7 @@ export const AddDeck = ({visible, onClose, onSubmit, initialData, availableShelv
                             }>
                                 {isSubmitting
                                     ? (initialData ? "Saving..." : "Creating...")
-                                    : (initialData ? "Save Changes" : "Create Deck")}
+                                    : (initialData ? "Save Changes..." : "Create")}
                             </Text>
                         </TouchableOpacity>
                     </View>

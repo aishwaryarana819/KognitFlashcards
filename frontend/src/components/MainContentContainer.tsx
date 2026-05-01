@@ -1,5 +1,5 @@
 import React from "react";
-import {ScrollView, StyleSheet, ViewStyle, useWindowDimensions} from "react-native";
+import {View, StyleSheet, ViewStyle, useWindowDimensions} from "react-native";
 import {useTheme} from '../context/ThemeContext';
 import {BREAKPOINTS} from "../theme/breakpoints";
 
@@ -8,14 +8,13 @@ interface MainContentContainerProps {
     style?: ViewStyle;
 }
 
-export const MainContentContainer = ({children, style}:
-    MainContentContainerProps) => {
+export const MainContentContainer = ({children, style}: MainContentContainerProps) => {
     const {activePalette} = useTheme();
     const {width} = useWindowDimensions();
     const isMobile = width <= BREAKPOINTS.MOBILE_MAX;
 
     return (
-        <ScrollView
+        <View
             style={[
                 styles.container,
                 {backgroundColor: isMobile ? 'transparent' : activePalette.bg2},
@@ -26,11 +25,11 @@ export const MainContentContainer = ({children, style}:
                 },
                 style
             ]}
-            contentContainerStyle={[styles.content, {paddingBottom: isMobile ? 120 : 40}]}
-            showsVerticalScrollIndicator={false}
         >
-            {children}
-        </ScrollView>
+            <View style={[styles.content, {paddingHorizontal: isMobile ? 20 : 30, paddingTop: isMobile ? 10 : 30}]}>
+                {children}
+            </View>
+        </View>
     );
 };
 
@@ -38,12 +37,12 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         marginTop: 15,
-        // marginBottom: 20,
         borderRadius: 15,
         overflow: 'hidden',
     },
     content: {
-        flexGrow: 1,
+        flex: 1,
         padding: 30,
+        paddingBottom: 0,
     }
 });

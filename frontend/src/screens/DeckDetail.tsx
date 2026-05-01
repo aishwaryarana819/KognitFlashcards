@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, FlatList } from 'react-native';
+import {View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, FlatList, DeviceEventEmitter} from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../context/ThemeContext';
@@ -29,7 +29,7 @@ export const DeckDetail = () => {
     const [editingCard, setEditingCard] = useState<any>(null);
     const [deletingCard, setDeletingCard] = useState<any>(null);
 
-    const fetchCards = async () => {
+    const fetchCards = React.useCallback(async () => {
         if (!session?.access_token) return;
         try {
             const res = await fetch(`http://127.0.0.1:8000/api/cards/?deck_id=${deckId}`, {
@@ -44,11 +44,14 @@ export const DeckDetail = () => {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [deckId, session]);
 
     useEffect(() => {
         fetchCards();
-    }, [deckId, session]);
+        const sub = DeviceEventEmitter.addListener('library_updated', fetchCards);
+        return () => sub.remove();
+    }, [fetchCards]);
+
 
     const handleSubmitCard = async (data: any) => {
         try {
@@ -144,20 +147,6 @@ export const DeckDetail = () => {
                     }
                 />
             )}
-
-            <TouchableOpacity
-                activeOpacity={0.8}
-                style={[styles.fab, {backgroundColor: activePalette.darkest}]}
-                onPress={() => { setEditingCard(null); setIsAddModalOpen(true); }}>
-                <Ionicons name="add" size={32} color={activePalette.bg2} />
-            </TouchableOpacity>
-
-            <AddCard
-                visible={isAddModalOpen}
-                onClose={() => { setIsAddModalOpen(false); setEditingCard(null); }}
-                initialData={editingCard}
-                onSubmit={handleSubmitCard}
-            />
 
             <ConfirmModal
                 visible={!!deletingCard}

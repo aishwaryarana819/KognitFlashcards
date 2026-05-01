@@ -1,5 +1,13 @@
 import React, {useState} from 'react';
-import {View, Text, DeviceEventEmitter, StyleSheet, TouchableOpacity, useWindowDimensions} from 'react-native';
+import {
+    View,
+    Text,
+    DeviceEventEmitter,
+    StyleSheet,
+    TouchableOpacity,
+    useWindowDimensions,
+    Platform
+} from 'react-native';
 import {useTheme} from '../context/ThemeContext';
 import {getTypography} from "../theme/typography";
 import {Ionicons, MaterialCommunityIcons} from "@expo/vector-icons";
@@ -30,7 +38,7 @@ export const FloatingReviewPalette = () => {
             <View style={[styles.paletteWraper, {gap: isMobile ? 6 : 20}]}>
                 <View style={styles.reviewSectionWrapper}>
                     <View style={[styles.reviewBox1, {
-                        backgroundColor: activePalette.fg,
+                        backgroundColor: activePalette.lightest+'80',
                         borderColor: activePalette.darkest,
                         borderLeftWidth: 0.3,
                         borderTopWidth: 0.2,
@@ -39,7 +47,9 @@ export const FloatingReviewPalette = () => {
                         paddingHorizontal: isMobile ? 10 : 20,
                         paddingVertical: isMobile ? 7.75 : 12,
                     },
-                    reviewBox1Shadow
+                        Platform.OS === 'web' && { backdropFilter: 'blur(20px)',
+                            WebkitBackdropFilter: 'blur(20px)'} as any,
+                        createBoxShadow
                     ]}>
                         <Text style={{
                             fontFamily: typography.fontFamilies.main,
@@ -97,7 +107,7 @@ export const FloatingReviewPalette = () => {
                     style={[
                         styles.createSection,
                         {
-                            backgroundColor: activePalette.fg,
+                            backgroundColor: activePalette.lightest+'80',
                             borderColor: activePalette.darkest,
                             borderLeftWidth: 0.3,
                             borderTopWidth: 0.2,
@@ -106,6 +116,8 @@ export const FloatingReviewPalette = () => {
                             paddingHorizontal: isMobile ? 10 : 20,
                             paddingVertical: isMobile ? 9 : 12,
                         },
+                        Platform.OS === 'web' && { backdropFilter: 'blur(20px)',
+                            WebkitBackdropFilter: 'blur(20px)'} as any,
                         createBoxShadow
                     ]}>
                     <Ionicons
@@ -144,9 +156,11 @@ export const FloatingReviewPalette = () => {
                     <View style={[
                         styles.createMenu,
                         {
-                            backgroundColor: activePalette.fg,
-                            borderColor: activePalette.darker + '20',
-                        }
+                            backgroundColor: activePalette.fg + '95',
+                            borderColor: activePalette.darker + '50',
+                        },
+                        Platform.OS === 'web' && {backdropFilter: 'blur(12px)',
+                        WebKitBackdropFilter: 'blur(20px)'} as any
                     ]}>
                         <TouchableOpacity style={styles.menuItem} onPress={() => { setIsChevronUp(false); DeviceEventEmitter.emit('open_add_card'); }}>
                             <Text style={[styles.menuText, {color: activePalette.darker, fontFamily: typography.fontFamilies.main}]}>
