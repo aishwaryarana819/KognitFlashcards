@@ -10,6 +10,10 @@ class Profile(models.Model):
     region = models.CharField(max_length=100, blank=True, null=True)
     domain = models.CharField(max_length=100, blank=True, null=True)
 
+    daily_goal = models.IntegerField(default=20)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

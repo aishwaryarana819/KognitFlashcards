@@ -30,6 +30,7 @@ import SettingsOutline from '../../assets/icons/settings-outline.svg'
 import HelpIcon from '../../assets/icons/help.svg'
 
 import {LibraryStack} from "./LibraryStack";
+import {Dashboard} from "../screens/Dashboard";
 
 const Drawer = createDrawerNavigator();
 
@@ -69,7 +70,17 @@ const ScreenWrapper = ({title}: {title: string}) => {
     );
 };
 
-const DashboardScreen = () => <ScreenWrapper title="Dashboard"/>;
+const DashboardScreen = () => {
+    const {activePalette} = useTheme();
+    return (
+        <View style={{flex: 1, backgroundColor: activePalette.bg}}>
+            <TopBar/>
+            <MainContentContainer>
+                <Dashboard />
+            </MainContentContainer>
+        </View>
+    );
+}
 const LibraryScreen = () => {
     const {activePalette} = useTheme();
     return (

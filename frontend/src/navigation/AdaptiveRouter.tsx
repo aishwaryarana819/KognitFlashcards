@@ -10,6 +10,10 @@ import {DesktopDrawer} from "./Sidebar";
 import {FloatingReviewPalette} from "../components/FloatingReviewPalette";
 import {ROUTES} from "./routes";
 import {ReviewSession} from "../screens/ReviewSession";
+import {AddCard} from "../modals/AddCard";
+import {AddDeck} from "../modals/AddDeck";
+import {AddShelf} from "../modals/AddShelf";
+import {GlobalModals} from "../modals/GlobalModals";
 
 export const AdaptiveRouter = () => {
     const {width} = useWindowDimensions();
@@ -52,6 +56,7 @@ export const AdaptiveRouter = () => {
                                 <>
                                     {isMobile ? <BottomBar initialRoute={currentRoute}/> : <DesktopDrawer initialRoute={currentRoute}/>}
                                     <FloatingReviewPalette/>
+                                    <GlobalModals/>
                                 </>
                             )}
                         </Stack.Screen>

@@ -129,28 +129,30 @@ export const ReviewSession = ({ navigation, route }: Props) => {
     if (!isLoading && queue.length > 0 && currentIndex >= queue.length) {
         return (
             <View style={[styles.container, { backgroundColor: activePalette.bg }]}>
-                <Ionicons name="checkmark-circle" size={80} color={activePalette.darker} />
-                <Text style={[{fontFamily: typography.fontFamilies.main,
-                    fontWeight: typography.fontWeights.semibold,
-                    fontSize: typography.fontSizes.heading,
-                    color: activePalette.darkest, marginTop: 20
-                }]}>
-                    Session Complete!
-                </Text>
-                <Text style={[{
-                    color: activePalette.fg2,
-                    fontFamily: typography.fontFamilies.secondary,
-                    fontSize: typography.fontSizes.bodyL,
-                    marginTop: 20
-                }]}>
-                    You reviewed {queue.length} cards today.
-                </Text>
-                <TouchableOpacity
-                    style={[styles.doneButton, { backgroundColor: activePalette.darker }]}
-                    onPress={() => navigation.goBack()}
-                >
-                    <Text style={[styles.doneButtonText, {color: activePalette.lightest, fontFamily: typography.fontFamilies.main}]}>Return to Library</Text>
-                </TouchableOpacity>
+                <View style={[styles.summaryCard, { backgroundColor: isDark ? activePalette.bg2 : '#ffffff' }]}>
+                    <Ionicons name="trophy" size={80} color="#FFD700" style={{ marginBottom: 20 }} />
+                    <Text style={[{
+                        fontFamily: typography.fontFamilies.main,
+                        fontWeight: typography.fontWeights.semibold,
+                        fontSize: typography.fontSizes.heading,
+                        color: activePalette.darkest,
+                        textAlign: 'center'
+                    }]}>
+                        Session Complete!
+                    </Text>
+
+                    <View style={[styles.statRow, { borderBottomColor: activePalette.lighter, borderBottomWidth: 1 }]}>
+                        <Text style={[styles.statLabel, { color: activePalette.darker, fontFamily: typography.fontFamilies.main }]}>Cards Reviewed</Text>
+                        <Text style={[styles.statValue, { color: activePalette.darkest, fontFamily: typography.fontFamilies.secondary }]}>{queue.length}</Text>
+                    </View>
+
+                    <TouchableOpacity
+                        style={[styles.doneButton, { backgroundColor: activePalette.darker, width: '100%', marginTop: 30 }]}
+                        onPress={() => navigation.goBack()}
+                    >
+                        <Text style={[styles.doneButtonText, { fontFamily: typography.fontFamilies.main, textAlign: 'center' }]}>Return to Library</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
         );
     }
@@ -184,7 +186,7 @@ export const ReviewSession = ({ navigation, route }: Props) => {
 
             <View style={styles.content}>
                 {isLoading ? (
-                    <ActivityIndicator size="large" color={activePalette.regular} />
+                    <ActivityIndicator size="large" color={activePalette.darker} />
                 ) : queue.length === 0 ? (
                     <View style={styles.emptyState}>
                         <Ionicons name="cafe-outline" size={64} color={activePalette.fg2} />
@@ -332,5 +334,10 @@ const styles = StyleSheet.create({
     gradingRow: { flexDirection: 'row', justifyContent: 'space-between', gap: 10 },
     gradeBtn: { flex: 1, height: 80, borderRadius: 15, borderWidth: 1, justifyContent: 'center', alignItems: 'center' },
     gradeLabel: { fontFamily: 'Urbanist-Bold', fontSize: 16, marginBottom: 5 },
-    gradeInterval: { fontFamily: 'Manrope-Medium', fontSize: 14 }
+    gradeInterval: { fontFamily: 'Manrope-Medium', fontSize: 14 },
+    summaryCard: { padding: 40, borderRadius: 24, width: '100%', maxWidth: 400, alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 10 }, shadowOpacity: 0.1, shadowRadius: 20, elevation: 5 },
+    statRow: { flexDirection: 'row', justifyContent: 'space-between', width: '100%', paddingVertical: 15, marginTop: 20 },
+    statLabel: { fontFamily: 'Manrope-Medium', fontSize: 16 },
+    statValue: { fontFamily: 'Urbanist-Bold', fontSize: 20 },
+
 });

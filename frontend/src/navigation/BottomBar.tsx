@@ -23,6 +23,7 @@ import SettingsIcon from '../../assets/icons/settings-fill.svg'
 import HelpIcon from '../../assets/icons/help.svg'
 
 import {LibraryStack} from "./LibraryStack";
+import {Dashboard} from "../screens/Dashboard";
 
 const Tab = createBottomTabNavigator<MobileTabParamList>();
 
@@ -36,7 +37,7 @@ const TAB_ICONS: Record<string, React.FC<any>> = {
 
 const DashboardScreen = () =>
     <MainContentContainer>
-        <UnderConstruction title="Dashboard" message="Coming soon."/>
+        <Dashboard/>
     </MainContentContainer>
 
 const LibraryScreen = () => (
