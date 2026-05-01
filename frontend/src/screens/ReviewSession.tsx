@@ -30,6 +30,29 @@ export const ReviewSession = ({ navigation, route }: Props) => {
         fetchQueue();
     }, []);
 
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) return;
+
+            if (isLoading || queue.length === 0 || currentIndex >= queue.length) return;
+
+            if (!isFlipped && event.code === 'Space') {
+                event.preventDefault();
+                handleFlip();
+            } else if (isFlipped) {
+                switch (event.key) {
+                    case '1': handleGrade(1); break;
+                    case '2': handleGrade(2); break;
+                    case '3': handleGrade(3); break;
+                    case '4': handleGrade(4); break;
+                }
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [isFlipped, currentIndex, queue, isLoading]);
+
     const fetchQueue = async () => {
         setIsLoading(true);
         try {
@@ -81,9 +104,13 @@ export const ReviewSession = ({ navigation, route }: Props) => {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ card_id: card.id, rating })
+            }).then(response => {
+                if (!response.ok) {
+                    console.error("Submission failed, consider adding retry logic.");
+                }
             });
         } catch (error) {
-            console.error("Failed to submit rating:", error);
+            console.error("Network error submitting rating:", error);
         }
     };
 
@@ -239,7 +266,7 @@ export const ReviewSession = ({ navigation, route }: Props) => {
                 <View style={[styles.controlsArea, { paddingBottom: isMobile ? 40 : 40 }]}>
                     {!isFlipped ? (
                         <TouchableOpacity
-                            style={[styles.flipButton, { backgroundColor: activePalette.lightest+'80' }]}
+                            style={[styles.flipButton, { backgroundColor: activePalette.darkest }]}
                             onPress={handleFlip}
                         >
                             <Text style={[
@@ -247,6 +274,7 @@ export const ReviewSession = ({ navigation, route }: Props) => {
                                 {
                                     fontFamily: typography.fontFamilies.main,
                                     fontWeight: typography.fontWeights.semibold,
+                                    color: activePalette.lightest
                                 }
                             ]}>Show Answer</Text>
                         </TouchableOpacity>
