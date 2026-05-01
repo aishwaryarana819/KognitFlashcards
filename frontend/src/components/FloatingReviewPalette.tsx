@@ -13,9 +13,12 @@ import {getTypography} from "../theme/typography";
 import {Ionicons, MaterialCommunityIcons} from "@expo/vector-icons";
 import {BREAKPOINTS} from "../theme/breakpoints";
 import {getReviewBox1Shadow, getReviewBox2Shadow, getCreateBoxShadow} from "../theme/shadows";
+import {useNavigation} from "@react-navigation/native";
+import {ROUTES} from "../navigation/routes";
 
 export const FloatingReviewPalette = () => {
     const {width} = useWindowDimensions();
+    const navigation = useNavigation();
     const {activePalette} = useTheme();
     const typography = getTypography(width);
     const isMobile = width <= BREAKPOINTS.MOBILE_MAX;
@@ -82,14 +85,18 @@ export const FloatingReviewPalette = () => {
                         </View>
                     </View>
 
-                    <TouchableOpacity activeOpacity={0.8} style={[styles.reviewBox2,
-                        {
-                            backgroundColor: activePalette.darker,
-                            paddingHorizontal: isMobile ? 10 : 20,
-                            paddingVertical: isMobile ? 12 : 16,
-                        },
-                        reviewBox2Shadow
-                    ]}>
+                    <TouchableOpacity
+                        activeOpacity={0.8}
+                        style={[styles.reviewBox2,
+                            {
+                                backgroundColor: activePalette.darker,
+                                paddingHorizontal: isMobile ? 10 : 20,
+                                paddingVertical: isMobile ? 12 : 16,
+                            },
+                            reviewBox2Shadow
+                        ]}
+                        onPress={() => navigation.navigate(ROUTES.REVIEW_SESSION as never)}
+                    >
                         {/* @ts-ignore */}
                         <Text style={{
                             fontFamily: typography.fontFamilies.main,

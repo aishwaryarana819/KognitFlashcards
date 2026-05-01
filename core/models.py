@@ -111,6 +111,7 @@ class ReviewLog(models.Model):
     rating = models.IntegerField()
     state = models.IntegerField()
     elapsed_days = models.IntegerField()
+    scheduled_days = models.IntegerField(default=0)
     reviewed_at = models.DateTimeField(auto_now_add=True)
 
 class Tag(models.Model):

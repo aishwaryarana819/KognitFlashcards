@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import {View, useWindowDimensions, StyleSheet} from "react-native";
 import {NavigationContainer, DefaultTheme} from "@react-navigation/native";
+import {createNativeStackNavigator} from "@react-navigation/native-stack";
 import {useTheme} from "../context/ThemeContext";
 import {BREAKPOINTS} from "../theme/breakpoints";
 import {TopBar} from "../components/TopBar";
@@ -8,6 +9,7 @@ import {BottomBar} from "./BottomBar";
 import {DesktopDrawer} from "./Sidebar";
 import {FloatingReviewPalette} from "../components/FloatingReviewPalette";
 import {ROUTES} from "./routes";
+import {ReviewSession} from "../screens/ReviewSession";
 
 export const AdaptiveRouter = () => {
     const {width} = useWindowDimensions();
@@ -23,6 +25,8 @@ export const AdaptiveRouter = () => {
         },
     };
 
+    const Stack = createNativeStackNavigator();
+
     return (
         <View style={[styles.container, {backgroundColor: activePalette.bg}]}>
             {isMobile && <TopBar />}
@@ -30,17 +34,40 @@ export const AdaptiveRouter = () => {
                 <NavigationContainer
                     theme={TransparentTheme}
                     onStateChange={(state) => {
-                        const routeName = state?.routes[state.index]?.name;
-                        if (routeName && routeName !== 'More')
-                            setCurrentRoute(routeName);
-                }}>
+                        try {
+                            const rootRoute = state?.routes[state.index];
+                            if (rootRoute && rootRoute.name === 'AppChrome' && rootRoute.state) {
+                                const activeChild = rootRoute.state.routes[rootRoute.state.index];
+                                if (activeChild && activeChild.name !== 'More') {
+                                    setCurrentRoute(activeChild.name);
+                                }
+                            }
+                        } catch (e) {
+                        }
+                    }}>
                     {/* @ts-ignore */}
-                    {isMobile ? <BottomBar initialRoute={currentRoute}/> : <DesktopDrawer initialRoute={currentRoute}/>}
+                    <Stack.Navigator screenOptions={{ headerShown: false, presentation: 'fullScreenModal' }}>
+                        <Stack.Screen name="AppChrome">
+                            {() => (
+                                <>
+                                    {isMobile ? <BottomBar initialRoute={currentRoute}/> : <DesktopDrawer initialRoute={currentRoute}/>}
+                                    <FloatingReviewPalette/>
+                                </>
+                            )}
+                        </Stack.Screen>
+
+                        <Stack.Screen
+                            name={ROUTES.REVIEW_SESSION}
+                            component={ReviewSession}
+                        />
+
+                    </Stack.Navigator>
+
                 </NavigationContainer>
-                <FloatingReviewPalette/>
             </View>
         </View>
     );
+
 };
 
 const styles = StyleSheet.create({

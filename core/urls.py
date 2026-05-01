@@ -2,6 +2,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import check_username, finalize_profile, hackclub_callback, get_profile
 from .viewsets import ShelfViewSet, DeckViewSet, CardViewSet, TagViewSet, TrashViewSet
+from .review_views import review_queue, review_submit, review_stats_today
 
 router = DefaultRouter()
 router.register(r'shelves', ShelfViewSet, basename='shelf')
@@ -20,4 +21,7 @@ urlpatterns = [
     path('trash/', TrashViewSet.as_view({'get': 'list'}), name='trash-list'),
     path('trash/<str:item_type>/<int:item_id>/restore/', TrashViewSet.as_view({'post': 'restore'}), name='trash-restore'),
     path('trash/<str:item_type>/<int:item_id>/permanent/', TrashViewSet.as_view({'delete': 'permanent_delete'}), name='trash-permanent'),
+    path('review/queue/', review_queue, name='review-queue' ),
+    path('review/submit/', review_submit, name='review-submit' ),
+    path('review/stats/today/', review_stats_today, name='review-stats-today'),
 ]

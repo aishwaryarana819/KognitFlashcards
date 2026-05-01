@@ -108,12 +108,6 @@ def _hackclub_callback_inner(request):
     if not code:
         return Response({"error": "Authorization code is required."}, status=status.HTTP_400_BAD_REQUEST)
 
-    """
-    code = request.data.get('code')
-    if not code:
-        return Response({"error": "Authorization code is required."}, status=status.HTTP_400_BAD_REQUEST)
-    """
-
     token_url = "https://auth.hackclub.com/oauth/token"
 
     dynamic_redirect_uri = request.data.get('redirect_uri')
