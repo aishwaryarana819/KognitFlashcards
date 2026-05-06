@@ -51,7 +51,7 @@ export const LoginOptions = ({onNavigateRegister, onNavigateRecovery}: LoginOpti
         const handleHackClubBridge = async (code: string) => {
             setIsLoading(true);
             try {
-                const res = await fetch ('http://127.0.0.1:8000/api/auth/hackclub/callback', {
+                const res = await fetch (`${process.env.EXPO_PUBLIC_API_URL || 'http://127.0.0.1:8000'}/api/auth/hackclub/callback`, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
