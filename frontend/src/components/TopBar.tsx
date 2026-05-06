@@ -1,7 +1,7 @@
 // Made fixes using AI
 
 import React, {useState, useEffect} from 'react';
-import {View, Text, StyleSheet, useWindowDimensions, TouchableOpacity, TextInput, Platform} from "react-native";
+import {View, Text, Pressable, StyleSheet, useWindowDimensions, TouchableOpacity, TextInput, Platform} from "react-native";
 import {useTheme} from "../context/ThemeContext";
 import {useAuth} from "../context/AuthContext";
 import {getTypography} from "../theme/typography";
@@ -16,7 +16,8 @@ import SearchIcon from '../../assets/icons/search.svg';
 export const TopBar = () => {
     const {width} = useWindowDimensions();
     const {activePalette, isDark, toggleTheme} = useTheme();
-    const {profile} = useAuth();
+    const {profile, signOut} = useAuth();
+    const [showLogout, setShowLogout] = useState(false);
 
     const [showNotifSoon, setShowNotifSoon] = useState(false);
     const [isMac, setIsMac] = useState(true);
@@ -46,6 +47,7 @@ export const TopBar = () => {
             paddingTop: isMobile ? 0 : 20,
             paddingLeft: isCollapsed ? 109.5 : 0,
             paddingRight: isMobile ? 0 : 20,
+            zIndex: 9999,
         }]}>
 
             {isMobile && (
@@ -62,6 +64,7 @@ export const TopBar = () => {
                 borderTopLeftRadius: isMobile ? 0 : 15,
                 borderTopRightRadius: isMobile ? 0 : 15,
                 borderBottomRightRadius: isMobile ? 0 : 15,
+                zIndex: 9999,
             }]}>
 
                 <View style={[styles.searchPalette, {
@@ -154,7 +157,7 @@ export const TopBar = () => {
                         }]}
                                           onPress={() => {
                                               setShowNotifSoon(true);
-                                              setTimeout(() => setShowNotifSoon(false), 2000);
+                                              setTimeout(() => setShowNotifSoon(false), 400);
                                           }}>
                             <Ionicons name="notifications-outline" size={iconSize}
                                       color={activePalette.darkest} style={iconShadow}/>
@@ -167,7 +170,7 @@ export const TopBar = () => {
                         </TouchableOpacity>
 
                         {showNotifSoon && (
-                            <View style={[styles.tooltipCard, {backgroundColor: activePalette.darkest}]}>
+                            <View style={[styles.tooltipCard, {width: 85, backgroundColor: activePalette.darkest}]}>
                                 {/* @ts-ignore */}
                                 <Text style={{fontFamily: typography.fontFamilies.main, fontSize: typography.fontSizes.captionS, color: activePalette.bg, fontWeight: typography.fontWeights.bold}}>
                                     Coming Soon
@@ -176,28 +179,79 @@ export const TopBar = () => {
                         )}
                     </View>
 
-                    <TouchableOpacity activeOpacity={0.7} style={styles.profileBox}>
-                        <View style={[{
-                            backgroundColor: activePalette.bg,
-                            width: circleSize, height: circleSize, borderRadius: circleRadius,
-                            alignItems: 'center', justifyContent: 'center',
-                        }]}>
-                            <Ionicons name="person-outline" size={iconSize}
-                                      color={activePalette.darkest} style={iconShadow}/>
-                        </View>
-
-                        {!isMobile && (
-                            <View style={styles.profileTextWrapper}>
-                                {/* @ts-ignore */}
-                                <Text style={{fontFamily: typography.fontFamilies.main, fontSize: typography.fontSizes.bodyS, fontWeight: typography.fontWeights.extrablack, color: activePalette.darkest}}>
-                                    {profile? `${profile.first_name} ${profile.last_name}`.trim() : "Sukuna"}
-                                </Text>
-                                <Text style={{fontFamily: typography.fontFamilies.secondary, fontSize: typography.fontSizes.caption, color: activePalette.fg2}}>
-                                    {profile?.username ? `@${profile.username}` : "ryomensukuna"}
-                                </Text>
+                    <View style={{zIndex: 50}}>
+                        <TouchableOpacity
+                            activeOpacity={0.7}
+                            style={styles.profileBox}
+                            onPress={() => setShowLogout(!showLogout)}
+                        >
+                            <View style={[{
+                                backgroundColor: activePalette.bg,
+                                width: circleSize, height: circleSize, borderRadius: circleRadius,
+                                alignItems: 'center', justifyContent: 'center',
+                            }]}>
+                                <Ionicons name="person-outline" size={iconSize}
+                                          color={activePalette.darkest} style={iconShadow}/>
                             </View>
+
+                            {!isMobile && (
+                                <View style={styles.profileTextWrapper}>
+                                    {/* @ts-ignore */}
+                                    <Text style={{fontFamily: typography.fontFamilies.main, fontSize: typography.fontSizes.bodyS, fontWeight: typography.fontWeights.extrablack, color: activePalette.darkest}}>
+                                        {profile? `${profile.first_name} ${profile.last_name}`.trim() : "Guest"}
+                                    </Text>
+                                    <Text style={{fontFamily: typography.fontFamilies.secondary, fontSize: typography.fontSizes.caption, color: activePalette.fg2}}>
+                                        {profile?.username ? `@${profile.username}` : "Not logged in"}
+                                    </Text>
+                                </View>
+                            )}
+                        </TouchableOpacity>
+
+                        {showLogout && (
+                            <>
+                                <Pressable
+                                    style={{position: (Platform.OS === 'web' ? 'fixed' : 'absolute') as any,
+                                    top: -5000, left: -5000, bottom: -5000, right: -5000,
+                                    zIndex: 9998
+                                }}
+                                    onPress={() => setShowLogout(false)}/>
+                                <TouchableOpacity
+                                    activeOpacity={0.7}
+                                    onPress={async () => {
+                                        setShowLogout(false);
+                                        if(signOut) await signOut();
+                                    }}
+                                    style={[styles.tooltipCard, {
+                                        backgroundColor: activePalette.darkest,
+                                        top: isMobile ? 48 : 55,
+                                        paddingVertical: 10,
+                                        paddingHorizontal: 10,
+                                        flexDirection: 'row',
+                                        alignItems: 'flex-start',
+                                        gap: 8,
+                                        right: isMobile ? 0 : 'auto',
+                                        left: isMobile ? 'auto' : 0,
+                                        marginTop: 4,
+                                        // minWidth: 120,
+                                        zIndex: 9999,
+                                        elevation: 10,
+                                    }]}
+                                >
+                                    <Ionicons name="log-out-outline" size={16} color={activePalette.bg} />
+                                    {/* @ts-ignore */}
+                                    <Text numberOfLines={1} style={{
+                                        fontFamily: typography.fontFamilies.main,
+                                        fontSize: typography.fontSizes.bodyS,
+                                        color: activePalette.bg,
+                                        fontWeight: typography.fontWeights.bold
+                                    }}>
+                                        Log out
+                                    </Text>
+                                </TouchableOpacity>
+                            </>
                         )}
-                    </TouchableOpacity>
+
+                    </View>
                 </View>
             </View>
         </View>

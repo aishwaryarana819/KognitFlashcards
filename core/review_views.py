@@ -1,11 +1,10 @@
 from datetime import datetime, timezone
-from django.db.models import Q
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 
-from .models import Card, CardReview, ReviewLog, DeckCard
+from .models import Card, CardReview, ReviewLog
 from .serializers import CardSerializer
 from .services.fsrs_service import review_card, get_preview_intervals, format_interval
 
@@ -43,12 +42,15 @@ def review_queue(request):
         CardReview.objects.bulk_create(new_reviews)
         print(f"Bulk created {len(new_reviews)} new CardReview records.")
 
-    from django.db.models import Q
     due_cards_qs = cards_qs.filter(
-        Q(fsrs_state__due__lte=now) | Q(fsrs_state__state=0)
+        fsrs_state__due__lte=now
     ).select_related('fsrs_state').order_by('fsrs_state__due')
 
     print(f"Total due cards matched by query: {due_cards_qs.count()}")
+
+    for dc in due_cards_qs[:5]:
+        cr = dc.fsrs_state
+        print(f"  Card '{dc.front[:20]}' state={cr.state} due={cr.due} stability={cr.stability} reps={cr.reps}")
 
     due_cards = due_cards_qs[:limit]
     results = []
@@ -109,7 +111,9 @@ def review_submit(request):
 
     for field, value in updated_fields.items():
         setattr(card_review, field, value)
-    card_review.save()
+    card_review.save(update_fields=list(updated_fields.keys()))
+    card_review.refresh_from_db()
+    print(f"DEBUG: Card {card.id} saved. State={card_review.state}, Due={card_review.due}, Stability={card_review.stability}")
 
     ReviewLog.objects.create(
         card=card,

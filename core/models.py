@@ -1,3 +1,4 @@
+from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
@@ -103,7 +104,7 @@ class CardReview(models.Model):
     reps = models.IntegerField(default=0)
     lapses = models.IntegerField(default=0)
     state = models.IntegerField(default=0)
-    due = models.DateTimeField(auto_now_add=True)
+    due = models.DateTimeField(default=timezone.now)
     last_review = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):

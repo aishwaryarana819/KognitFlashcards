@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Animated, ActivityIndicator, useWindowDimensions } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Animated, ActivityIndicator, useWindowDimensions, DeviceEventEmitter } from 'react-native';
 import { useTheme } from '../context/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -10,6 +10,7 @@ import {BREAKPOINTS} from "../theme/breakpoints";
 import {getTypography} from "../theme/typography";
 import {Urbanist_600SemiBold} from "@expo-google-fonts/urbanist";
 import {Manrope_400Regular} from "@expo-google-fonts/manrope";
+import {lightPalette} from "../theme/colors";
 
 type Props = NativeStackScreenProps<RootStackParamList, typeof ROUTES.REVIEW_SESSION>;
 
@@ -126,7 +127,13 @@ export const ReviewSession = ({ navigation, route }: Props) => {
 
     const currentCard = queue[currentIndex];
 
-    if (!isLoading && queue.length > 0 && currentIndex >= queue.length) {
+    const isSessionDone = !isLoading && queue.length > 0 && currentIndex >= queue.length;
+    useEffect(() => {
+        if (isSessionDone)
+            DeviceEventEmitter.emit('review_completed');
+    }, [isSessionDone]);
+
+    if (isSessionDone) {
         return (
             <View style={[styles.container, { backgroundColor: activePalette.bg }]}>
                 <View style={[styles.summaryCard, { backgroundColor: isDark ? activePalette.bg2 : '#ffffff' }]}>
@@ -150,7 +157,7 @@ export const ReviewSession = ({ navigation, route }: Props) => {
                         style={[styles.doneButton, { backgroundColor: activePalette.darker, width: '100%', marginTop: 30 }]}
                         onPress={() => navigation.goBack()}
                     >
-                        <Text style={[styles.doneButtonText, { fontFamily: typography.fontFamilies.main, textAlign: 'center' }]}>Return to Library</Text>
+                        <Text style={[styles.doneButtonText, { fontFamily: typography.fontFamilies.main, color: activePalette.lightest, textAlign: 'center' }]}>Return to Library</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -159,30 +166,26 @@ export const ReviewSession = ({ navigation, route }: Props) => {
 
     return (
         <View style={[styles.container, { backgroundColor: activePalette.bg }]}>
-            <View style={[
-                styles.topBar,
-                queue.length > 0 && { borderBottomWidth: 0, borderBottomColor: activePalette.lighter }
-            ]}>
+            <View style={styles.topBar}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={styles.closeBtn}>
                     <Ionicons name="close" size={28} color={activePalette.darker} />
                 </TouchableOpacity>
 
-                {(queue.length > 0 || isLoading) && (
+                {(queue.length > 0) && (
                     <View style={styles.progressContainer}>
                         <Text style={[styles.progressText, { fontFamily: typography.fontFamilies.main, color: activePalette.darker }]}>
-                            {isLoading ? 'Loading...' : `${currentIndex + 1} / ${queue.length}`}
+                            {`${currentIndex + 1} / ${queue.length}`}
                         </Text>
-                        <View style={[styles.progressBarBg, { backgroundColor: activePalette.lighter,
-                        borderWidth: 1, borderColor: activePalette.lightest }]}>
+                        <View style={[styles.progressBarBg, {backgroundColor: isDark ? lightPalette.regular+'30' : lightPalette.lighter+'30',
+                            borderWidth: 1, borderColor: isDark ? lightPalette.lighter : lightPalette.darker }]}>
                             <View style={[styles.progressBarFill, {
                                 backgroundColor: activePalette.regular,
-                                width: queue.length > 0 ? `${(currentIndex / queue.length) * 100}%` : '0%'
+                                width: `${(currentIndex / queue.length) * 100}%`
                             }]} />
                         </View>
                     </View>
                 )}
             </View>
-
 
             <View style={styles.content}>
                 {isLoading ? (
@@ -248,7 +251,7 @@ export const ReviewSession = ({ navigation, route }: Props) => {
                                 {currentCard.front}
                             </Text>
 
-                            <View style={[styles.divider, { borderWidth: 0.5, backgroundColor: activePalette.lighter }]} />
+                            <View style={[styles.divider, { borderWidth: 0.5, borderColor: isDark ? lightPalette.lighter : lightPalette.darker }]} />
 
                             <Text style={[
                                 styles.cardText,
@@ -311,7 +314,7 @@ const GradeButton = ({ label, interval, color, onPress }: { label: string, inter
 
 const styles = StyleSheet.create({
     container: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-    topBar: { position: 'absolute', top: 0, width: '100%', height: 80, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, paddingTop: 30, borderBottomWidth: 1, zIndex: 10 },
+    topBar: { position: 'absolute', top: 0, width: '100%', height: 80, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, paddingTop: 30, zIndex: 10 },
     closeBtn: { padding: 10 },
     progressContainer: { flex: 1, alignItems: 'center', marginRight: 40 },
     progressText: { fontFamily: 'Manrope-Medium', fontSize: 14, marginBottom: 8 },

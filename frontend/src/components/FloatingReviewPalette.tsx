@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import {
     View,
     Text,
@@ -15,6 +15,9 @@ import {BREAKPOINTS} from "../theme/breakpoints";
 import {getReviewBox1Shadow, getReviewBox2Shadow, getCreateBoxShadow} from "../theme/shadows";
 import {useNavigation} from "@react-navigation/native";
 import {ROUTES} from "../navigation/routes";
+import {useAuth} from "../context/AuthContext";
+import {useFocusEffect} from "@react-navigation/native";
+import {lightPalette} from "../theme/colors";
 
 export const FloatingReviewPalette = () => {
     const {width} = useWindowDimensions();
@@ -24,6 +27,37 @@ export const FloatingReviewPalette = () => {
     const isMobile = width <= BREAKPOINTS.MOBILE_MAX;
 
     const [isChevronUp, setIsChevronUp] = useState(false);
+
+    const {session} = useAuth();
+    const [dueCount, setDueCount] = useState<number | null>(null);
+
+    const fetchDueCount = useCallback(async () => {
+        if (!session?.access_token) return;
+        try {
+            const res = await fetch(
+                `${process.env.EXPO_PUBLIC_API_URL || 'http://127.0.0.1:8000'}/api/review/stats/today/`,
+                { headers: { 'Authorization': `Bearer ${session.access_token}` } }
+            );
+            if (res.ok) {
+                const data = await res.json();
+                setDueCount(data.cards_due ?? 0);
+            }
+        } catch (e) {
+            console.error('Failed to fetch due count', e);
+        }
+    }, [session]);
+
+    useFocusEffect(
+        useCallback(() => {
+            fetchDueCount();
+        }, [fetchDueCount])
+    );
+
+    useEffect(() => {
+        const sub = DeviceEventEmitter.addListener('review_completed', fetchDueCount);
+        const sub2 = DeviceEventEmitter.addListener('library_updated', fetchDueCount);
+        return () => { sub.remove(); sub2.remove(); };
+    }, [fetchDueCount]);
 
     const reviewBox1Shadow = getReviewBox1Shadow();
     const reviewBox2Shadow = getReviewBox2Shadow(activePalette);
@@ -42,7 +76,7 @@ export const FloatingReviewPalette = () => {
                 <View style={styles.reviewSectionWrapper}>
                     <View style={[styles.reviewBox1, {
                         backgroundColor: activePalette.lightest+'80',
-                        borderColor: activePalette.darkest,
+                        borderColor: activePalette.regular,
                         borderLeftWidth: 0.3,
                         borderTopWidth: 0.2,
                         borderBottomWidth: 0.2,
@@ -71,12 +105,12 @@ export const FloatingReviewPalette = () => {
                                 fontWeight: typography.fontWeights.bold,
                                 color: activePalette.bg,
                             }}>
-                                32
+                                {dueCount ?? '0'}
                             </Text>
 
                             <View style={[styles.statusDot,
                                 {
-                                    backgroundColor: activePalette.red,
+                                    backgroundColor: (dueCount ?? 0) > 0 ? activePalette.red : lightPalette.bg2,
                                     borderColor: activePalette.darkest,
                                     borderWidth: 1,
                                     width: 12, height: 12, borderRadius: 8,
@@ -115,7 +149,7 @@ export const FloatingReviewPalette = () => {
                         styles.createSection,
                         {
                             backgroundColor: activePalette.lightest+'80',
-                            borderColor: activePalette.darkest,
+                            borderColor: activePalette.regular,
                             borderLeftWidth: 0.3,
                             borderTopWidth: 0.2,
                             borderBottomWidth: 0.2,
@@ -164,7 +198,7 @@ export const FloatingReviewPalette = () => {
                         styles.createMenu,
                         {
                             backgroundColor: activePalette.fg + '95',
-                            borderColor: activePalette.darker + '50',
+                            borderColor: activePalette.lighter,
                         },
                         Platform.OS === 'web' && {backdropFilter: 'blur(12px)',
                         WebKitBackdropFilter: 'blur(20px)'} as any

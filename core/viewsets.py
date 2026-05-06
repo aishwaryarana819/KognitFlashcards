@@ -13,16 +13,12 @@ from .serializers import (
 )
 from django.contrib.contenttypes.models import ContentType
 
-# class ScratchNoteViewSet(OwnershipMixin, viewsets.ModelViewSet):
-#     queryset = ScratchNote.objects.all().order_by('-created_at')
-#     serializer_class = ScratchNoteSerializer
-
 class OwnershipMixin:
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         if not self.request.user or not self.request.user.is_authenticated:
-            return self.get_queryset.none()
+            return self.queryset.none()
 
         qs = self.queryset.filter(user=self.request.user)
         if hasattr(self.queryset.model, 'is_deleted'):
@@ -34,8 +30,20 @@ class OwnershipMixin:
             raise PermissionDenied("Profile finalization required.")
         serializer.save(user=self.request.user)
 
+class ScratchNoteViewSet(OwnershipMixin, viewsets.ModelViewSet):
+    queryset = ScratchNote.objects.all().order_by('-created_at')
+    serializer_class = ScratchNoteSerializer
+
 class ShelfViewSet(OwnershipMixin, viewsets.ModelViewSet):
     queryset = Shelf.objects.all()
+
+    class ShelfViewSet(OwnershipMixin, viewsets.ModelViewSet):
+        queryset = Shelf.objects.all()
+
+        def get_queryset(self):
+            qs = super().get_queryset()
+            qs = qs.prefetch_related('shelf_decks')
+            return qs
 
     def get_serializer_class(self):
         if self.action in ['create', 'update', 'partial_update']:
@@ -57,6 +65,7 @@ class DeckViewSet(OwnershipMixin, viewsets.ModelViewSet):
 
     def get_queryset(self):
         qs = super().get_queryset()
+        qs = qs.prefetch_related('deck_cards', 'deck_shelves')
         shelf_id = self.request.query_params.get('shelf_id')
         if shelf_id:
             qs = qs.filter(deck_shelves__shelf_id=shelf_id).distinct()
@@ -86,6 +95,7 @@ class CardViewSet(OwnershipMixin, viewsets.ModelViewSet):
 
     def get_queryset(self):
         qs = super().get_queryset()
+        qs = qs.select_related('fsrs_state').prefetch_related('card_decks')
         deck_id = self.request.query_params.get('deck_id')
         if deck_id:
             qs = qs.filter(card_decks__deck_id=deck_id).distinct()

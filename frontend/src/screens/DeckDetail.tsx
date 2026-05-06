@@ -133,7 +133,9 @@ export const DeckDetail = () => {
             </View>
 
             {isLoading ? (
-                <ActivityIndicator size="large" color={activePalette.darker} style={{marginTop: 50}} />
+                <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', marginBottom: 100}}>
+                    <ActivityIndicator size="large" color={activePalette.darker} />
+                </View>
             ) : (
                 <FlatList
                     data={cards}

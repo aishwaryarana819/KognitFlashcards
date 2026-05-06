@@ -134,6 +134,16 @@ export const AccountRecovery = ({onNavigateLogin}: AccountRecoveryProps) => {
                     {isLoading ? "Sending..." : "Send Reset Code"}
                 </Text>
             </TouchableOpacity>
+            <Text style={{
+                marginTop: 24,
+                textAlign: 'center',
+                opacity: 0.5,
+                fontFamily: typography.fontFamilies.secondary,
+                fontSize: typography.fontSizes.bodyS,
+                color: activePalette.darker
+            }}>
+                Note: For now, this will log you in via a secure OTP link. The manual password reset flow is coming soon.
+            </Text>
         </View>
     );
 

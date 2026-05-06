@@ -1,5 +1,5 @@
 import {useState, useRef, useEffect} from 'react';
-import {View, Text, TouchableOpacity, StyleSheet, useWindowDimensions, TextInput, Pressable, Platform, Alert} from 'react-native';
+import {View, Text, TouchableOpacity, StyleSheet, useWindowDimensions, TextInput, Pressable, Platform, Alert, ActivityIndicator} from 'react-native';
 import Svg, {Path, G, Rect, Defs, LinearGradient, Stop} from 'react-native-svg';
 
 import * as WebBrowser from 'expo-web-browser';
@@ -164,7 +164,24 @@ export const LoginOptions = ({onNavigateRegister, onNavigateRecovery}: LoginOpti
         if (error) setApiError(error.message);
     };
 
-    const renderOptions = () => (
+    const renderOptions = () => {
+    if (isLoading) {
+        return (
+            <View style={{ width: '100%', alignItems: 'center', justifyContent: 'center', paddingVertical: 40 }}>
+                <ActivityIndicator size="large" color={activePalette.darkest} />
+                <Text style={{
+                    marginTop: 20,
+                    fontFamily: typography.fontFamilies.main,
+                    fontSize: typography.fontSizes.bodyL,
+                    color: activePalette.darkest,
+                    fontWeight: '600'
+                }}>
+                    Authenticating with HackClub...
+                </Text>
+            </View>
+        );
+    }
+    return (
         <>
             <View style={styles.headerSection}>
                 <Text style={{
@@ -258,7 +275,8 @@ export const LoginOptions = ({onNavigateRegister, onNavigateRecovery}: LoginOpti
 
             </View>
         </>
-    );
+    )
+    };
 
     const renderEmailInput = () => (
         <View style={{width: '100%'}}>

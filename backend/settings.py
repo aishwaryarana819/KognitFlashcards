@@ -92,6 +92,8 @@ DATABASES = {
         'PASSWORD': env('SUPABASE_DB_PASSWORD'),
         'HOST': env('SUPABASE_DB_HOST'),
         'PORT': env('SUPABASE_DB_PORT'),
+        'CONN_MAX_AGE': 0,
+        'CONN_HEALTH_CHECKS': True,
     }
 }
 

@@ -3,12 +3,15 @@ from rest_framework.routers import DefaultRouter
 from .views import check_username, finalize_profile, hackclub_callback, get_profile
 from .viewsets import ShelfViewSet, DeckViewSet, CardViewSet, TagViewSet, TrashViewSet
 from .review_views import review_queue, review_submit, review_stats_today
+from .viewsets import ScratchNoteViewSet
+from .dashboard_views import dashboard_stats
 
 router = DefaultRouter()
 router.register(r'shelves', ShelfViewSet, basename='shelf')
 router.register(r'decks', DeckViewSet, basename='deck')
 router.register(r'cards', CardViewSet, basename='card')
 router.register(r'tags', TagViewSet, basename='tag')
+router.register(r'scratch-notes', ScratchNoteViewSet, basename='scratch-note')
 
 urlpatterns = [
     path('auth/check-username', check_username, name='check_username'),
@@ -24,4 +27,6 @@ urlpatterns = [
     path('review/queue/', review_queue, name='review-queue' ),
     path('review/submit/', review_submit, name='review-submit' ),
     path('review/stats/today/', review_stats_today, name='review-stats-today'),
+    path('dashboard/stats/', dashboard_stats, name='dashboard-stats'),
 ]
+

@@ -9,13 +9,23 @@ def get_scheduler():
     )
 
 def card_review_to_fsrs_card(card_review):
-    if card_review is None or card_review.state == 0:
+    if card_review is None:
+        return FSRSCard()
+
+    if card_review.state == 0 and (not card_review.last_review and card_review.reps == 0):
         return FSRSCard()
 
     fsrs_card = FSRSCard()
     fsrs_card.due = card_review.due if card_review.due else datetime.now(timezone.utc)
     fsrs_card.stability = card_review.stability
     fsrs_card.difficulty = card_review.difficulty
+
+    fsrs_card.reps = getattr(card_review, 'reps', 0)
+    fsrs_card.lapses = getattr(card_review, 'lapses', 0)
+    fsrs_card.elapsed_days = getattr(card_review, 'elapsed_days', 0)
+    fsrs_card.scheduled_days = getattr(card_review, 'scheduled_days', 0)
+    if hasattr(card_review, 'last_review') and card_review.last_review:
+        fsrs_card.last_review = card_review.last_review
 
     try:
         fsrs_card.state = State(card_review.state)
@@ -28,12 +38,7 @@ def review_card(card_review, rating_int):
     scheduler = get_scheduler()
     fsrs_card = card_review_to_fsrs_card(card_review)
 
-    rating_map = {
-        1: Rating.Again,
-        2: Rating.Hard,
-        3: Rating.Good,
-        4: Rating.Easy
-    }
+    rating_map = { 1: Rating.Again, 2: Rating.Hard, 3: Rating.Good, 4: Rating.Easy }
     rating = rating_map.get(rating_int, Rating.Good)
 
     new_card, review_log = scheduler.review_card(fsrs_card, rating)
@@ -47,10 +52,11 @@ def review_card(card_review, rating_int):
         'stability': new_card.stability,
         'difficulty': new_card.difficulty,
         'state': new_card.state.value,
-        'reps': (card_review.reps + 1) if card_review else 1,
-        'lapses': (card_review.lapses + 1) if (rating == Rating.Again and card_review) else getattr(card_review,
-                                                                                                    'lapses', 0),
-        'scheduled_days': scheduled_days
+        'reps': new_card.reps,
+        'lapses': new_card.lapses,
+        'elapsed_days': elapsed_days,
+        'scheduled_days': scheduled_days,
+        'last_review': now
     }
 
     log_data = {

@@ -9,13 +9,17 @@ export const GlobalModals = () => {
     const [cardVisible, setCardVisible] = useState(false);
     const [deckVisible, setDeckVisible] = useState(false);
     const [shelfVisible, setShelfVisible] = useState(false);
+    const [cardInitialData, setCardInitialData] = useState(false);
 
-    // Provide empty arrays by default to prevent the "Cannot read properties of undefined (reading 'length')" crash
     const [decks, setDecks] = useState([]);
     const [shelves, setShelves] = useState([]);
 
     useEffect(() => {
-        const sub1 = DeviceEventEmitter.addListener('open_add_card', () => { fetchMetadata(); setCardVisible(true); });
+        const sub1 = DeviceEventEmitter.addListener('open_add_card', (params?: any) => {
+            fetchMetadata();
+            setCardInitialData(params?.initialData || null);
+            setCardVisible(true);
+        });
         const sub2 = DeviceEventEmitter.addListener('open_add_deck', () => { fetchMetadata(); setDeckVisible(true); });
         const sub3 = DeviceEventEmitter.addListener('open_add_shelf', () => { fetchMetadata(); setShelfVisible(true); });
 
@@ -82,7 +86,7 @@ export const GlobalModals = () => {
 
     return (
         <>
-            <AddCard visible={cardVisible} onClose={() => setCardVisible(false)} onSubmit={handleCreateCard} availableDecks={decks} />
+            <AddCard visible={cardVisible} onClose={() => setCardVisible(false)} onSubmit={handleCreateCard} availableDecks={decks} initialData={cardInitialData} />
             <AddDeck visible={deckVisible} onClose={() => setDeckVisible(false)} onSubmit={handleCreateDeck} availableShelves={shelves} />
             <AddShelf visible={shelfVisible} onClose={() => setShelfVisible(false)} onSubmit={handleCreateShelf} />
         </>

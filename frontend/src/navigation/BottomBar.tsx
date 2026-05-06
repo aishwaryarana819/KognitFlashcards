@@ -1,10 +1,7 @@
 import React, {useState} from 'react';
 import {View, TouchableOpacity, StyleSheet, Text, Platform, useWindowDimensions, Modal} from "react-native";
-import {createBottomTabNavigator, BottomTabBarProps} from '@react-navigation/bottom-tabs';
-import {useNavigation} from "@react-navigation/native";
 import {useTheme} from '../context/ThemeContext';
 import {getInnerShadow} from "../theme/shadows";
-import {MobileTabParamList} from "./NavigationTypes";
 import {ROUTES} from './routes';
 
 import {UnderConstruction} from "../screens/UnderConstruction";
@@ -24,8 +21,6 @@ import HelpIcon from '../../assets/icons/help.svg'
 
 import {LibraryStack} from "./LibraryStack";
 import {Dashboard} from "../screens/Dashboard";
-
-const Tab = createBottomTabNavigator<MobileTabParamList>();
 
 const TAB_ICONS: Record<string, React.FC<any>> = {
     [ROUTES.DASHBOARD]: DashboardIcon,
@@ -68,13 +63,12 @@ const DRAWER_ITEMS = [
     {icon: HelpIcon, label: 'Help'},
 ];
 
-const MoreDrawer = ({visible, onClose}: {visible: boolean; onClose: () => void}) => {
+const MoreDrawer = ({visible, onClose, onNavigate}: {visible: boolean; onClose: () => void; onNavigate: (label: string) => void}) => {
     const {activePalette, isDark} = useTheme();
     const {width} = useWindowDimensions();
     const typography = getTypography(width);
 
     if (!visible) return null;
-    const navigation = useNavigation<any>();
 
     const row1 = DRAWER_ITEMS.slice(0, 3);
     const row2 = DRAWER_ITEMS.slice(3);
@@ -100,9 +94,7 @@ const MoreDrawer = ({visible, onClose}: {visible: boolean; onClose: () => void})
                                 <TouchableOpacity
                                     key={item.label}
                                     activeOpacity={0.7}
-                                    onPress={() => {
-                                        navigation.navigate('More', {title: item.label});
-                                    }}
+                                    onPress={() => onNavigate(item.label)}
                                     style={[drawerStyles.title,
                                         {backgroundColor: activePalette.bg}]}
                                 >
@@ -125,9 +117,7 @@ const MoreDrawer = ({visible, onClose}: {visible: boolean; onClose: () => void})
                                 <TouchableOpacity
                                     key={item.label}
                                     activeOpacity={0.7}
-                                    onPress={() => {
-                                        navigation.navigate('More', {title: item.label});
-                                    }}
+                                    onPress={() => onNavigate(item.label)}
                                     style={[drawerStyles.title,
                                         {backgroundColor: activePalette.bg}]}
                                 >
@@ -155,12 +145,14 @@ const ACTIVE_ICON_SIZE = 30;
 const ACTIVE_CIRCLE_SIZE = 64;
 const TAB_BAR_HEIGHT = 76;
 
-const CustomTabBar =
-    ({state, navigation, onToggleMore}: BottomTabBarProps & {
-        showMore: boolean, onToggleMore: () => void
-    }) => {
+const CustomTabBar = ({activeTab, onTabPress}: {
+    activeTab: string;
+    onTabPress: (tab: string) => void;
+}) => {
     const {activePalette, isDark} = useTheme();
     const innerShadow = getInnerShadow(activePalette);
+
+    const TAB_ORDER = [ROUTES.ANALYTICS, ROUTES.LIBRARY, ROUTES.DASHBOARD, ROUTES.DISCOVER, 'More'];
 
     return (
         <View style={[styles.tabBarContainer, {
@@ -172,29 +164,15 @@ const CustomTabBar =
                 WebkitBackdropFilter: 'blur(20px)',
             } as any),
         ]}>
-            {state.routes.map((route, index) => {
-                const isFocused = state.index === index;
-                const IconComponent = TAB_ICONS[route.name];
-
-                const onPress = () => {
-                    if (route.name === 'More') {
-                        onToggleMore();
-                        return;
-                    }
-                    const event = navigation.emit({
-                        type: 'tabPress',
-                        target: route.key,
-                        canPreventDefault: true,
-                    });
-                    if (!isFocused && !event.defaultPrevented)
-                        navigation.navigate(route.name);
-                };
+            {TAB_ORDER.map((tab) => {
+                const isFocused = activeTab === tab;
+                const IconComponent = TAB_ICONS[tab];
 
                 if (isFocused) {
                     return (
                         <TouchableOpacity
-                            key={route.key}
-                            onPress={onPress}
+                            key={tab}
+                            onPress={() => onTabPress(tab)}
                             activeOpacity={0.8}
                             style={styles.tabSlot}
                         >
@@ -213,8 +191,8 @@ const CustomTabBar =
 
                 return (
                     <TouchableOpacity
-                        key={route.key}
-                        onPress={onPress}
+                        key={tab}
+                        onPress={() => onTabPress(tab)}
                         activeOpacity={0.7}
                         style={styles.tabSlot}
                     >
@@ -230,34 +208,49 @@ const CustomTabBar =
     );
 };
 
-export const BottomBar =  ({initialRoute = ROUTES.DASHBOARD}:{initialRoute?:string}) => {
+export const BottomBar = ({initialRoute = ROUTES.DASHBOARD}: {initialRoute?: string}) => {
     const [showMore, setShowMore] = useState(false);
+    const [activeTab, setActiveTab] = useState(initialRoute);
+    const [moreTitle, setMoreTitle] = useState('More');
+
+    const renderScreen = () => {
+        switch (activeTab) {
+            case ROUTES.DASHBOARD: return <DashboardScreen />;
+            case ROUTES.LIBRARY: return <LibraryScreen />;
+            case ROUTES.ANALYTICS: return <AnalyticsScreen />;
+            case ROUTES.DISCOVER: return <DiscoverScreen />;
+            case 'More': return (
+                <MainContentContainer>
+                    <UnderConstruction title={moreTitle} message="Coming soon." />
+                </MainContentContainer>
+            );
+            default: return <DashboardScreen />;
+        }
+    };
 
     return (
         <View style={{flex: 1}}>
-            {/* @ts-ignore */}
-            <Tab.Navigator
-                tabBar={props => (
-                    <CustomTabBar {...props}
-                        showMore={showMore}
-                        onToggleMore={() => setShowMore(prev => !prev)}
-                    />
-                    )}
-                    /* @ts-ignore */
-                    initialRouteName={initialRoute}
-                    screenOptions={{headerShown: false, sceneStyle: {backgroundColor: 'transparent'}}}
-                >
-                <Tab.Screen name={ROUTES.ANALYTICS} component={AnalyticsScreen}/>
-                <Tab.Screen name={ROUTES.LIBRARY} component={LibraryScreen}/>
-                <Tab.Screen name={ROUTES.DASHBOARD} component={DashboardScreen}/>
-                <Tab.Screen name={ROUTES.DISCOVER} component={DiscoverScreen}/>
-                <Tab.Screen name="More" component={MoreScreen}/>
-            </Tab.Navigator>
-            <MoreDrawer visible={showMore} onClose={() => setShowMore(false)}
-                /* @ts-ignore */
+            {renderScreen()}
+            <CustomTabBar
+                activeTab={activeTab}
+                onTabPress={(tab) => {
+                    if (tab === 'More') {
+                        setShowMore(prev => !prev);
+                    } else {
+                        setActiveTab(tab);
+                        setShowMore(false);
+                    }
+                }}
+            />
+            <MoreDrawer
+                visible={showMore}
+                onClose={() => setShowMore(false)}
                 onNavigate={(label: string) => {
-                setShowMore(false);
-            }}/>
+                    setMoreTitle(label);
+                    setActiveTab('More');
+                    setShowMore(false);
+                }}
+            />
         </View>
     );
 };
