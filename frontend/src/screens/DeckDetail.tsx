@@ -32,7 +32,7 @@ export const DeckDetail = () => {
     const fetchCards = React.useCallback(async () => {
         if (!session?.access_token) return;
         try {
-            const res = await fetch(`http://127.0.0.1:8000/api/cards/?deck_id=${deckId}`, {
+            const res = await fetch(`${process.env.EXPO_PUBLIC_API_URL || 'http://127.0.0.1:8000'}/api/cards/?deck_id=${deckId}`, {
                 headers: {'Authorization': `Bearer ${session.access_token}`}
             });
             if (res.ok) {
@@ -57,8 +57,8 @@ export const DeckDetail = () => {
         try {
             const isEditing = !!editingCard;
             const url = isEditing
-                ? `http://127.0.0.1:8000/api/cards/${editingCard.id}/`
-                : 'http://127.0.0.1:8000/api/cards/';
+                ? `${process.env.EXPO_PUBLIC_API_URL || 'http://127.0.0.1:8000'}/api/cards/${editingCard.id}/`
+                : `${process.env.EXPO_PUBLIC_API_URL || 'http://127.0.0.1:8000'}/api/cards/`;
             const method = isEditing ? 'PUT' : 'POST';
 
             const payload = isEditing ? data : { ...data, deck_ids: [deckId] };
@@ -86,7 +86,7 @@ export const DeckDetail = () => {
 
     const handleDeleteCard = async (cardId: number) => {
         try {
-            const res = await fetch(`http://127.0.0.1:8000/api/cards/${cardId}/`, {
+            const res = await fetch(`${process.env.EXPO_PUBLIC_API_URL || 'http://127.0.0.1:8000'}/api/cards/${cardId}/`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${session?.access_token}` }
             });

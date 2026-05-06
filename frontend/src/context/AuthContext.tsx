@@ -40,7 +40,7 @@ export const AuthProvider = ({children}: {children: React.ReactNode}) => {
 
         if (currentSession?.access_token) {
             try {
-                const res = await fetch('http://127.0.0.1:8000/api/auth/profile', {
+                const res = await fetch(`${process.env.EXPO_PUBLIC_API_URL || 'http://127.0.0.1:8000'}/api/auth/profile`, {
                     headers: {'Authorization': `Bearer ${currentSession.access_token}`}
                 });
                 if (res.ok) setProfile(await res.json());

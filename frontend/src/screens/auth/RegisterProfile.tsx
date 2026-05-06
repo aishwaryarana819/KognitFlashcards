@@ -54,7 +54,7 @@ const RegisterProfile = ({onNavigateLogin, onNavigateDashboard}: RegisterProfile
 
                 const delayDebounceFn = setTimeout(async () => {
                     try {
-                        const response = await fetch(`http://127.0.0.1:8000/api/auth/check-username?q=${username}`);
+                        const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL || 'http://127.0.0.1:8000'}/api/auth/check-username?q=${username}`);
                         const data = await response.json();
 
                         if (!response.ok) setUsernameError(data.error || "Failed to check availability");
@@ -343,7 +343,7 @@ const RegisterProfile = ({onNavigateLogin, onNavigateDashboard}: RegisterProfile
                                 if (!token) throw new Error("Missing active session token. Are you logged in? ");
                                 console.log("[Profile] 3. Token retrieved.");
 
-                                const response = await fetch('http://127.0.0.1:8000/api/auth/finalize-profile', {
+                                const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL || 'http://127.0.0.1:8000'}/api/auth/finalize-profile`, {
                                     method: 'POST',
                                     headers: {
                                         'Content-Type': 'application/json',

@@ -61,7 +61,7 @@ export const ReviewSession = ({ navigation, route }: Props) => {
             const params = route.params as { deckId?: number } | undefined;
             const deckIdParam = params?.deckId ? `?deck_id=${params.deckId}` : '';
 
-            const response = await fetch(`http://127.0.0.1:8000/api/review/queue/${deckIdParam}`, {
+            const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL || 'http://127.0.0.1:8000'}/api/review/queue/${deckIdParam}`, {
                 headers: { 'Authorization': `Bearer ${session.session?.access_token}` }
             });
 
@@ -98,7 +98,7 @@ export const ReviewSession = ({ navigation, route }: Props) => {
 
         try {
             const { data: session } = await supabase.auth.getSession();
-            await fetch(`http://127.0.0.1:8000/api/review/submit/`, {
+            await fetch(`${process.env.EXPO_PUBLIC_API_URL || 'http://127.0.0.1:8000'}/api/review/submit/`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${session.session?.access_token}`,

@@ -19,7 +19,7 @@ export const DailyGoalWidget = () => {
     const fetchStats = async () => {
         try {
             const { data: session } = await supabase.auth.getSession();
-            const response = await fetch('http://127.0.0.1:8000/api/review/stats/today/', {
+            const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL || 'http://127.0.0.1:8000'}/api/review/stats/today/`, {
                 headers: { 'Authorization': `Bearer ${session.session?.access_token}` }
             });
             if (response.ok) {

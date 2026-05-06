@@ -44,9 +44,9 @@ export const Library = () => {
         if (!session?.access_token) return;
         try {
             const [shelvesRes, decksRes, cardsRes] = await Promise.all([
-                fetch('http://127.0.0.1:8000/api/shelves/', { headers: {'Authorization': `Bearer ${session.access_token}`} }),
-                fetch('http://127.0.0.1:8000/api/decks/', { headers: {'Authorization': `Bearer ${session.access_token}`} }),
-                fetch('http://127.0.0.1:8000/api/cards/', { headers: {'Authorization': `Bearer ${session.access_token}`} })
+                fetch(`${process.env.EXPO_PUBLIC_API_URL || 'http://127.0.0.1:8000'}/api/shelves/`, { headers: {'Authorization': `Bearer ${session.access_token}`} }),
+                fetch(`${process.env.EXPO_PUBLIC_API_URL || 'http://127.0.0.1:8000'}/api/decks/`, { headers: {'Authorization': `Bearer ${session.access_token}`} }),
+                fetch(`${process.env.EXPO_PUBLIC_API_URL || 'http://127.0.0.1:8000'}/api/cards/`, { headers: {'Authorization': `Bearer ${session.access_token}`} })
             ]);
 
             if (shelvesRes.ok && decksRes.ok && cardsRes.ok) {
@@ -91,7 +91,7 @@ export const Library = () => {
 
     const handleCreateShelf = async (data: any) => {
         try {
-            const res = await fetch('http://127.0.0.1:8000/api/shelves/', {
+            const res = await fetch(`${process.env.EXPO_PUBLIC_API_URL || 'http://127.0.0.1:8000'}/api/shelves/`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${session?.access_token}`,
@@ -115,7 +115,7 @@ export const Library = () => {
 
     const handleDeleteShelf = async (shelfId: number) => {
         try {
-            const res = await fetch(`http://127.0.0.1:8000/api/shelves/${shelfId}/`, {
+            const res = await fetch(`${process.env.EXPO_PUBLIC_API_URL || 'http://127.0.0.1:8000'}/api/shelves/${shelfId}/`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${session?.access_token}`,
@@ -136,7 +136,7 @@ export const Library = () => {
     const handleEditShelf = async (data: any) => {
         if (!editingShelf) return;
         try {
-            const res = await fetch(`http://127.0.0.1:8000/api/shelves/${editingShelf.id}/`, {
+            const res = await fetch(`${process.env.EXPO_PUBLIC_API_URL || 'http://127.0.0.1:8000'}/api/shelves/${editingShelf.id}/`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${session?.access_token}`,
@@ -161,7 +161,7 @@ export const Library = () => {
 
     const handleCreateDeck = async (data: any) => {
         try {
-            const res = await fetch('http://127.0.0.1:8000/api/decks/', {
+            const res = await fetch(`${process.env.EXPO_PUBLIC_API_URL || 'http://127.0.0.1:8000'}/api/decks/`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${session?.access_token}`,
@@ -185,7 +185,7 @@ export const Library = () => {
     const handleEditDeck = async (data: any) => {
         if (!editingDeck) return;
         try {
-            const res = await fetch(`http://127.0.0.1:8000/api/decks/${editingDeck.id}/`, {
+            const res = await fetch(`${process.env.EXPO_PUBLIC_API_URL || 'http://127.0.0.1:8000'}/api/decks/${editingDeck.id}/`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${session?.access_token}`,
@@ -209,7 +209,7 @@ export const Library = () => {
 
     const handleDeleteDeck = async (deckId: number) => {
         try {
-            const res = await fetch(`http://127.0.0.1:8000/api/decks/${deckId}/`, {
+            const res = await fetch(`${process.env.EXPO_PUBLIC_API_URL || 'http://127.0.0.1:8000'}/api/decks/${deckId}/`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${session?.access_token}`,
@@ -231,8 +231,8 @@ export const Library = () => {
         try {
             const isEditing = !!editingCard;
             const url = isEditing
-                ? `http://127.0.0.1:8000/api/cards/${editingCard.id}/`
-                : 'http://127.0.0.1:8000/api/cards/';
+                ? `${process.env.EXPO_PUBLIC_API_URL || 'http://127.0.0.1:8000'}/api/cards/${editingCard.id}/`
+                : `${process.env.EXPO_PUBLIC_API_URL || 'http://127.0.0.1:8000'}/api/cards/`;
             const method = isEditing ? 'PUT' : 'POST';
 
             const res = await fetch(url, {
@@ -268,7 +268,7 @@ export const Library = () => {
 
     const handleDeleteCard = async (cardId: number) => {
         try {
-            const res = await fetch(`http://127.0.0.1:8000/api/cards/${cardId}/`, {
+            const res = await fetch(`${process.env.EXPO_PUBLIC_API_URL || 'http://127.0.0.1:8000'}/api/cards/${cardId}/`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${session?.access_token}` }
             });

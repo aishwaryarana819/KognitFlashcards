@@ -28,7 +28,7 @@ export const ShelfDetail = () => {
         const fetchDecks = async () => {
             if (!session?.access_token) return;
             try {
-                const res = await fetch(`http://127.0.0.1:8000/api/decks/?shelf_id=${shelfId}`, {
+                const res = await fetch(`${process.env.EXPO_PUBLIC_API_URL || 'http://127.0.0.1:8000'}/api/decks/?shelf_id=${shelfId}`, {
                     headers: {'Authorization': `Bearer ${session.access_token}`}
                 });
                 if (res.ok) {
