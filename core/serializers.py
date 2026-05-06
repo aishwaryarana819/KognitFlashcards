@@ -32,14 +32,12 @@ class CardSerializer(serializers.ModelSerializer):
         model = Card
         fields = ['id', 'front', 'back', 'card_type', 'image_url', 'notes', 'is_suspended', 'fsrs_state', 'tags', 'deck_ids', 'created_at', 'updated_at']
 
-    # Fixed Indentation: Moved outside of class Meta
     def get_tags(self, obj):
         ctype = ContentType.objects.get_for_model(Card)
         tag_ids = TaggedItem.objects.filter(content_type=ctype, object_id=obj.id).values_list('tag_id', flat=True)
         tags = Tag.objects.filter(id__in=tag_ids)
         return TagSerializer(tags, many=True).data
 
-    # Fixed Indentation: Moved outside of class Meta
     def get_deck_ids(self, obj):
         return list(DeckCard.objects.filter(card=obj).values_list('deck_id', flat=True))
 
@@ -100,7 +98,7 @@ class DeckCreateSerializer(serializers.ModelSerializer):
         read_only_fields = ['id']
 
     def create(self, validated_data):
-        validated_data.pop('shelf_ids', None)  # Removed from the database kwargs
+        validated_data.pop('shelf_ids', None)
         return super().create(validated_data)
 
 
@@ -112,105 +110,6 @@ class CardCreateSerializer(serializers.ModelSerializer):
         fields = ['front', 'back', 'card_type', 'image_url', 'notes', 'deck_ids']
 
     def create(self, validated_data):
-        validated_data.pop('deck_ids', None) # Removed from the database kwargs
+        validated_data.pop('deck_ids', None)
         return super().create(validated_data)
-
-
-""""
-class CardSerializer(serializers.ModelSerializer):
-    fsrs_state = CardReviewSerializer(read_only=True)
-    tags = serializers.SerializerMethodField()
-    deck_ids = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Card
-        fields = ['id', 'front', 'back', 'card_type', 'image_url', 'notes', 'is_suspended', 'fsrs_state', 'tags', 'deck_ids', 'created_at', 'updated_at']
-
-        def get_tags(self, obj):
-            ctype = ContentType.objects.get_for_model(Card)
-            tag_ids = TaggedItem.objects.filter(content_type=ctype, object_id=obj.id).values_list('tag_id', flat=True)
-            tags = Tag.objects.filter(id__in=tag_ids)
-            return TagSerializer(tags, many=True).data
-
-        def get_deck_ids(self, obj):
-            return list(DeckCard.objects.filter(card=obj).values_list('deck_id', flat=True))
-
-        def create(self, validated_data):
-            validated_data.pop('deck_ids', None)  # Prevent DRF from trying to insert this into the DB
-            return super().create(validated_data)
-
-class DeckSerializer(serializers.ModelSerializer):
-    tags = serializers.SerializerMethodField()
-    shelf_ids = serializers.SerializerMethodField()
-    card_count = serializers.SerializerMethodField() # Fixed
-
-    class Meta:
-        model = Deck
-        fields = ['id', 'name', 'description', 'color', 'icon', 'position', 'is_archived', 'tags', 'shelf_ids', 'card_count', 'created_at', 'updated_at']
-
-    def get_tags(self, obj):
-        ctype = ContentType.objects.get_for_model(Deck)
-        tag_ids = TaggedItem.objects.filter(content_type=ctype, object_id=obj.id).values_list('tag_id', flat=True)
-        tags = Tag.objects.filter(id__in=tag_ids)
-        return TagSerializer(tags, many=True).data
-
-    def get_shelf_ids(self, obj):
-        return list(ShelfDeck.objects.filter(deck=obj).values_list('shelf_id', flat=True))
-
-    def get_card_count(self, obj):
-        return obj.deck_cards.count()
-
-    def create(self, validated_data):
-        validated_data.pop('shelf_ids', None)  # Prevent DRF from trying to insert this into the DB
-        return super().create(validated_data)
-
-class ShelfSerializer(serializers.ModelSerializer):
-    tags = serializers.SerializerMethodField()
-    deck_count = serializers.SerializerMethodField() # Fixed
-
-    class Meta:
-        model = Shelf
-        fields = ['id', 'name', 'description', 'color', 'icon', 'position', 'is_archived', 'tags', 'deck_count', 'created_at', 'updated_at']
-
-    # Fixed Indentation: Moved outside of class Meta
-    def get_tags(self, obj):
-        ctype = ContentType.objects.get_for_model(Shelf)
-        tag_ids = TaggedItem.objects.filter(content_type=ctype, object_id=obj.id).values_list('tag_id', flat=True)
-        tags = Tag.objects.filter(id__in=tag_ids)
-        return TagSerializer(tags, many=True).data
-
-    def get_deck_count(self, obj):
-        return obj.shelf_decks.count()
-
-class ShelfCreateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Shelf
-        fields = ['id', 'name', 'description', 'color', 'icon'] # Added 'id'
-        read_only_fields = ['id']
-
-class DeckCreateSerializer(serializers.ModelSerializer):
-    shelf_ids = serializers.ListField(child=serializers.IntegerField(), required=False, write_only=True)
-
-    class Meta:
-        model = Deck
-        fields = ['id', 'name', 'description', 'color', 'icon', 'shelf_ids'] # Added 'id'
-        read_only_fields = ['id']
-
-class CardCreateSerializer(serializers.ModelSerializer):
-    deck_ids = serializers.ListField(child=serializers.IntegerField(), required=False, write_only=True)
-
-    class Meta:
-        model = Card
-        fields = ['front', 'back', 'card_type', 'image_url', 'notes', 'deck_ids']
-"""
-
-
-
-
-
-
-
-
-
-
 

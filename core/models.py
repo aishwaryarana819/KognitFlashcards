@@ -104,11 +104,10 @@ class CardReview(models.Model):
     reps = models.IntegerField(default=0)
     lapses = models.IntegerField(default=0)
     state = models.IntegerField(default=0)
+    step = models.IntegerField(null=True, blank=True, default=0)
     due = models.DateTimeField(default=timezone.now)
     last_review = models.DateTimeField(null=True, blank=True)
 
-    def __str__(self):
-        return f"FSRS: {self.card.front[:20]}"
 
 class ReviewLog(models.Model):
     card = models.ForeignKey(Card, on_delete=models.CASCADE, related_name='review_logs')

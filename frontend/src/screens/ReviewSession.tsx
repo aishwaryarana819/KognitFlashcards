@@ -262,6 +262,22 @@ export const ReviewSession = ({ navigation, route }: Props) => {
                                     fontSize: typography.fontSizes.bodyL
                                 }
                             ]}>{currentCard.back}</Text>
+                            {currentCard.notes ? (
+                                <>
+                                    <View style={[styles.divider, { borderWidth: 0.5, borderColor: isDark ? lightPalette.lighter : lightPalette.darker, marginTop: 20 }]} />
+                                    <Text style={[
+                                        styles.cardText,
+                                        {
+                                            color: activePalette.regular,
+                                            fontFamily: typography.fontFamilies.secondary,
+                                            fontWeight: typography.fontWeights.regular,
+                                            fontSize: typography.fontSizes.bodyS,
+                                            fontStyle: 'italic',
+                                            marginTop: 10,
+                                        }
+                                    ]}>{currentCard.notes}</Text>
+                                </>
+                            ) : null}
                         </Animated.View>
                     </View>
                 )}

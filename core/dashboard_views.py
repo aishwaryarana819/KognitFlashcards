@@ -42,9 +42,12 @@ def dashboard_stats(request):
     sixty_days_ago = today - timedelta(days=60)
 
     logs_today = ReviewLog.objects.filter(user=user, reviewed_at__date=today)
-    cards_reviewed_today = logs_today.count()
-
-    inaccuracy_today = logs_today.filter(rating__in=[1, 2]).count()
+    today_stats = logs_today.aggregate(
+        cards_reviewed=Count('id'),
+        inaccuracy=Count('id', filter=Q(rating__in=[1, 2]))
+    )
+    cards_reviewed_today = today_stats['cards_reviewed']
+    inaccuracy_today = today_stats['inaccuracy']
 
     estimated_seconds = cards_reviewed_today * 30
     hours, remainder = divmod(estimated_seconds, 3600)
@@ -52,33 +55,38 @@ def dashboard_stats(request):
     time_spent_str = f"{int(hours)}h {int(minutes)}m" if hours > 0 else f"{int(minutes)}m"
 
     cards_qs = Card.objects.filter(user=user, is_deleted=False)
-    cards_without_review = cards_qs.filter(fsrs_state__isnull=True).count()
+    card_counts = cards_qs.aggregate(
+        without_review=Count('id', filter=Q(fsrs_state__isnull=True)),
+        remaining_due=Count('id', filter=Q(fsrs_state__due__lte=now) | Q(fsrs_state__isnull=True)),
+        new_count=Count('id', filter=Q(fsrs_state__state=0) | Q(fsrs_state__isnull=True)),
+        n_last_30=Count('id', filter=(Q(fsrs_state__state=0) | Q(fsrs_state__isnull=True)) & Q(created_at__gte=thirty_days_ago)),
+        n_prev_30=Count('id', filter=(Q(fsrs_state__state=0) | Q(fsrs_state__isnull=True)) & Q(created_at__gte=sixty_days_ago, created_at__lt=thirty_days_ago)),
+    )
+    cards_without_review = card_counts['without_review']
+    remaining_due = card_counts['remaining_due']
+    new_count = card_counts['new_count']
+    new_trend = round(((card_counts['n_last_30'] - card_counts['n_prev_30']) / (card_counts['n_prev_30'] or 1)) * 100)
 
     user_card_reviews = CardReview.objects.filter(card__user=user, card__is_deleted=False)
+    review_stats = user_card_reviews.aggregate(
+        mastered_count=Count('id', filter=Q(stability__gt=21)),
+        mastered_avg=Avg('scheduled_days', filter=Q(stability__gt=21)),
+        m_last_30=Count('id', filter=Q(stability__gt=21, last_review__gte=thirty_days_ago)),
+        m_prev_30=Count('id', filter=Q(stability__gt=21, last_review__gte=sixty_days_ago, last_review__lt=thirty_days_ago)),
+        
+        learning_count=Count('id', filter=Q(state__in=[1, 3])),
+        learning_avg=Avg('scheduled_days', filter=Q(state__in=[1, 3])),
+        l_last_30=Count('id', filter=Q(state__in=[1, 3], last_review__gte=thirty_days_ago)),
+        l_prev_30=Count('id', filter=Q(state__in=[1, 3], last_review__gte=sixty_days_ago, last_review__lt=thirty_days_ago)),
+    )
 
-    mastered_qs = user_card_reviews.filter(stability__gt=21)
-    mastered_count = mastered_qs.count()
-    mastered_int = mastered_qs.aggregate(avg=Avg('scheduled_days'))['avg'] or 0
-    m_last_30 = mastered_qs.filter(last_review__gte=thirty_days_ago).count()
-    m_prev_30 = mastered_qs.filter(last_review__gte=sixty_days_ago, last_review__lt=thirty_days_ago).count()
-    mastered_trend = round(((m_last_30 - m_prev_30) / (m_prev_30 or 1)) * 100)
+    mastered_count = review_stats['mastered_count']
+    mastered_int = review_stats['mastered_avg'] or 0
+    mastered_trend = round(((review_stats['m_last_30'] - review_stats['m_prev_30']) / (review_stats['m_prev_30'] or 1)) * 100)
 
-    learning_qs = user_card_reviews.filter(state__in=[1, 3])
-    learning_count = learning_qs.count()
-    learning_int = learning_qs.aggregate(avg=Avg('scheduled_days'))['avg'] or 0
-    l_last_30 = learning_qs.filter(last_review__gte=thirty_days_ago).count()
-    l_prev_30 = learning_qs.filter(last_review__gte=sixty_days_ago, last_review__lt=thirty_days_ago).count()
-    learning_trend = round(((l_last_30 - l_prev_30) / (l_prev_30 or 1)) * 100)
-
-    new_qs = cards_qs.filter(Q(fsrs_state__state=0) | Q(fsrs_state__isnull=True))
-    new_count = new_qs.count()
-    n_last_30 = new_qs.filter(created_at__gte=thirty_days_ago).count()
-    n_prev_30 = new_qs.filter(created_at__gte=sixty_days_ago, created_at__lt=thirty_days_ago).count()
-    new_trend = round(((n_last_30 - n_prev_30) / (n_prev_30 or 1)) * 100)
-
-    remaining_due = cards_qs.filter(
-        Q(fsrs_state__due__lte=now) | Q(fsrs_state__isnull=True)
-    ).count()
+    learning_count = review_stats['learning_count']
+    learning_int = review_stats['learning_avg'] or 0
+    learning_trend = round(((review_stats['l_last_30'] - review_stats['l_prev_30']) / (review_stats['l_prev_30'] or 1)) * 100)
 
     total_relevant_today = cards_reviewed_today + remaining_due
 
@@ -100,17 +108,24 @@ def dashboard_stats(request):
             "count": heatmap_dict.get(date_str, 0)
         })
 
-    streak_count = 0
-    is_active_today = logs_today.exists()
+    is_active_today = cards_reviewed_today > 0
 
+    recent_review_dates = set(
+        ReviewLog.objects.filter(
+            user=user,
+            reviewed_at__date__gte=today - timedelta(days=365)
+        ).values_list('reviewed_at__date', flat=True).distinct()
+    )
+
+    streak_count = 0
     check_date = today if is_active_today else today - timedelta(days=1)
-    while True:
-        has_reviews = ReviewLog.objects.filter(user=user, reviewed_at__date=check_date).exists()
-        if has_reviews:
-            streak_count += 1
-            check_date -= timedelta(days=1)
-        else:
-            break
+    while check_date in recent_review_dates:
+        streak_count += 1
+        check_date -= timedelta(days=1)
+
+    mastered_qs = user_card_reviews.filter(stability__gt=21)
+    learning_qs = user_card_reviews.filter(state__in=[1, 3])
+    new_qs = cards_qs.filter(Q(fsrs_state__state=0) | Q(fsrs_state__isnull=True))
 
     return Response({
         "today": {

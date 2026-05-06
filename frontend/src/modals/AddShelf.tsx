@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import {View, Text, Modal, TextInput, TouchableOpacity, StyleSheet, ScrollView, Platform, KeyboardAvoidingView, useWindowDimensions} from "react-native";
 import {useTheme} from "../context/ThemeContext";
 import {getTypography} from "../theme/typography";
@@ -69,7 +69,7 @@ export const AddShelf = ({visible, onClose, onSubmit, initialData}: AddShelfProp
     const [selectedIcon, setSelectedIcon] = useState(SHELF_ICONS[0]);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (visible && initialData) {
             setName(initialData.name);
             setDescription(initialData.description || "");
@@ -81,7 +81,7 @@ export const AddShelf = ({visible, onClose, onSubmit, initialData}: AddShelfProp
             setSelectedColor(SHELF_COLORS[0]);
             setSelectedIcon(SHELF_ICONS[0]);
         }
-    }, [visible, initialData]);
+    }, [visible]);
 
     const handleCreate = async () => {
         if (!name.trim() || isSubmitting) return;

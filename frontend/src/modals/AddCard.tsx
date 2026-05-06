@@ -52,7 +52,7 @@ export const AddCard = ({visible, onClose, onSubmit, initialData, availableDecks
                 setSelectedDeckId(null); // Leave it unselected by default!
             }
         }
-    }, [visible, initialData, defaultDeckId, availableDecks]);
+    }, [visible]);
 
     const handleCreate = async () => {
         if (!front.trim() || !back.trim() || isSubmitting) return;

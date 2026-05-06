@@ -5,6 +5,12 @@ from rest_framework import authentication
 from rest_framework import exceptions
 from supabase import create_client, Client
 
+_supabase_client: Client | None = None
+def get_supabase_client() -> Client:
+    global _supabase_client
+    if _supabase_client is None:
+        _supabase_client = create_client(settings.SUPABASE_URL, settings.SUPABASE_SERVICE_ROLE_KEY)
+    return _supabase_client
 
 class SupabaseJWTAuthentication(authentication.BaseAuthentication):
     def authenticate_header(self, request):
@@ -21,11 +27,9 @@ class SupabaseJWTAuthentication(authentication.BaseAuthentication):
         if not token or token == "undefined":
             return None
 
-        # 1. Initialize Supabase Client
-        supabase: Client = create_client(settings.SUPABASE_URL, settings.SUPABASE_SERVICE_ROLE_KEY)
+        supabase = get_supabase_client()
 
         try:
-            # 2. Automatically cryptographically verify the token and get the user
             user_res = supabase.auth.get_user(token)
             supabase_user = user_res.user
             if not supabase_user:
@@ -37,7 +41,6 @@ class SupabaseJWTAuthentication(authentication.BaseAuthentication):
         except Exception as e:
             raise exceptions.AuthenticationFailed(f'Supabase rejected token: {str(e)}')
 
-        # 3. Securely map them to our Django Model
         try:
             from core.models import Profile
             profile = Profile.objects.get(supabase_uid=supabase_uid)

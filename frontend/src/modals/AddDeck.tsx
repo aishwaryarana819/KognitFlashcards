@@ -84,7 +84,7 @@ export const AddDeck = ({visible, onClose, onSubmit, initialData, availableShelv
             setSelectedIcon(DECK_ICONS[0]);
             setSelectedShelves([]);
         }
-    }, [visible, initialData]);
+    }, [visible]);
 
     const handleCreate = async () => {
         if (!name.trim() || isSubmitting) return;
