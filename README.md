@@ -6,6 +6,8 @@ Welcome to **Kognit Flashcards** — a powerful, beautifully designed spaced-rep
 Unlike basic flashcard apps, Kognit acts as a "Sanctuary for Scattered Memory," bringing an elegant, distraction-free interface to the rigorous demands of active recall.
 
 ## Features
+- **Fully Responsive across Web & Mobile**
+- **Complete & Free Sync** 
 - **FSRS v6 Integration:** Powered by the cutting-edge Free Spaced Repetition Scheduler (FSRS v6.3.1) algorithm to optimize your learning intervals and minimize study time.
 - **Hierarchical Organization:** Organize your knowledge seamlessly using Shelves, Decks, and Cards.
 - **Dynamic Review Sessions:** A distraction-free study environment featuring an adaptive floating review palette and performance tracking.
@@ -22,12 +24,9 @@ Unlike basic flashcard apps, Kognit acts as a "Sanctuary for Scattered Memory," 
 - **Deployment:** Vercel and Render
 
 ## Known Bugs
-While Kognit is stable for daily use, there are a few known quirks we are actively working on:
 - Light logo icon doesn't appear in Safari.
-- Fonts appear about 40% uglier (but still legible) on Firefox & Safari due to varying browser rendering engines.
+- Fonts appear about 40% uglier (but still fine) on Firefox & Safari due to varying browser rendering engines.
 - Google Login currently does not work (OAuth callback routing issue).
-- The Floating Review Palette may take a few seconds to initially sync due counts on very slow internet connections.
-- Not a bug BUT things are kinda slow as of now
 
 ## Coming Soon
 Currently, Dashboard & Library is functional. 

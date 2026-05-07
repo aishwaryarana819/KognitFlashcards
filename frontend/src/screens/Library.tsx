@@ -74,6 +74,11 @@ export const Library = () => {
         fetchLibraryData();
     }, [fetchLibraryData]);
 
+    useEffect(() => {
+        const sub = DeviceEventEmitter.addListener('library_updated', fetchLibraryData);
+        return () => sub.remove();
+    }, [fetchLibraryData]);
+
     //
     // useEffect(() => {
     //     const sub1 = DeviceEventEmitter.addListener('open_add_shelf', () => setIsAddShelfVisible(true));
@@ -104,6 +109,7 @@ export const Library = () => {
             if (res.ok) {
                 const newShelf = await res.json();
                 setShelves(prev => [newShelf, ...prev]);
+                DeviceEventEmitter.emit('library_updated');
                 setIsAddShelfVisible(false);
             } else {
                 const errText = await res.text();
@@ -149,6 +155,7 @@ export const Library = () => {
             if (res.ok) {
                 const updatedShelf = await res.json();
                 setShelves(prev => prev.map(s => s.id === updatedShelf.id ? updatedShelf : s));
+                DeviceEventEmitter.emit('library_updated');
                 setIsAddShelfVisible(false);
                 setEditingShelf(null);
             } else {
@@ -172,7 +179,9 @@ export const Library = () => {
             });
 
             if (res.ok) {
-                await fetchLibraryData();
+                const newDeck = await res.json();
+                setDecks(prev => [newDeck, ...prev]);
+                DeviceEventEmitter.emit('library_updated');
                 setIsAddDeckVisible(false);
             } else {
                 const errText = await res.text();
@@ -196,7 +205,9 @@ export const Library = () => {
             });
 
             if (res.ok) {
-                await fetchLibraryData();
+                const updatedDeck = await res.json();
+                setDecks(prev => prev.map(d => d.id === updatedDeck.id ? updatedDeck : d));
+                DeviceEventEmitter.emit('library_updated');
                 setIsAddDeckVisible(false);
                 setEditingDeck(null);
             } else {
@@ -250,10 +261,12 @@ export const Library = () => {
 
                 if (isEditing) {
                     setCards(prev => prev.map(c => c.id === newCard.id ? newCard : c).filter(c => !c.deck_ids || c.deck_ids.length === 0));
+                    setAllCards(prev => prev.map(c => c.id === newCard.id ? newCard : c));
                 } else {
                     if (!newCard.deck_ids || newCard.deck_ids.length === 0) {
                         setCards(prev => [newCard, ...prev]);
                     }
+                    setAllCards(prev => [newCard, ...prev]);
                 }
 
                 DeviceEventEmitter.emit('library_updated');
@@ -332,53 +345,48 @@ export const Library = () => {
                 <View style={[styles.contentArea, {justifyContent: 'center', alignItems: 'center', paddingBottom: 150}]}>
                     <ActivityIndicator size="large" color={activePalette.darker} />
                 </View>
-            ) : (shelves.length === 0 && decks.length === 0 && cards.length === 0) ? (
-                <View style={styles.contentArea}>
-                    <Text style={{ fontFamily: typography.fontFamilies.secondary, color: activePalette.darker, fontSize: typography.fontSizes.bodyL, textAlign: 'center', marginTop: 150, opacity: 0.5}}>
-                        Your library is empty. Click + New to get started!
-                    </Text>
-                </View>
             ) : (
                 <ScrollView style={styles.contentArea} contentContainerStyle={{paddingBottom: isMobile ? 180 : 150}} showsVerticalScrollIndicator={false}>
-                    {shelves.length > 0 && (
-                        <View style={[styles.sectionContainer, {backgroundColor: isMobile ? activePalette.bg2 : activePalette.bg}]}>
-                            <TouchableOpacity
-                                style={[styles.sectionHeader, {paddingRight: 0}]}
-                                onPress={() => setExpandedSection(expandedSection === 'shelves' ? null : 'shelves')}
-                            >
-                                {/* @ts-ignore */}
-                                <Text style={{ fontFamily: typography.fontFamilies.main, fontSize: typography.fontSizes.button, fontWeight: 'bold', color: activePalette.darker }}>Shelves</Text>
-                                <Ionicons name={expandedSection === 'shelves' ? 'chevron-down' : 'chevron-forward'} size={20} color={activePalette.darker} />
-                            </TouchableOpacity>
-                            {expandedSection === 'shelves' ? (
-                                <View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 16}}>
-                                    {shelves.map(shelf => (
-                                        <View key={`shelf-${shelf.id}`} style={{width: viewMode === 'grid' ? (isMobile ? '48%' : 220) : '100%'}}>
-                                            <ShelfCard name={shelf.name} deckCount={shelf.deck_count || 0} colorHex={shelf.color}
-                                                       viewMode={viewMode}
-                                                       onPress={() => navigation.navigate('ShelfDetail', { shelfId: shelf.id, shelfName: shelf.name, colorHex: shelf.color })}
-                                                       onDelete={() => setDeletingShelf(shelf)}
-                                                       onEdit={() => { setEditingShelf(shelf); setIsAddShelfVisible(true); }}
-                                            />
-                                        </View>
-                                    ))}
-                                </View>
-                            ) : (
-                                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{gap: 16}}>
-                                    {shelves.map(shelf => (
-                                        <View key={`shelf-${shelf.id}`} style={{width: viewMode === 'grid' ? (isMobile ? 140 : 220) : (isMobile ? 240 : 350)}}>
-                                            <ShelfCard name={shelf.name} deckCount={shelf.deck_count || 0} colorHex={shelf.color}
-                                                       viewMode={viewMode}
-                                                       onPress={() => navigation.navigate('ShelfDetail', { shelfId: shelf.id, shelfName: shelf.name, colorHex: shelf.color })}
-                                                       onDelete={() => setDeletingShelf(shelf)}
-                                                       onEdit={() => { setEditingShelf(shelf); setIsAddShelfVisible(true); }}
-                                            />
-                                        </View>
-                                    ))}
-                                </ScrollView>
-                            )}
-                        </View>
-                    )}
+                    <View style={[styles.sectionContainer, {backgroundColor: isMobile ? activePalette.bg2 : activePalette.bg}]}>
+                        <TouchableOpacity
+                            style={[styles.sectionHeader, {paddingRight: 0}]}
+                            onPress={() => setExpandedSection(expandedSection === 'shelves' ? null : 'shelves')}
+                        >
+                            {/* @ts-ignore */}
+                            <Text style={{ fontFamily: typography.fontFamilies.main, fontSize: typography.fontSizes.button, fontWeight: 'bold', color: activePalette.darker }}>Shelves</Text>
+                            <Ionicons name={expandedSection === 'shelves' ? 'chevron-down' : 'chevron-forward'} size={20} color={activePalette.darker} />
+                        </TouchableOpacity>
+
+                        {shelves.length === 0 ? (
+                                <Text style={{color: activePalette.regular, fontFamily: typography.fontFamilies.secondary, marginTop: 10, fontStyle: 'italic'}}>Create your first shelf from New +</Text>
+                        ) : expandedSection === 'shelves' ? (
+                            <View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 16}}>
+                                {shelves.map(shelf => (
+                                    <View key={`shelf-${shelf.id}`} style={{width: viewMode === 'grid' ? (isMobile ? '48%' : 220) : '100%'}}>
+                                        <ShelfCard name={shelf.name} deckCount={shelf.deck_count || 0} colorHex={shelf.color}
+                                                   viewMode={viewMode}
+                                                   onPress={() => navigation.navigate('ShelfDetail', { shelfId: shelf.id, shelfName: shelf.name, colorHex: shelf.color })}
+                                                   onDelete={() => setDeletingShelf(shelf)}
+                                                   onEdit={() => { setEditingShelf(shelf); setIsAddShelfVisible(true); }}
+                                        />
+                                    </View>
+                                ))}
+                            </View>
+                        ) : (
+                            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{gap: 16}}>
+                                {shelves.map(shelf => (
+                                    <View key={`shelf-${shelf.id}`} style={{width: viewMode === 'grid' ? (isMobile ? 140 : 220) : (isMobile ? 240 : 350)}}>
+                                        <ShelfCard name={shelf.name} deckCount={shelf.deck_count || 0} colorHex={shelf.color}
+                                                   viewMode={viewMode}
+                                                   onPress={() => navigation.navigate('ShelfDetail', { shelfId: shelf.id, shelfName: shelf.name, colorHex: shelf.color })}
+                                                   onDelete={() => setDeletingShelf(shelf)}
+                                                   onEdit={() => { setEditingShelf(shelf); setIsAddShelfVisible(true); }}
+                                        />
+                                    </View>
+                                ))}
+                            </ScrollView>
+                        )}
+                    </View>
 
                     <View style={[styles.sectionContainer, {backgroundColor: isMobile ? activePalette.bg2 : activePalette.bg}]}>
                         <TouchableOpacity
@@ -424,45 +432,45 @@ export const Library = () => {
                         })()}
                     </View>
 
-                    {decks.length > 0 && (
-                        <View style={[styles.sectionContainer, {backgroundColor: isMobile ? activePalette.bg2 : activePalette.bg}]}>
-                            <TouchableOpacity
-                                style={[styles.sectionHeader, {paddingRight: 0}]}
-                                onPress={() => setExpandedSection(expandedSection === 'allDecks' ? null : 'allDecks')}
-                            >
-                                {/* @ts-ignore */}
-                                <Text style={{ fontFamily: typography.fontFamilies.main, fontSize: typography.fontSizes.button, fontWeight: 'bold', color: activePalette.darker }}>All Decks</Text>
-                                <Ionicons name={expandedSection === 'allDecks' ? 'chevron-down' : 'chevron-forward'} size={20} color={activePalette.darker} />
-                            </TouchableOpacity>
-                            {expandedSection === 'allDecks' ? (
-                                <View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 16}}>
-                                    {decks.map(deck => (
-                                        <View key={`alldeck-${deck.id}`} style={{width: viewMode === 'grid' ? (isMobile ? '48%' : 220) : '100%'}}>
-                                            <DeckCard name={deck.name} cardCount={deck.card_count || 0} dueCount={0} colorHex={deck.color}
-                                                      viewMode={viewMode}
-                                                      onPress={() => navigation.navigate('DeckDetail', { deckId: deck.id, deckName: deck.name, colorHex: deck.color })}
-                                                      onEdit={() => { setEditingDeck(deck); setIsAddDeckVisible(true); }}
-                                                      onDelete={() => setDeletingDeck(deck)}
-                                            />
-                                        </View>
-                                    ))}
-                                </View>
-                            ) : (
-                                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{gap: 16}}>
-                                    {decks.map(deck => (
-                                        <View key={`alldeck-${deck.id}`} style={{width: viewMode === 'grid' ? (isMobile ? 140 : 220) : (isMobile ? 240 : 350)}}>
-                                            <DeckCard name={deck.name} cardCount={deck.card_count || 0} dueCount={0} colorHex={deck.color}
-                                                      viewMode={viewMode}
-                                                      onPress={() => navigation.navigate('DeckDetail', { deckId: deck.id, deckName: deck.name, colorHex: deck.color })}
-                                                      onEdit={() => { setEditingDeck(deck); setIsAddDeckVisible(true); }}
-                                                      onDelete={() => setDeletingDeck(deck)}
-                                            />
-                                        </View>
-                                    ))}
-                                </ScrollView>
-                            )}
-                        </View>
-                    )}
+                    <View style={[styles.sectionContainer, {backgroundColor: isMobile ? activePalette.bg2 : activePalette.bg}]}>
+                        <TouchableOpacity
+                            style={[styles.sectionHeader, {paddingRight: 0}]}
+                            onPress={() => setExpandedSection(expandedSection === 'allDecks' ? null : 'allDecks')}
+                        >
+                            {/* @ts-ignore */}
+                            <Text style={{ fontFamily: typography.fontFamilies.main, fontSize: typography.fontSizes.button, fontWeight: 'bold', color: activePalette.darker }}>All Decks</Text>
+                            <Ionicons name={expandedSection === 'allDecks' ? 'chevron-down' : 'chevron-forward'} size={20} color={activePalette.darker} />
+                        </TouchableOpacity>
+                        {decks.length === 0 ? (
+                                <Text style={{color: activePalette.regular, fontFamily: typography.fontFamilies.secondary, marginTop: 10, fontStyle: 'italic'}}>Create your first Deck NOW.</Text>
+                            ) : expandedSection === 'allDecks' ? (
+                            <View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 16}}>
+                                {decks.map(deck => (
+                                    <View key={`alldeck-${deck.id}`} style={{width: viewMode === 'grid' ? (isMobile ? '48%' : 220) : '100%'}}>
+                                        <DeckCard name={deck.name} cardCount={deck.card_count || 0} dueCount={0} colorHex={deck.color}
+                                                  viewMode={viewMode}
+                                                  onPress={() => navigation.navigate('DeckDetail', { deckId: deck.id, deckName: deck.name, colorHex: deck.color })}
+                                                  onEdit={() => { setEditingDeck(deck); setIsAddDeckVisible(true); }}
+                                                  onDelete={() => setDeletingDeck(deck)}
+                                        />
+                                    </View>
+                                ))}
+                            </View>
+                        ) : (
+                            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{gap: 16}}>
+                                {decks.map(deck => (
+                                    <View key={`alldeck-${deck.id}`} style={{width: viewMode === 'grid' ? (isMobile ? 140 : 220) : (isMobile ? 240 : 350)}}>
+                                        <DeckCard name={deck.name} cardCount={deck.card_count || 0} dueCount={0} colorHex={deck.color}
+                                                  viewMode={viewMode}
+                                                  onPress={() => navigation.navigate('DeckDetail', { deckId: deck.id, deckName: deck.name, colorHex: deck.color })}
+                                                  onEdit={() => { setEditingDeck(deck); setIsAddDeckVisible(true); }}
+                                                  onDelete={() => setDeletingDeck(deck)}
+                                        />
+                                    </View>
+                                ))}
+                            </ScrollView>
+                        )}
+                    </View>
 
                     <View style={[styles.sectionContainer, {backgroundColor: isMobile ? activePalette.bg2 : activePalette.bg}]}>
                         <TouchableOpacity
@@ -526,65 +534,65 @@ export const Library = () => {
                         )}
                     </View>
 
-                    {allCards.length > 0 && (
-                        <View style={[styles.sectionContainer, {backgroundColor: isMobile ? activePalette.bg2 : activePalette.bg}]}>
-                            <TouchableOpacity
-                                style={[styles.sectionHeader, {paddingRight: 0}]}
-                                onPress={() => setExpandedSection(expandedSection === 'allCards' ? null : 'allCards')}
-                            >
-                                {/* @ts-ignore */}
-                                <Text style={{ fontFamily: typography.fontFamilies.main, fontSize: typography.fontSizes.button, fontWeight: 'bold', color: activePalette.darker }}>All Cards</Text>
-                                <Ionicons name={expandedSection === 'allCards' ? 'chevron-down' : 'chevron-forward'} size={20} color={activePalette.darker} />
-                            </TouchableOpacity>
-                            {expandedSection === 'allCards' ? (
-                                <View style={{gap: 12}}>
-                                    {allCards.map(card => (
-                                        <View key={`allcard-${card.id}`} style={[styles.cardRow, {backgroundColor: activePalette.bg2}]}>
-                                            <View style={{flex: 1, paddingRight: 12}}>
-                                                {/* @ts-ignore */}
-                                                <Text style={{fontFamily: typography.fontFamilies.main, fontSize: 16, fontWeight: 'bold', color: activePalette.darkest, marginBottom: 4}} numberOfLines={1}>{card.front}</Text>
-                                                <Text style={{fontFamily: typography.fontFamilies.secondary, color: activePalette.regular}} numberOfLines={1}>{card.back}</Text>
-                                            </View>
-                                            <View style={{flexDirection: 'row', alignItems: 'center', gap: 6}}>
-                                                <View style={{paddingHorizontal: 6, paddingVertical: 2, borderRadius: 6, backgroundColor: activePalette.darker + '20'}}>
-                                                    <Text style={{color: activePalette.darker, fontSize: 10, fontWeight: 'bold'}}>{card.card_type.toUpperCase()}</Text>
-                                                </View>
-                                                <TouchableOpacity onPress={() => { setEditingCard(card); setIsAddCardVisible(true); }} style={{padding: 4}}>
-                                                    <Ionicons name="create-outline" size={18} color={activePalette.darkest}/>
-                                                </TouchableOpacity>
-                                                <TouchableOpacity onPress={() => setDeletingCard(card)} style={{padding: 4}}>
-                                                    <Ionicons name="trash-outline" size={18} color={activePalette.red}/>
-                                                </TouchableOpacity>
-                                            </View>
-                                        </View>
-                                    ))}
-                                </View>
-                            ) : (
-                                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{gap: 12}}>
-                                    {allCards.map(card => (
-                                        <View key={`allcard-${card.id}`} style={{width: isMobile ? 140 : 200, padding: isMobile ? 12 : 16, borderRadius: 16, backgroundColor: isMobile ? activePalette.bg : activePalette.bg2}}>
+                    <View style={[styles.sectionContainer, {backgroundColor: isMobile ? activePalette.bg2 : activePalette.bg}]}>
+                        <TouchableOpacity
+                            style={[styles.sectionHeader, {paddingRight: 0}]}
+                            onPress={() => setExpandedSection(expandedSection === 'allCards' ? null : 'allCards')}
+                        >
+                            {/* @ts-ignore */}
+                            <Text style={{ fontFamily: typography.fontFamilies.main, fontSize: typography.fontSizes.button, fontWeight: 'bold', color: activePalette.darker }}>All Cards</Text>
+                            <Ionicons name={expandedSection === 'allCards' ? 'chevron-down' : 'chevron-forward'} size={20} color={activePalette.darker} />
+                        </TouchableOpacity>
+                        {allCards.length === 0 ? (
+                                <Text style={{color: activePalette.regular, fontFamily: typography.fontFamilies.secondary, marginTop: 10, fontStyle: 'italic'}}>Seems like you're yet to start learning.</Text>
+                        ) : expandedSection === 'allCards' ? (
+                            <View style={{gap: 12}}>
+                                {allCards.map(card => (
+                                    <View key={`allcard-${card.id}`} style={[styles.cardRow, {backgroundColor: activePalette.bg2}]}>
+                                        <View style={{flex: 1, paddingRight: 12}}>
                                             {/* @ts-ignore */}
                                             <Text style={{fontFamily: typography.fontFamilies.main, fontSize: 16, fontWeight: 'bold', color: activePalette.darkest, marginBottom: 4}} numberOfLines={1}>{card.front}</Text>
                                             <Text style={{fontFamily: typography.fontFamilies.secondary, color: activePalette.regular}} numberOfLines={1}>{card.back}</Text>
-                                            <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 12}}>
-                                                <View style={{paddingHorizontal: 6, paddingVertical: 2, borderRadius: 6, backgroundColor: activePalette.darker + '20'}}>
-                                                    <Text style={{color: activePalette.darker, fontSize: 10, fontWeight: 'bold'}}>{card.card_type.toUpperCase()}</Text>
-                                                </View>
-                                                <View style={{flexDirection: 'row', gap: 4}}>
-                                                    <TouchableOpacity onPress={() => { setEditingCard(card); setIsAddCardVisible(true); }} style={{padding: 4}}>
-                                                        <Ionicons name="create-outline" size={16} color={activePalette.darkest}/>
-                                                    </TouchableOpacity>
-                                                    <TouchableOpacity onPress={() => setDeletingCard(card)} style={{padding: 4}}>
-                                                        <Ionicons name="trash-outline" size={16} color={activePalette.red}/>
-                                                    </TouchableOpacity>
-                                                </View>
+                                        </View>
+                                        <View style={{flexDirection: 'row', alignItems: 'center', gap: 6}}>
+                                            <View style={{paddingHorizontal: 6, paddingVertical: 2, borderRadius: 6, backgroundColor: activePalette.darker + '20'}}>
+                                                <Text style={{color: activePalette.darker, fontSize: 10, fontWeight: 'bold'}}>{card.card_type.toUpperCase()}</Text>
+                                            </View>
+                                            <TouchableOpacity onPress={() => { setEditingCard(card); setIsAddCardVisible(true); }} style={{padding: 4}}>
+                                                <Ionicons name="create-outline" size={18} color={activePalette.darkest}/>
+                                            </TouchableOpacity>
+                                            <TouchableOpacity onPress={() => setDeletingCard(card)} style={{padding: 4}}>
+                                                <Ionicons name="trash-outline" size={18} color={activePalette.red}/>
+                                            </TouchableOpacity>
+                                        </View>
+                                    </View>
+                                ))}
+                            </View>
+                        ) : (
+                            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{gap: 12}}>
+                                {allCards.map(card => (
+                                    <View key={`allcard-${card.id}`} style={{width: isMobile ? 140 : 200, padding: isMobile ? 12 : 16, borderRadius: 16, backgroundColor: isMobile ? activePalette.bg : activePalette.bg2}}>
+                                        {/* @ts-ignore */}
+                                        <Text style={{fontFamily: typography.fontFamilies.main, fontSize: 16, fontWeight: 'bold', color: activePalette.darkest, marginBottom: 4}} numberOfLines={1}>{card.front}</Text>
+                                        <Text style={{fontFamily: typography.fontFamilies.secondary, color: activePalette.regular}} numberOfLines={1}>{card.back}</Text>
+                                        <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 12}}>
+                                            <View style={{paddingHorizontal: 6, paddingVertical: 2, borderRadius: 6, backgroundColor: activePalette.darker + '20'}}>
+                                                <Text style={{color: activePalette.darker, fontSize: 10, fontWeight: 'bold'}}>{card.card_type.toUpperCase()}</Text>
+                                            </View>
+                                            <View style={{flexDirection: 'row', gap: 4}}>
+                                                <TouchableOpacity onPress={() => { setEditingCard(card); setIsAddCardVisible(true); }} style={{padding: 4}}>
+                                                    <Ionicons name="create-outline" size={16} color={activePalette.darkest}/>
+                                                </TouchableOpacity>
+                                                <TouchableOpacity onPress={() => setDeletingCard(card)} style={{padding: 4}}>
+                                                    <Ionicons name="trash-outline" size={16} color={activePalette.red}/>
+                                                </TouchableOpacity>
                                             </View>
                                         </View>
-                                    ))}
-                                </ScrollView>
-                            )}
-                        </View>
-                    )}
+                                    </View>
+                                ))}
+                            </ScrollView>
+                        )}
+                    </View>
 
                 </ScrollView>
             )}

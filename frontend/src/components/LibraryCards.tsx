@@ -44,11 +44,11 @@ export const ShelfCard = (
             onPress={onPress}
             style={[styles.cardBase, { backgroundColor: cardBg, padding: isMobile ? 14 : 20 }]}
         >
-            <View style={[
-                styles.colorBar,
-                { backgroundColor: colorHex },
-                isGrid && { width: '100%', height: 6, right: 0, bottom: 'auto' }
-            ]} />
+            {/*<View style={[*/}
+            {/*    styles.colorBar,*/}
+            {/*    { backgroundColor: colorHex },*/}
+            {/*    isGrid && { width: '100%', height: 6, right: 0, bottom: 'auto' }*/}
+            {/*]} />*/}
 
             <View style={[styles.cardContent, isGrid && { flexDirection: 'column', alignItems: 'flex-start', paddingLeft: 0, paddingTop: 10 }]}>
 
@@ -128,11 +128,11 @@ export const DeckCard = ({ name, cardCount, dueCount, colorHex, onPress, onEdit,
             onPress={onPress}
             style={[styles.cardBase, { backgroundColor: cardBg, padding: isMobile ? 14 : 20 }]}
         >
-            <View style={[
-                styles.colorBar,
-                { backgroundColor: colorHex },
-                isGrid && { width: '100%', height: 6, right: 0, bottom: 'auto' }
-            ]} />
+            {/*<View style={[*/}
+            {/*    styles.colorBar,*/}
+            {/*    { backgroundColor: colorHex },*/}
+            {/*    isGrid && { width: '100%', height: 6, right: 0, bottom: 'auto' }*/}
+            {/*]} />*/}
 
             <View style={[styles.cardContent, isGrid && { flexDirection: 'column', alignItems: 'flex-start', paddingLeft: 0, paddingTop: 10 }]}>
 
@@ -207,13 +207,13 @@ const styles = StyleSheet.create({
         marginBottom: 16,
         padding: 20,
     },
-    colorBar: {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        bottom: 0,
-        width: 6,
-    },
+    // colorBar: {
+    //     position: 'absolute',
+    //     top: 0,
+    //     left: 0,
+    //     bottom: 0,
+    //     width: 6,
+    // },
     cardContent: {
         flexDirection: 'row',
         alignItems: 'center',

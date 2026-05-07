@@ -16,9 +16,9 @@ export const TodayAtGlance = ({ data, deckStates }: { data: any, deckStates?: an
     const reviewed = data?.reviewed || 0;
     const progress = goal > 0 ? Math.min(reviewed / goal, 1) : 0;
 
-    const size = 160;
-    const bottomStrokeWidth = 20;
-    const topStrokeWidth = 24;
+    const size = isMobile ? 120 : 160;
+    const bottomStrokeWidth = isMobile ? 15 : 20;
+    const topStrokeWidth = isMobile ? 18 : 24;
     const radius = (size - topStrokeWidth) / 2;
     const circumference = radius * 2 * Math.PI;
     const strokeDashoffset = circumference - (progress * circumference);

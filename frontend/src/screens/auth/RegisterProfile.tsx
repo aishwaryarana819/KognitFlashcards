@@ -10,8 +10,8 @@ import {BREAKPOINTS} from "../../theme/breakpoints";
 import {AuthHeader} from "../../components/AuthHeader";
 import {supabase} from "../../lib/supabase";
 
-const REGIONS = ["USA/Canada", "South America", "Western Europe", "Central/Eastern Europe", "Russia", "India", "Other Asia", "Africa", "Oceania", "Others"];
-const DOMAINS = ["Medical & Health", "Law & Humanities", "STEM & Engineering", "Languages", "Arts & Design", "General Productivity", "Others"];
+const REGIONS = ["Select Region", "USA/Canada", "South America", "Western Europe", "Central/Eastern Europe", "Russia", "India", "Other Asia", "Africa", "Oceania", "Others"];
+const DOMAINS = ["Select Domain", "Medical & Health", "Law & Humanities", "STEM & Engineering", "Languages", "Arts & Design", "General Productivity", "Others"];
 
 type RegisterProfileProps = {
     onNavigateLogin: () => void;

@@ -336,11 +336,12 @@ export const RegisterOptions = ({onNavigateLogin, onNavigateProfile}: RegisterOp
 
                     return(
                         <View key={index} style={[styles.otpBox, {
+                            width: isMobile ? 32 : 48, height: isMobile ? 38 : 56, borderRadius: isMobile ? 8 : 12,
                             borderColor: isCurrent ? activePalette.darkest : activePalette.lighter,
                             backgroundColor: isDark ? activePalette.bg : activePalette.lightest,
                             borderWidth: isCurrent ? 2 : 1
                         }]}>
-                            <Text style={{fontSize: 24, fontWeight: '700',
+                            <Text style={{fontSize: typography.fontSizes.button, fontWeight: typography.fontWeights.medium,
                                 fontFamily: typography.fontFamilies.main, color: activePalette.darkest}}>
                                 {digit}
                             </Text>
@@ -472,9 +473,9 @@ const styles = StyleSheet.create({
         width: '100%',
     },
     otpBox: {
-        width: 48,
-        height: 56,
-        borderRadius: 12,
+        // width: 48,
+        // height: 56,
+        // borderRadius: 12,
         justifyContent: 'center',
         alignItems: 'center',
     },
