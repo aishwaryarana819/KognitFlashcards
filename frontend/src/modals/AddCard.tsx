@@ -1,5 +1,17 @@
 import React, {useState} from "react";
-import {View, Text, Modal, TextInput, TouchableOpacity, ScrollView, Platform, KeyboardAvoidingView, StyleSheet, useWindowDimensions} from "react-native";
+import {
+    View,
+    Text,
+    Modal,
+    TextInput,
+    TouchableOpacity,
+    ScrollView,
+    Platform,
+    KeyboardAvoidingView,
+    StyleSheet,
+    useWindowDimensions,
+    Alert
+} from "react-native";
 import {useTheme} from "../context/ThemeContext";
 import {getTypography} from "../theme/typography";
 import {Ionicons} from '@expo/vector-icons';
@@ -66,6 +78,18 @@ export const AddCard = ({visible, onClose, onSubmit, initialData, availableDecks
                 notes: notes.trim(),
                 deck_ids: selectedDeckId ? [selectedDeckId] : [],
             });
+
+            if (!initialData) {
+                if (Platform.OS === 'web') {
+                    window.alert("Yay! You created your first flashcard. It will appear in the Library.");
+                } else {
+                    Alert.alert(
+                        "First Flashcard!!!",
+                        "Yay! You created your first flashcard. It will appear in the Library.",
+                    );
+                }
+            }
+
         } finally {
             setIsSubmitting(false);
         }

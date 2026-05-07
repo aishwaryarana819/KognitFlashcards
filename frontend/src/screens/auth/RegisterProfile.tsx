@@ -198,7 +198,7 @@ const RegisterProfile = ({onNavigateLogin, onNavigateDashboard}: RegisterProfile
                         {!!passwordError && (
                             <Text style={{color: lightPalette.red, fontSize: typography.fontSizes.caption, marginTop: 4,
                                 fontFamily: typography.fontFamilies.secondary, fontWeight: '700'}}>
-                                {passwordError}
+                                Password must contain at least one character/number
                             </Text>
                         )}
 
@@ -254,7 +254,7 @@ const RegisterProfile = ({onNavigateLogin, onNavigateDashboard}: RegisterProfile
                                 >
                                     <ScrollView nestedScrollEnabled showsVerticalScrollIndicator={true}>
                                         {REGIONS.map((opt, i) => (
-                                            <TouchableOpacity key={i} style={{padding: 16, borderBottomWidth: i === REGIONS.length - 1 ? 0 : 1,
+                                            <TouchableOpacity key={i} style={{padding: 16, width: '100%', borderBottomWidth: i === REGIONS.length - 1 ? 0 : 1,
                                                 borderBottomColor: activePalette.lighter}} onPress={() => {
                                                     setRegion(opt);
                                                     setActiveDropdown(null)}}
@@ -295,7 +295,7 @@ const RegisterProfile = ({onNavigateLogin, onNavigateDashboard}: RegisterProfile
                                 >
                                     <ScrollView nestedScrollEnabled showsVerticalScrollIndicator={true}>
                                         {DOMAINS.map((opt, i) => (
-                                            <TouchableOpacity key={i} style={{padding: 16, borderBottomWidth: i === DOMAINS.length - 1 ? 0 : 1,
+                                            <TouchableOpacity key={i} style={{padding: 16, width: '100%', borderBottomWidth: i === DOMAINS.length - 1 ? 0 : 1,
                                                 borderBottomColor: activePalette.lighter}} onPress={() => {
                                                     setDomain(opt);
                                                     setActiveDropdown(null)

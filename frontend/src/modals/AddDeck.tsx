@@ -1,5 +1,17 @@
 import React, {useState} from "react";
-import {View, Text, Modal, TextInput, TouchableOpacity, ScrollView, Platform, KeyboardAvoidingView, StyleSheet, useWindowDimensions} from "react-native";
+import {
+    View,
+    Text,
+    Modal,
+    TextInput,
+    TouchableOpacity,
+    ScrollView,
+    Platform,
+    KeyboardAvoidingView,
+    StyleSheet,
+    useWindowDimensions,
+    Alert
+} from "react-native";
 import {useTheme} from "../context/ThemeContext";
 import {getTypography} from "../theme/typography";
 import {Ionicons} from '@expo/vector-icons';
@@ -98,6 +110,17 @@ export const AddDeck = ({visible, onClose, onSubmit, initialData, availableShelv
                 icon: selectedIcon,
                 shelf_ids: selectedShelves,
             });
+
+            if (!initialData) {
+                if (Platform.OS === 'web') {
+                    window.alert("Yay! You created your first deck. It will appear in the Library.");
+                } else {
+                    Alert.alert(
+                        "First Deck!!!",
+                        "Yay! You created your first deck. It will appear in the Library.",
+                    );
+                }
+            }
 
             setName('');
             setDescription('');

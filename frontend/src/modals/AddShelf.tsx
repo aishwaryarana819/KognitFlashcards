@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import {View, Text, Modal, TextInput, TouchableOpacity, StyleSheet, ScrollView, Platform, KeyboardAvoidingView, useWindowDimensions} from "react-native";
+import {View, Alert, Text, Modal, TextInput, TouchableOpacity, StyleSheet, ScrollView, Platform, KeyboardAvoidingView, useWindowDimensions} from "react-native";
 import {useTheme} from "../context/ThemeContext";
 import {getTypography} from "../theme/typography";
 import {Ionicons} from '@expo/vector-icons';
@@ -93,6 +93,18 @@ export const AddShelf = ({visible, onClose, onSubmit, initialData}: AddShelfProp
                 color: selectedColor,
                 icon: selectedIcon
             });
+
+            if (!initialData) {
+                if (Platform.OS === 'web') {
+                    window.alert("Yay! You created your first shelf. It will appear in the Library.");
+                } else {
+                    Alert.alert(
+                        "First Shelf!!!",
+                        "Yay! You created your first shelf. It will appear in the Library.",
+                    );
+                }
+            }
+
             setName('');
             setDescription('');
             setSelectedColor(SHELF_COLORS[0]);

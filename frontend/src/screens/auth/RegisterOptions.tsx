@@ -1,5 +1,5 @@
 import {useState, useRef, useEffect} from 'react';
-import {View, Text, TouchableOpacity, StyleSheet, useWindowDimensions, TextInput, Pressable, Platform, Alert} from 'react-native';
+import {View, Text, TouchableOpacity, StyleSheet, useWindowDimensions, TextInput, Pressable, Platform, Alert, ActivityIndicator} from 'react-native';
 import Svg, {Path, G, Rect, Defs, LinearGradient, Stop} from 'react-native-svg';
 
 import * as WebBrowser from 'expo-web-browser';
@@ -145,90 +145,108 @@ export const RegisterOptions = ({onNavigateLogin, onNavigateProfile}: RegisterOp
         }
     };
 
-    const renderOptions = () => (
-        <>
-            <View style={styles.headerSection}>
-                <Text style={{
-                    fontFamily: typography.fontFamilies.main,
-                    fontSize: typography.fontSizes.heroS,
-                    color: activePalette.darkest,
-                    fontWeight: '800',
-                    marginBottom: 12,
-                }}>
-                    {"Your Memory Mastery\nStarts Here."}
-                </Text>
-                <Text style={{
-                    fontFamily: typography.fontFamilies.secondary,
-                    fontSize: typography.fontSizes.bodyL,
-                    color: activePalette.darker,
-                    lineHeight: 24,
-                }}>
-                    Let's build memory that lasts.
-                </Text>
-            </View>
-            <View style={styles.optionsContainer}>
-                <TouchableOpacity
-                    style={[styles.authButton, {borderColor: activePalette.darker, borderWidth: 1.5,
-                        backgroundColor: isDark ? activePalette.bg2 : lightPalette.lightest,}]}
-                    activeOpacity={0.7} onPress={() => {
-                    if (Platform.OS === 'web')
-                        window.alert("Google Login is Coming Soon. Please use HackClub or Email for now.");
-                    else
-                        Alert.alert("Google Login is Coming Soon. Please use HackClub or Email for now.");
-                }}
-                >
-                    <GoogleIcon/>
-                    <Text style={[styles.authButtonText, {
+    const renderOptions = () => {
+        if (isLoading) {
+            return (
+                <View style={{ width: '100%', alignItems: 'center', justifyContent: 'center', paddingVertical: 40 }}>
+                    <ActivityIndicator size="large" color={activePalette.darkest} />
+                    <Text style={{
+                        marginTop: 20,
                         fontFamily: typography.fontFamilies.main,
-                        color: activePalette.darker,
-                    }]}>
-                        Register with Google
+                        fontSize: typography.fontSizes.bodyL,
+                        color: activePalette.darkest,
+                        fontWeight: '600'
+                    }}>
+                        Authenticating with HackClub...
                     </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={[styles.authButton, {borderColor: activePalette.darker, borderWidth: 1.5,
-                        backgroundColor: isDark ? activePalette.bg2 : lightPalette.lightest,}]}
-                    activeOpacity={0.7} onPress={() => promptAsync()}
-                >
-                    <HackClubIcon/>
-                    <Text style={[styles.authButtonText, {
-                        fontFamily: typography.fontFamilies.main,
-                        color: activePalette.darker,
-                    }]}>
-                        Register with HackClub
-                    </Text>
-                </TouchableOpacity>
-
-                <View style={[styles.dividerSection]}>
-                    <View style={[styles.dividerLine, {
-                        backgroundColor: activePalette.lighter }]}/>
-                    <Text style={[styles.dividerText, {
-                        fontFamily: typography.fontFamilies.secondary,
-                        color: activePalette.regular, fontWeight: '800'
-                    }]}>
-                        OR
-                    </Text>
-                    <View style={[styles.dividerLine, {
-                        backgroundColor: activePalette.lighter
-                    }]}/>
                 </View>
-
-                <TouchableOpacity
-                    style={[styles.authButton, {backgroundColor: activePalette.darkest}]}
-                    activeOpacity={0.7}
-                    onPress={() => setStep('email')}
-                >
-                    <EmailIcon/>
-                    <Text style={[styles.authButtonText, {
+            );
+        }
+        return (
+            <>
+                <View style={styles.headerSection}>
+                    <Text style={{
                         fontFamily: typography.fontFamilies.main,
-                        color: activePalette.lightest,
-                    }]}>
-                        Register with Email
+                        fontSize: typography.fontSizes.heroS,
+                        color: activePalette.darkest,
+                        fontWeight: '800',
+                        marginBottom: 12,
+                    }}>
+                        {"Your Memory Mastery\nStarts Here."}
                     </Text>
-                </TouchableOpacity>
-            </View>
-        </>
-    );
+                    <Text style={{
+                        fontFamily: typography.fontFamilies.secondary,
+                        fontSize: typography.fontSizes.bodyL,
+                        color: activePalette.darker,
+                        lineHeight: 24,
+                    }}>
+                        Let's build memory that lasts.
+                    </Text>
+                </View>
+                <View style={styles.optionsContainer}>
+                    <TouchableOpacity
+                        style={[styles.authButton, {borderColor: activePalette.darker, borderWidth: 1.5,
+                            backgroundColor: isDark ? activePalette.bg2 : lightPalette.lightest,}]}
+                        activeOpacity={0.7} onPress={() => {
+                        if (Platform.OS === 'web')
+                            window.alert("Google Login is Coming Soon. Please use HackClub or Email for now.");
+                        else
+                            Alert.alert("Google Login is Coming Soon. Please use HackClub or Email for now.");
+                    }}
+                    >
+                        <GoogleIcon/>
+                        <Text style={[styles.authButtonText, {
+                            fontFamily: typography.fontFamilies.main,
+                            color: activePalette.darker,
+                        }]}>
+                            Register with Google
+                        </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={[styles.authButton, {borderColor: activePalette.darker, borderWidth: 1.5,
+                            backgroundColor: isDark ? activePalette.bg2 : lightPalette.lightest,}]}
+                        activeOpacity={0.7} onPress={() => promptAsync()}
+                    >
+                        <HackClubIcon/>
+                        <Text style={[styles.authButtonText, {
+                            fontFamily: typography.fontFamilies.main,
+                            color: activePalette.darker,
+                        }]}>
+                            Register with HackClub
+                        </Text>
+                    </TouchableOpacity>
+
+                    <View style={[styles.dividerSection]}>
+                        <View style={[styles.dividerLine, {
+                            backgroundColor: activePalette.lighter }]}/>
+                        <Text style={[styles.dividerText, {
+                            fontFamily: typography.fontFamilies.secondary,
+                            color: activePalette.regular, fontWeight: '800'
+                        }]}>
+                            OR
+                        </Text>
+                        <View style={[styles.dividerLine, {
+                            backgroundColor: activePalette.lighter
+                        }]}/>
+                    </View>
+
+                    <TouchableOpacity
+                        style={[styles.authButton, {backgroundColor: activePalette.darkest}]}
+                        activeOpacity={0.7}
+                        onPress={() => setStep('email')}
+                    >
+                        <EmailIcon/>
+                        <Text style={[styles.authButtonText, {
+                            fontFamily: typography.fontFamilies.main,
+                            color: activePalette.lightest,
+                        }]}>
+                            Register with Email
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+            </>
+        );
+    };
 
     const renderEmailInput = () => (
         <View style={{width: '100%'}}>

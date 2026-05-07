@@ -144,8 +144,8 @@ export const DeckStates = ({ states }: { states: any }) => {
             flex: isMobile ? undefined : 1,
         }]}>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}
-                        contentContainerStyle={{gap: 15}} decelerationRate="fast"
-                        snapToInterval={isMobile ? (width * 0.75) + 15 : 236}
+                        contentContainerStyle={{gap: 15, flexGrow: 1, justifyContent: isMobile ? 'flex-start' : 'space-between'}}
+                        decelerationRate="fast" snapToInterval={isMobile ? (width * 0.75) + 15 : 236}
             >
                 {content}
             </ScrollView>
