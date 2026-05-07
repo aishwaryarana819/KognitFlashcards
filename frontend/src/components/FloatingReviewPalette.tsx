@@ -35,7 +35,7 @@ export const FloatingReviewPalette = () => {
         if (!session?.access_token) return;
         try {
             const res = await fetch(
-                `${process.env.EXPO_PUBLIC_API_URL || 'http://127.0.0.1:8000'}/api/review/stats/today/`,
+                `${process.env.EXPO_PUBLIC_API_URL || 'http://127.0.0.1:8000'}/api/review/stats/today/?t=${Date.now()}`,
                 { headers: { 'Authorization': `Bearer ${session.access_token}` } }
             );
             if (res.ok) {
@@ -207,8 +207,8 @@ export const FloatingReviewPalette = () => {
                             <Text style={[styles.menuText, {color: activePalette.darker, fontFamily: typography.fontFamilies.main}]}>
                                 Card
                             </Text>
-                            <MaterialCommunityIcons
-                                name="cards-outline"
+                            <Ionicons
+                                name="documents-outline"
                                 size={24}
                                 color={activePalette.darker}
                                 style={styles.iconShadow}
@@ -231,8 +231,8 @@ export const FloatingReviewPalette = () => {
                             <Text style={[styles.menuText, {color: activePalette.darker, fontFamily: typography.fontFamilies.main}]}>
                                 Shelf
                             </Text>
-                            <MaterialCommunityIcons
-                                name="bookshelf"
+                            <Ionicons
+                                name="library-outline"
                                 size={24}
                                 color={activePalette.darker}
                                 style={styles.iconShadow}

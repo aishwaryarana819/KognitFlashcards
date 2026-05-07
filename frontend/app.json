@@ -26,7 +26,10 @@
     "web": {
       "favicon": "./assets/favicon.png",
       "name": "KognitFlashcards",
-      "shortName": "Kognit"
+      "shortName": "Kognit",
+      "build": {
+        "output": "static"
+      }
     },
     "plugins": [
       "expo-font",

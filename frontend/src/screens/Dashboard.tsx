@@ -24,7 +24,7 @@ export const Dashboard = () => {
     const fetchDashboardStats = React.useCallback(async () => {
         if (!session?.access_token) return;
         try {
-            const res = await fetch(`${process.env.EXPO_PUBLIC_API_URL || 'http://127.0.0.1:8000'}/api/dashboard/stats/`, {
+            const res = await fetch(`${process.env.EXPO_PUBLIC_API_URL || 'http://127.0.0.1:8000'}/api/dashboard/stats/?t=${Date.now()}`, {
                 headers: {'Authorization': `Bearer ${session.access_token}`}
             });
             if (res.ok) {
@@ -48,8 +48,6 @@ export const Dashboard = () => {
         const sub2 = DeviceEventEmitter.addListener('review_completed', fetchDashboardStats);
         return () => { sub.remove(); sub2.remove(); };
     }, [fetchDashboardStats]);
-
-
 
     if (isLoading) {
         return (

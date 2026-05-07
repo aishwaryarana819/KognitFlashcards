@@ -254,7 +254,8 @@ const RegisterProfile = ({onNavigateLogin, onNavigateDashboard}: RegisterProfile
                                 >
                                     <ScrollView nestedScrollEnabled showsVerticalScrollIndicator={true}>
                                         {REGIONS.map((opt, i) => (
-                                            <TouchableOpacity key={i} style={{padding: 16, width: '100%', borderBottomWidth: i === REGIONS.length - 1 ? 0 : 1,
+                                            <TouchableOpacity key={i} style={{padding: 16, width: '100%', display: 'flex',
+                                                flexDirection: 'row', borderBottomWidth: i === REGIONS.length - 1 ? 0 : 1,
                                                 borderBottomColor: activePalette.lighter}} onPress={() => {
                                                     setRegion(opt);
                                                     setActiveDropdown(null)}}
@@ -295,7 +296,8 @@ const RegisterProfile = ({onNavigateLogin, onNavigateDashboard}: RegisterProfile
                                 >
                                     <ScrollView nestedScrollEnabled showsVerticalScrollIndicator={true}>
                                         {DOMAINS.map((opt, i) => (
-                                            <TouchableOpacity key={i} style={{padding: 16, width: '100%', borderBottomWidth: i === DOMAINS.length - 1 ? 0 : 1,
+                                            <TouchableOpacity key={i} style={{padding: 16, width: '100%', display: 'flex',
+                                                flexDirection: 'row', borderBottomWidth: i === DOMAINS.length - 1 ? 0 : 1,
                                                 borderBottomColor: activePalette.lighter}} onPress={() => {
                                                     setDomain(opt);
                                                     setActiveDropdown(null)
@@ -334,7 +336,11 @@ const RegisterProfile = ({onNavigateLogin, onNavigateDashboard}: RegisterProfile
                                 console.log("[Profile] 1. Starting profile save...");
                                 const {error: authError} = await supabase.auth.updateUser({password: password});
 
-                                if (authError) throw new Error("Supabase Password Error: " + authError.message);
+                                if (authError) {
+                                    if (authError.message.includes("Password should contain"))
+                                        throw new Error("Password must contain at least one character/number");
+                                    throw new Error(authError.message);
+                                }
                                 console.log("[Profile] 2. Password updated.");
 
                                 const {data: sessionData} = await supabase.auth.getSession();

@@ -44,9 +44,9 @@ export const Library = () => {
         if (!session?.access_token) return;
         try {
             const [shelvesRes, decksRes, cardsRes] = await Promise.all([
-                fetch(`${process.env.EXPO_PUBLIC_API_URL || 'http://127.0.0.1:8000'}/api/shelves/`, { headers: {'Authorization': `Bearer ${session.access_token}`} }),
-                fetch(`${process.env.EXPO_PUBLIC_API_URL || 'http://127.0.0.1:8000'}/api/decks/`, { headers: {'Authorization': `Bearer ${session.access_token}`} }),
-                fetch(`${process.env.EXPO_PUBLIC_API_URL || 'http://127.0.0.1:8000'}/api/cards/`, { headers: {'Authorization': `Bearer ${session.access_token}`} })
+                fetch(`${process.env.EXPO_PUBLIC_API_URL || 'http://127.0.0.1:8000'}/api/shelves/?t=${Date.now()}`, { headers: {'Authorization': `Bearer ${session.access_token}`} }),
+                fetch(`${process.env.EXPO_PUBLIC_API_URL || 'http://127.0.0.1:8000'}/api/decks/?t=${Date.now()}`, { headers: {'Authorization': `Bearer ${session.access_token}`} }),
+                fetch(`${process.env.EXPO_PUBLIC_API_URL || 'http://127.0.0.1:8000'}/api/cards/?t=${Date.now()}`, { headers: {'Authorization': `Bearer ${session.access_token}`} })
             ]);
 
             if (shelvesRes.ok && decksRes.ok && cardsRes.ok) {
@@ -74,20 +74,21 @@ export const Library = () => {
         fetchLibraryData();
     }, [fetchLibraryData]);
 
-    useEffect(() => {
-        const sub1 = DeviceEventEmitter.addListener('open_add_shelf', () => setIsAddShelfVisible(true));
-        const sub2 = DeviceEventEmitter.addListener('open_add_deck', () => setIsAddDeckVisible(true));
-        const sub3 = DeviceEventEmitter.addListener('open_add_card', (params) => {
-            setEditingCard(params?.initialData || null);
-            setDefaultDeckId(params?.deckId || null);
-            setIsAddCardVisible(true);
-        });
-        return () => {
-            sub1.remove();
-            sub2.remove();
-            sub3.remove();
-        };
-    }, []);
+    //
+    // useEffect(() => {
+    //     const sub1 = DeviceEventEmitter.addListener('open_add_shelf', () => setIsAddShelfVisible(true));
+    //     const sub2 = DeviceEventEmitter.addListener('open_add_deck', () => setIsAddDeckVisible(true));
+    //     const sub3 = DeviceEventEmitter.addListener('open_add_card', (params) => {
+    //         setEditingCard(params?.initialData || null);
+    //         setDefaultDeckId(params?.deckId || null);
+    //         setIsAddCardVisible(true);
+    //     });
+    //     return () => {
+    //         sub1.remove();
+    //         sub2.remove();
+    //         sub3.remove();
+    //     };
+    // }, []);
 
     const handleCreateShelf = async (data: any) => {
         try {

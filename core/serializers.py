@@ -41,7 +41,6 @@ class CardSerializer(serializers.ModelSerializer):
     def get_deck_ids(self, obj):
         return list(DeckCard.objects.filter(card=obj).values_list('deck_id', flat=True))
 
-
 class DeckSerializer(serializers.ModelSerializer):
     tags = serializers.SerializerMethodField()
     shelf_ids = serializers.SerializerMethodField()
@@ -61,8 +60,7 @@ class DeckSerializer(serializers.ModelSerializer):
         return list(ShelfDeck.objects.filter(deck=obj).values_list('shelf_id', flat=True))
 
     def get_card_count(self, obj):
-        return obj.deck_cards.count()
-
+        return obj.deck_cards.filter(card__is_deleted=False).count()
 
 class ShelfSerializer(serializers.ModelSerializer):
     tags = serializers.SerializerMethodField()
@@ -79,15 +77,13 @@ class ShelfSerializer(serializers.ModelSerializer):
         return TagSerializer(tags, many=True).data
 
     def get_deck_count(self, obj):
-        return obj.shelf_decks.count()
-
+        return obj.shelf_decks.filter(deck__is_deleted=False).count()
 
 class ShelfCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Shelf
         fields = ['id', 'name', 'description', 'color', 'icon']
         read_only_fields = ['id']
-
 
 class DeckCreateSerializer(serializers.ModelSerializer):
     shelf_ids = serializers.ListField(child=serializers.IntegerField(), required=False, write_only=True)
@@ -100,7 +96,6 @@ class DeckCreateSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data.pop('shelf_ids', None)
         return super().create(validated_data)
-
 
 class CardCreateSerializer(serializers.ModelSerializer):
     deck_ids = serializers.ListField(child=serializers.IntegerField(), required=False, write_only=True)
