@@ -4,6 +4,7 @@ import {useTheme} from "../context/ThemeContext";
 import {getTypography} from "../theme/typography";
 import {Ionicons} from '@expo/vector-icons';
 import {lightPalette} from "../theme/colors";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 //  edited with AI
 const SHELF_COLORS = [
@@ -95,13 +96,17 @@ export const AddShelf = ({visible, onClose, onSubmit, initialData}: AddShelfProp
             });
 
             if (!initialData) {
-                if (Platform.OS === 'web') {
-                    window.alert("Yay! You created your first shelf. It will appear in the Library.");
-                } else {
-                    Alert.alert(
-                        "First Shelf!!!",
-                        "Yay! You created your first shelf. It will appear in the Library.",
-                    );
+                const hasCreatedFirst = await AsyncStorage.getItem('hasCreatedFirstShelf');
+                if (!hasCreatedFirst) {
+                    if (Platform.OS === 'web') {
+                        window.alert("Yay! You created your first shelf. It will appear in the Library.");
+                    } else {
+                        Alert.alert(
+                            "First Shelf!!!",
+                            "Yay! You created your first shelf. It will appear in the Library.",
+                        );
+                    }
+                    await AsyncStorage.setItem('hasCreatedFirstShelf', 'true');
                 }
             }
 

@@ -16,6 +16,7 @@ import {useTheme} from "../context/ThemeContext";
 import {getTypography} from "../theme/typography";
 import {Ionicons} from '@expo/vector-icons';
 import {lightPalette} from "../theme/colors";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const DECK_COLORS = [
     '#5D5FEF', // Indigo (Tech/General)
@@ -112,13 +113,17 @@ export const AddDeck = ({visible, onClose, onSubmit, initialData, availableShelv
             });
 
             if (!initialData) {
-                if (Platform.OS === 'web') {
-                    window.alert("Yay! You created your first deck. It will appear in the Library.");
-                } else {
-                    Alert.alert(
-                        "First Deck!!!",
-                        "Yay! You created your first deck. It will appear in the Library.",
-                    );
+                const hasCreatedFirst = await AsyncStorage.getItem('hasCreatedFirstDeck');
+                if (!hasCreatedFirst) {
+                    if (Platform.OS === 'web') {
+                        window.alert("Yay! You created your first deck. It will appear in the Library.");
+                    } else {
+                        Alert.alert(
+                            "First Deck!!!",
+                            "Yay! You created your first deck. It will appear in the Library.",
+                        );
+                    }
+                    await AsyncStorage.setItem('hasCreatedFirstDeck', 'true');
                 }
             }
 

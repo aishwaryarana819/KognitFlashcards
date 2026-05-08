@@ -336,12 +336,12 @@ export const RegisterOptions = ({onNavigateLogin, onNavigateProfile}: RegisterOp
 
                     return(
                         <View key={index} style={[styles.otpBox, {
-                            width: isMobile ? 32 : 48, height: isMobile ? 38 : 56, borderRadius: isMobile ? 8 : 12,
+                            width: isMobile ? 24 : 48, height: isMobile ? 28 : 56, borderRadius: isMobile ? 6 : 12,
                             borderColor: isCurrent ? activePalette.darkest : activePalette.lighter,
                             backgroundColor: isDark ? activePalette.bg : activePalette.lightest,
                             borderWidth: isCurrent ? 2 : 1
                         }]}>
-                            <Text style={{fontSize: typography.fontSizes.button, fontWeight: typography.fontWeights.medium,
+                            <Text style={{fontSize: isMobile ? typography.fontSizes.bodyL : typography.fontSizes.button, fontWeight: typography.fontWeights.medium,
                                 fontFamily: typography.fontFamilies.main, color: activePalette.darkest}}>
                                 {digit}
                             </Text>

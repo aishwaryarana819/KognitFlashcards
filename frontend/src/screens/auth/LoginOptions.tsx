@@ -377,11 +377,12 @@ export const LoginOptions = ({onNavigateRegister, onNavigateRecovery}: LoginOpti
 
                     return(
                         <View key={index} style={[styles.otpBox, {
+                            width: isMobile ? 24 : 48, height: isMobile ? 28 : 56, borderRadius: isMobile ? 6 : 12,
                             borderColor: isCurrent ? activePalette.darkest : activePalette.lighter,
                             backgroundColor: isDark ? activePalette.bg : activePalette.lightest,
                             borderWidth: isCurrent ? 2 : 1
                         }]}>
-                            <Text style={{fontSize: 24, fontWeight: '700',
+                            <Text style={{fontSize: isMobile ? typography.fontSizes.bodyL : typography.fontSizes.button, fontWeight: typography.fontWeights.medium,
                                 fontFamily: typography.fontFamilies.main, color: activePalette.darkest}}>
                                 {digit}
                             </Text>

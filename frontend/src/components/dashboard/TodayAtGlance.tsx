@@ -16,9 +16,9 @@ export const TodayAtGlance = ({ data, deckStates }: { data: any, deckStates?: an
     const reviewed = data?.reviewed || 0;
     const progress = goal > 0 ? Math.min(reviewed / goal, 1) : 0;
 
-    const size = isMobile ? 120 : 160;
-    const bottomStrokeWidth = isMobile ? 15 : 20;
-    const topStrokeWidth = isMobile ? 18 : 24;
+    const size = 160;
+    const bottomStrokeWidth = 20;
+    const topStrokeWidth = 24;
     const radius = (size - topStrokeWidth) / 2;
     const circumference = radius * 2 * Math.PI;
     const strokeDashoffset = circumference - (progress * circumference);
@@ -48,7 +48,6 @@ export const TodayAtGlance = ({ data, deckStates }: { data: any, deckStates?: an
         </View>
     );
 
-
     return (
         <View style={[styles.card, {
             backgroundColor: activePalette.bg,
@@ -67,7 +66,7 @@ export const TodayAtGlance = ({ data, deckStates }: { data: any, deckStates?: an
 
             <View style={{ height: 0.5, backgroundColor: activePalette.darkest, opacity: 0.3, marginBottom: 20 }} />
 
-            <View style={styles.content}>
+            <View style={[styles.content, isMobile && { flexDirection: 'column', gap: 24 }]}>
                 <View style={styles.ringContainer}>
                     <Svg width={size} height={size} style={{overflow: 'visible'}}>
                         <Defs>
@@ -112,9 +111,13 @@ export const TodayAtGlance = ({ data, deckStates }: { data: any, deckStates?: an
                     </View>
                 </View>
 
-                <View style={{ width: 0.5, height: 140, backgroundColor: activePalette.darkest, opacity: 0.3, marginHorizontal: 24 }} />
+                {isMobile ? (
+                    <View style={{ height: 0.5, width: '100%', backgroundColor: activePalette.darkest, opacity: 0.3 }} />
+                ) : (
+                    <View style={{ width: 0.5, height: 140, backgroundColor: activePalette.darkest, opacity: 0.3, marginHorizontal: 24 }} />
+                )}
 
-                <View style={styles.statsTable}>
+                <View style={[styles.statsTable, isMobile && { width: '100%' }]}>
                     {renderStatRow("New", deckStates?.new?.count || 0)}
                     {renderStatRow("Inaccuracy", data?.inaccuracy || 0)}
                     {renderStatRow("Mastered", deckStates?.mastered?.count || 0)}
@@ -122,6 +125,7 @@ export const TodayAtGlance = ({ data, deckStates }: { data: any, deckStates?: an
                     {renderStatRow("Time Spent", data?.time_spent || "0m")}
                 </View>
             </View>
+
         </View>
     );
 };

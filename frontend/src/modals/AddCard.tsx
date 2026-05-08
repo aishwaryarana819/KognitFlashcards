@@ -16,6 +16,7 @@ import {useTheme} from "../context/ThemeContext";
 import {getTypography} from "../theme/typography";
 import {Ionicons} from '@expo/vector-icons';
 import {lightPalette} from "../theme/colors";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface AddCardProps {
     visible: boolean;
@@ -78,15 +79,18 @@ export const AddCard = ({visible, onClose, onSubmit, initialData, availableDecks
                 notes: notes.trim(),
                 deck_ids: selectedDeckId ? [selectedDeckId] : [],
             });
-
             if (!initialData) {
-                if (Platform.OS === 'web') {
-                    window.alert("Yay! You created your first flashcard. It will appear in the Library.");
-                } else {
-                    Alert.alert(
-                        "First Flashcard!!!",
-                        "Yay! You created your first flashcard. It will appear in the Library.",
-                    );
+                const hasCreatedFirst = await AsyncStorage.getItem('hasCreatedFirstCard');
+                if (!hasCreatedFirst) {
+                    if (Platform.OS === 'web') {
+                        window.alert("Yay! You created your first flashcard. It will appear in the Library.");
+                    } else {
+                        Alert.alert(
+                            "First Flashcard!!!",
+                            "Yay! You created your first flashcard. It will appear in the Library.",
+                        );
+                    }
+                    await AsyncStorage.setItem('hasCreatedFirstCard', 'true');
                 }
             }
 

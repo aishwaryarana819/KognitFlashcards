@@ -34,8 +34,8 @@ export const GlobalModals = () => {
             if (!session.session) return;
 
             const [decksRes, shelvesRes] = await Promise.all([
-                fetch(`${process.env.EXPO_PUBLIC_API_URL || 'http://127.0.0.1:8000'}/api/decks/`, { headers: { 'Authorization': `Bearer ${session.session.access_token}` } }),
-                fetch(`${process.env.EXPO_PUBLIC_API_URL || 'http://127.0.0.1:8000'}/api/shelves/`, { headers: { 'Authorization': `Bearer ${session.session.access_token}` } })
+                fetch(`${process.env.EXPO_PUBLIC_API_URL || 'http://127.0.0.1:8000'}/api/decks/?t=${Date.now()}`, { headers: { 'Authorization': `Bearer ${session.session.access_token}` } }),
+                fetch(`${process.env.EXPO_PUBLIC_API_URL || 'http://127.0.0.1:8000'}/api/shelves/?t=${Date.now()}`, { headers: { 'Authorization': `Bearer ${session.session.access_token}` } })
             ]);
 
             if (decksRes.ok) {
@@ -59,7 +59,7 @@ export const GlobalModals = () => {
             body: JSON.stringify(data)
         });
         setCardVisible(false);
-        DeviceEventEmitter.emit('refresh_library');
+        DeviceEventEmitter.emit('library_updated');
     };
 
     const handleCreateDeck = async (data: any) => {
@@ -70,7 +70,7 @@ export const GlobalModals = () => {
             body: JSON.stringify(data)
         });
         setDeckVisible(false);
-        DeviceEventEmitter.emit('refresh_library');
+        DeviceEventEmitter.emit('library_updated');
     };
 
     const handleCreateShelf = async (data: any) => {
@@ -81,7 +81,7 @@ export const GlobalModals = () => {
             body: JSON.stringify(data)
         });
         setShelfVisible(false);
-        DeviceEventEmitter.emit('refresh_library');
+        DeviceEventEmitter.emit('library_updated');
     };
 
     return (

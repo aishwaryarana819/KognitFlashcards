@@ -94,8 +94,20 @@ class DeckCreateSerializer(serializers.ModelSerializer):
         read_only_fields = ['id']
 
     def create(self, validated_data):
-        validated_data.pop('shelf_ids', None)
-        return super().create(validated_data)
+        shelf_ids = validated_data.pop('shelf_ids', [])
+        deck = super().create(validated_data)
+        for position, s_id in enumerate(shelf_ids):
+            ShelfDeck.objects.create(deck=deck, shelf_id=s_id, position=position)
+        return deck
+
+    def update(self, instance, validated_data):
+        shelf_ids = validated_data.pop('shelf_ids', None)
+        instance = super().update(instance, validated_data)
+        if shelf_ids is not None:
+            ShelfDeck.objects.filter(deck=instance).delete()
+            for position, s_id in enumerate(shelf_ids):
+                ShelfDeck.objects.create(deck=instance, shelf_id=s_id, position=position)
+        return instance
 
 class CardCreateSerializer(serializers.ModelSerializer):
     deck_ids = serializers.ListField(child=serializers.IntegerField(), required=False, write_only=True)
@@ -105,6 +117,17 @@ class CardCreateSerializer(serializers.ModelSerializer):
         fields = ['front', 'back', 'card_type', 'image_url', 'notes', 'deck_ids']
 
     def create(self, validated_data):
-        validated_data.pop('deck_ids', None)
-        return super().create(validated_data)
+        deck_ids = validated_data.pop('deck_ids', [])
+        card = super().create(validated_data)
+        for position, d_id in enumerate(deck_ids):
+            DeckCard.objects.create(card=card, deck_id=d_id, position=position)
+        return card
 
+    def update(self, instance, validated_data):
+        deck_ids = validated_data.pop('deck_ids', None)
+        instance = super().update(instance, validated_data)
+        if deck_ids is not None:
+            DeckCard.objects.filter(card=instance).delete()
+            for position, d_id in enumerate(deck_ids):
+                DeckCard.objects.create(card=instance, deck_id=d_id, position=position)
+        return instance

@@ -10,6 +10,8 @@ export interface ShelfCardProps {
     name: string;
     deckCount: number;
     colorHex: string;
+    icon?: string;
+    description?: string;
     onPress: () => void;
     onEdit?: () => void;
     onDelete?: () => void;
@@ -21,6 +23,8 @@ interface DeckCardProps {
     cardCount: number;
     dueCount: number;
     colorHex: string;
+    icon?: string;
+    description?: string;
     onPress: () => void;
     onEdit?: () => void;
     onDelete?: () => void;
@@ -29,7 +33,7 @@ interface DeckCardProps {
 }
 
 export const ShelfCard = (
-    { name, deckCount, colorHex, onPress, onEdit, onDelete, viewMode='list' }: ShelfCardProps) => {
+    { name, deckCount, colorHex, onPress, onEdit, onDelete, viewMode='list', icon, description }: ShelfCardProps) => {
     const { activePalette, isDark } = useTheme();
     const { width } = useWindowDimensions();
     const isMobile = width <= BREAKPOINTS.MOBILE_MAX;
@@ -53,7 +57,7 @@ export const ShelfCard = (
             <View style={[styles.cardContent, isGrid && { flexDirection: 'column', alignItems: 'flex-start', paddingLeft: 0, paddingTop: 10 }]}>
 
                 <View style={[styles.iconBox, { backgroundColor: colorHex + (isDark ? '40' : '20')}, isGrid && { marginBottom: 16 }]}>
-                    <Ionicons name="folder-open" size={isGrid ? 20 : 24} color={colorHex} />
+                    <Ionicons name={(icon as any) || "library-outline"} size={isGrid ? 20 : 24} color={colorHex} />
                 </View>
 
                 <View style={[styles.textStack, isGrid && { marginLeft: 0, marginRight: 0, marginBottom: 12 }]}>
@@ -66,6 +70,18 @@ export const ShelfCard = (
                     }} numberOfLines={isGrid ? 2 : 1}>
                         {name}
                     </Text>
+
+                    {description ? (
+                        <Text style={{
+                            fontFamily: typography.fontFamilies.secondary,
+                            fontSize: typography.fontSizes.caption,
+                            color: activePalette.regular,
+                            marginTop: 2
+                        }} numberOfLines={1}>
+                            {description}
+                        </Text>
+                    ) : null}
+
                     <Text style={{
                         fontFamily: typography.fontFamilies.secondary,
                         fontSize: typography.fontSizes.caption,
@@ -113,7 +129,7 @@ interface DeckCardProps {
     activePalette?: string;
 }
 
-export const DeckCard = ({ name, cardCount, dueCount, colorHex, onPress, onEdit, onDelete, viewMode='list' }: DeckCardProps) => {
+export const DeckCard = ({ name, cardCount, dueCount, colorHex, onPress, onEdit, onDelete, viewMode='list', icon, description }: DeckCardProps) => {
     const { activePalette, isDark } = useTheme();
     const { width } = useWindowDimensions();
     const isMobile = width <= BREAKPOINTS.MOBILE_MAX;
@@ -138,7 +154,7 @@ export const DeckCard = ({ name, cardCount, dueCount, colorHex, onPress, onEdit,
 
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
                     <View style={[styles.iconBox, { backgroundColor: colorHex + '20' }, isGrid && { marginBottom: 16 }]}>
-                        <Ionicons name="albums" size={isGrid ? 20 : 24} color={colorHex} />
+                        <Ionicons name={(icon as any) || "albums-outline"} size={isGrid ? 20 : 24} color={colorHex} />
                     </View>
                     {dueCount > 0 && isGrid && (
                         <View style={[styles.dueBadge, { backgroundColor: activePalette.red + '20', marginLeft: 8, marginBottom: 16 }]}>
@@ -158,6 +174,18 @@ export const DeckCard = ({ name, cardCount, dueCount, colorHex, onPress, onEdit,
                     }} numberOfLines={isGrid ? 2 : 1}>
                         {name}
                     </Text>
+
+                    {description ? (
+                        <Text style={{
+                            fontFamily: typography.fontFamilies.secondary,
+                            fontSize: typography.fontSizes.caption,
+                            color: activePalette.regular,
+                            marginTop: 2
+                        }} numberOfLines={1}>
+                            {description}
+                        </Text>
+                    ) : null}
+
                     <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 4, gap: 8}}>
                         <Text style={{
                             fontFamily: typography.fontFamilies.secondary,

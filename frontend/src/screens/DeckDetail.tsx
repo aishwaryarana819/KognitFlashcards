@@ -10,6 +10,7 @@ import { AddCard } from '../modals/AddCard';
 import { ConfirmModal } from '../modals/ConfirmModal';
 import { getTypography } from '../theme/typography';
 import { useWindowDimensions } from 'react-native';
+import {BREAKPOINTS} from "../theme/breakpoints";
 
 type DeckDetailRouteProp = RouteProp<LibraryStackParamList, typeof ROUTES.DECK_DETAIL>;
 
@@ -17,9 +18,11 @@ export const DeckDetail = () => {
     const { activePalette, isDark } = useTheme();
     const navigation = useNavigation();
     const route = useRoute<DeckDetailRouteProp>();
-    const { deckId, deckName, colorHex } = route.params;
+    const { deckId, deckName, colorHex, icon, description } = route.params as any;
+
     const { session } = useAuth();
     const { width } = useWindowDimensions();
+    const isMobile = width <= BREAKPOINTS.MOBILE_MAX;
     const typography = getTypography(width);
 
     const [cards, setCards] = useState<any[]>([]);
@@ -127,10 +130,23 @@ export const DeckDetail = () => {
                     <Ionicons name="arrow-back" size={24} color={activePalette.darkest} />
                 </TouchableOpacity>
                 <View style={[styles.iconBox, { backgroundColor: colorHex + '20' }]}>
-                    <Ionicons name="albums" size={20} color={colorHex} />
+                    <Ionicons name={(icon as any) || "library-outline"} size={20} color={colorHex} />
                 </View>
                 <Text style={{ fontSize: 24, fontWeight: 'bold', fontFamily: typography.fontFamilies.main, color: activePalette.darkest }}>{deckName}</Text>
             </View>
+
+            {description ? (
+                <View style={{ paddingHorizontal: isMobile ? 30 : 60, marginBottom: 16 }}>
+                    <Text style={{
+                        fontFamily: typography.fontFamilies.secondary,
+                        fontSize: typography.fontSizes.bodyS,
+                        color: activePalette.darker,
+                        opacity: 0.5,
+                    }}>
+                        {description}
+                    </Text>
+                </View>
+            ) : null}
 
             {isLoading ? (
                 <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', marginBottom: 100}}>

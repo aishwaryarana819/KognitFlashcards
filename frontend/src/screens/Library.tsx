@@ -362,10 +362,11 @@ export const Library = () => {
                         ) : expandedSection === 'shelves' ? (
                             <View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 16}}>
                                 {shelves.map(shelf => (
-                                    <View key={`shelf-${shelf.id}`} style={{width: viewMode === 'grid' ? (isMobile ? '48%' : 220) : '100%'}}>
+                                    <View key={`shelf-${shelf.id}`} style={{width: viewMode === 'grid' ? (isMobile ? '46%' : 220) : '100%'}}>
                                         <ShelfCard name={shelf.name} deckCount={shelf.deck_count || 0} colorHex={shelf.color}
-                                                   viewMode={viewMode}
-                                                   onPress={() => navigation.navigate('ShelfDetail', { shelfId: shelf.id, shelfName: shelf.name, colorHex: shelf.color })}
+                                                   viewMode={viewMode} icon={shelf.icon} description={shelf.description}
+                                                   onPress={() => navigation.navigate('ShelfDetail', { shelfId: shelf.id, shelfName: shelf.name,
+                                                       colorHex: shelf.color, icon: shelf.icon, description: shelf.description })}
                                                    onDelete={() => setDeletingShelf(shelf)}
                                                    onEdit={() => { setEditingShelf(shelf); setIsAddShelfVisible(true); }}
                                         />
@@ -377,8 +378,9 @@ export const Library = () => {
                                 {shelves.map(shelf => (
                                     <View key={`shelf-${shelf.id}`} style={{width: viewMode === 'grid' ? (isMobile ? 140 : 220) : (isMobile ? 240 : 350)}}>
                                         <ShelfCard name={shelf.name} deckCount={shelf.deck_count || 0} colorHex={shelf.color}
-                                                   viewMode={viewMode}
-                                                   onPress={() => navigation.navigate('ShelfDetail', { shelfId: shelf.id, shelfName: shelf.name, colorHex: shelf.color })}
+                                                   viewMode={viewMode} icon={shelf.icon} description={shelf.description}
+                                                   onPress={() => navigation.navigate('ShelfDetail', { shelfId: shelf.id, shelfName: shelf.name,
+                                                       colorHex: shelf.color, icon: shelf.icon, description: shelf.description })}
                                                    onDelete={() => setDeletingShelf(shelf)}
                                                    onEdit={() => { setEditingShelf(shelf); setIsAddShelfVisible(true); }}
                                         />
@@ -405,10 +407,11 @@ export const Library = () => {
                             return expandedSection === 'decks' ? (
                                 <View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 16}}>
                                     {uncategorizedDecks.map(deck => (
-                                        <View key={`deck-${deck.id}`} style={{width: viewMode === 'grid' ? (isMobile ? '48%' : 220) : '100%'}}>
+                                        <View key={`deck-${deck.id}`} style={{width: viewMode === 'grid' ? (isMobile ? '46%' : 220) : '100%'}}>
                                             <DeckCard name={deck.name} cardCount={deck.card_count || 0} dueCount={0} colorHex={deck.color}
-                                                      viewMode={viewMode}
-                                                      onPress={() => navigation.navigate('DeckDetail', { deckId: deck.id, deckName: deck.name, colorHex: deck.color })}
+                                                      viewMode={viewMode} icon={deck.icon} description={deck.description}
+                                                      onPress={() => navigation.navigate('DeckDetail', { deckId: deck.id, deckName: deck.name,
+                                                          colorHex: deck.color, icon: deck.icon, description: deck.description })}
                                                       onEdit={() => { setEditingDeck(deck); setIsAddDeckVisible(true); }}
                                                       onDelete={() => setDeletingDeck(deck)}
                                             />
@@ -420,8 +423,9 @@ export const Library = () => {
                                     {uncategorizedDecks.map(deck => (
                                         <View key={`deck-${deck.id}`} style={{width: viewMode === 'grid' ? (isMobile ? 140 : 220) : (isMobile ? 240 : 350)}}>
                                             <DeckCard name={deck.name} cardCount={deck.card_count || 0} dueCount={0} colorHex={deck.color}
-                                                      viewMode={viewMode}
-                                                      onPress={() => navigation.navigate('DeckDetail', { deckId: deck.id, deckName: deck.name, colorHex: deck.color })}
+                                                      viewMode={viewMode} icon={deck.icon} description={deck.description}
+                                                      onPress={() => navigation.navigate('DeckDetail', { deckId: deck.id, deckName: deck.name,
+                                                          colorHex: deck.color, icon: deck.icon, description: deck.description })}
                                                       onEdit={() => { setEditingDeck(deck); setIsAddDeckVisible(true); }}
                                                       onDelete={() => setDeletingDeck(deck)}
                                             />
@@ -446,10 +450,11 @@ export const Library = () => {
                             ) : expandedSection === 'allDecks' ? (
                             <View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 16}}>
                                 {decks.map(deck => (
-                                    <View key={`alldeck-${deck.id}`} style={{width: viewMode === 'grid' ? (isMobile ? '48%' : 220) : '100%'}}>
+                                    <View key={`alldeck-${deck.id}`} style={{width: viewMode === 'grid' ? (isMobile ? '46%' : 220) : '100%'}}>
                                         <DeckCard name={deck.name} cardCount={deck.card_count || 0} dueCount={0} colorHex={deck.color}
-                                                  viewMode={viewMode}
-                                                  onPress={() => navigation.navigate('DeckDetail', { deckId: deck.id, deckName: deck.name, colorHex: deck.color })}
+                                                  viewMode={viewMode} icon={deck.icon} description={deck.description}
+                                                  onPress={() => navigation.navigate('DeckDetail', { deckId: deck.id, deckName: deck.name,
+                                                      colorHex: deck.color, icon: deck.icon, description: deck.description })}
                                                   onEdit={() => { setEditingDeck(deck); setIsAddDeckVisible(true); }}
                                                   onDelete={() => setDeletingDeck(deck)}
                                         />
@@ -461,8 +466,9 @@ export const Library = () => {
                                 {decks.map(deck => (
                                     <View key={`alldeck-${deck.id}`} style={{width: viewMode === 'grid' ? (isMobile ? 140 : 220) : (isMobile ? 240 : 350)}}>
                                         <DeckCard name={deck.name} cardCount={deck.card_count || 0} dueCount={0} colorHex={deck.color}
-                                                  viewMode={viewMode}
-                                                  onPress={() => navigation.navigate('DeckDetail', { deckId: deck.id, deckName: deck.name, colorHex: deck.color })}
+                                                  viewMode={viewMode} icon={deck.icon} description={deck.description}
+                                                  onPress={() => navigation.navigate('DeckDetail', { deckId: deck.id, deckName: deck.name,
+                                                      colorHex: deck.color, icon: deck.icon, description: deck.description })}
                                                   onEdit={() => { setEditingDeck(deck); setIsAddDeckVisible(true); }}
                                                   onDelete={() => setDeletingDeck(deck)}
                                         />
@@ -484,50 +490,94 @@ export const Library = () => {
                         {cards.length === 0 ? (
                             <Text style={{color: activePalette.regular, fontFamily: typography.fontFamilies.secondary, marginTop: 10, fontStyle: 'italic'}}>No uncategorized cards.</Text>
                         ) : expandedSection === 'cards' ? (
-                            <View style={{gap: 12}}>
+                            <View style={viewMode === 'grid' ? {flexDirection: 'row', flexWrap: 'wrap', gap: 16} : {gap: 12}}>
                                 {cards.map(card => (
-                                    <View key={`card-${card.id}`} style={[styles.cardRow, {
-                                        backgroundColor: activePalette.bg2,
-                                    }]}>
-                                        <View style={{flex: 1, paddingRight: 12}}>
-                                            {/* @ts-ignore */}
-                                            <Text style={{fontFamily: typography.fontFamilies.main, fontSize: 16, fontWeight: 'bold', color: activePalette.darkest, marginBottom: 4}} numberOfLines={1}>{card.front}</Text>
-                                            <Text style={{fontFamily: typography.fontFamilies.secondary, color: activePalette.regular}} numberOfLines={2}>{card.back}</Text>
-                                        </View>
-                                        <View style={{flexDirection: 'row', alignItems: 'center', gap: 6}}>
-                                            <View style={{paddingHorizontal: 6, paddingVertical: 2, borderRadius: 6, backgroundColor: activePalette.darker + '20'}}>
-                                                <Text style={{color: activePalette.darker, fontSize: 10, fontWeight: 'bold'}}>{card.card_type.toUpperCase()}</Text>
+                                    <View key={`card-${card.id}`} style={{width: viewMode === 'grid' ? (isMobile ? '46%' : 220) : '100%'}}>
+                                        {viewMode === 'grid' ? (
+                                            <View style={{padding: isMobile ? 12 : 16, borderRadius: 16, backgroundColor: isMobile ? activePalette.bg : activePalette.bg2}}>
+                                                {/* @ts-ignore */}
+                                                <Text style={{fontFamily: typography.fontFamilies.main, fontSize: 16, fontWeight: 'bold', color: activePalette.darkest, marginBottom: 4}} numberOfLines={1}>{card.front}</Text>
+                                                <Text style={{fontFamily: typography.fontFamilies.secondary, color: activePalette.regular}} numberOfLines={1}>{card.back}</Text>
+                                                <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 12}}>
+                                                    <View style={{paddingHorizontal: 6, paddingVertical: 2, borderRadius: 6, backgroundColor: activePalette.darker + '20'}}>
+                                                        <Text style={{color: activePalette.darker, fontSize: 10, fontWeight: 'bold'}}>{card.card_type.toUpperCase()}</Text>
+                                                    </View>
+                                                    <View style={{flexDirection: 'row', gap: 4}}>
+                                                        <TouchableOpacity onPress={() => { setEditingCard(card); setIsAddCardVisible(true); }} style={{padding: 4}}>
+                                                            <Ionicons name="create-outline" size={16} color={activePalette.darkest}/>
+                                                        </TouchableOpacity>
+                                                        <TouchableOpacity onPress={() => setDeletingCard(card)} style={{padding: 4}}>
+                                                            <Ionicons name="trash-outline" size={16} color={activePalette.red}/>
+                                                        </TouchableOpacity>
+                                                    </View>
+                                                </View>
                                             </View>
-                                            <TouchableOpacity onPress={() => { setEditingCard(card); setIsAddCardVisible(true); }} style={{padding: 4}}>
-                                                <Ionicons name="create-outline" size={18} color={activePalette.darkest}/>
-                                            </TouchableOpacity>
-                                            <TouchableOpacity onPress={() => setDeletingCard(card)} style={{padding: 4}}>
-                                                <Ionicons name="trash-outline" size={18} color={activePalette.red}/>
-                                            </TouchableOpacity>
-                                        </View>
+                                        ) : (
+                                            <View style={[styles.cardRow, {backgroundColor: isMobile ? activePalette.bg : activePalette.bg2}]}>
+                                                <View style={{flex: 1, paddingRight: 12}}>
+                                                    {/* @ts-ignore */}
+                                                    <Text style={{fontFamily: typography.fontFamilies.main, fontSize: 16, fontWeight: 'bold', color: activePalette.darkest, marginBottom: 4}} numberOfLines={1}>{card.front}</Text>
+                                                    <Text style={{fontFamily: typography.fontFamilies.secondary, color: activePalette.regular}} numberOfLines={2}>{card.back}</Text>
+                                                </View>
+                                                <View style={{flexDirection: 'row', alignItems: 'center', gap: 6}}>
+                                                    <View style={{paddingHorizontal: 6, paddingVertical: 2, borderRadius: 6, backgroundColor: activePalette.darker + '20'}}>
+                                                        <Text style={{color: activePalette.darker, fontSize: 10, fontWeight: 'bold'}}>{card.card_type.toUpperCase()}</Text>
+                                                    </View>
+                                                    <TouchableOpacity onPress={() => { setEditingCard(card); setIsAddCardVisible(true); }} style={{padding: 4}}>
+                                                        <Ionicons name="create-outline" size={18} color={activePalette.darkest}/>
+                                                    </TouchableOpacity>
+                                                    <TouchableOpacity onPress={() => setDeletingCard(card)} style={{padding: 4}}>
+                                                        <Ionicons name="trash-outline" size={18} color={activePalette.red}/>
+                                                    </TouchableOpacity>
+                                                </View>
+                                            </View>
+                                        )}
                                     </View>
                                 ))}
                             </View>
                         ) : (
                             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{gap: 12}}>
                                 {cards.map(card => (
-                                    <View key={`card-${card.id}`} style={{width: isMobile ? 140 : 200, padding: isMobile ? 12 : 16, borderRadius: 16, backgroundColor: isMobile ? activePalette.bg : activePalette.bg2}}>
-                                        {/* @ts-ignore */}
-                                        <Text style={{fontFamily: typography.fontFamilies.main, fontSize: 16, fontWeight: 'bold', color: activePalette.darkest, marginBottom: 4}} numberOfLines={1}>{card.front}</Text>
-                                        <Text style={{fontFamily: typography.fontFamilies.secondary, color: activePalette.regular}} numberOfLines={1}>{card.back}</Text>
-                                        <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 12}}>
-                                            <View style={{paddingHorizontal: 6, paddingVertical: 2, borderRadius: 6, backgroundColor: activePalette.darker + '20'}}>
-                                                <Text style={{color: activePalette.darker, fontSize: 10, fontWeight: 'bold'}}>{card.card_type.toUpperCase()}</Text>
+                                    <View key={`card-${card.id}`} style={{width: viewMode === 'grid' ? (isMobile ? 140 : 200) : (isMobile ? 280 : 380)}}>
+                                        {viewMode === 'grid' ? (
+                                            <View style={{padding: isMobile ? 12 : 16, borderRadius: 16, backgroundColor: isMobile ? activePalette.bg : activePalette.bg2}}>
+                                                {/* @ts-ignore */}
+                                                <Text style={{fontFamily: typography.fontFamilies.main, fontSize: 16, fontWeight: 'bold', color: activePalette.darkest, marginBottom: 4}} numberOfLines={1}>{card.front}</Text>
+                                                <Text style={{fontFamily: typography.fontFamilies.secondary, color: activePalette.regular}} numberOfLines={1}>{card.back}</Text>
+                                                <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 12}}>
+                                                    <View style={{paddingHorizontal: 6, paddingVertical: 2, borderRadius: 6, backgroundColor: activePalette.darker + '20'}}>
+                                                        <Text style={{color: activePalette.darker, fontSize: 10, fontWeight: 'bold'}}>{card.card_type.toUpperCase()}</Text>
+                                                    </View>
+                                                    <View style={{flexDirection: 'row', gap: 4}}>
+                                                        <TouchableOpacity onPress={() => { setEditingCard(card); setIsAddCardVisible(true); }} style={{padding: 4}}>
+                                                            <Ionicons name="create-outline" size={16} color={activePalette.darkest}/>
+                                                        </TouchableOpacity>
+                                                        <TouchableOpacity onPress={() => setDeletingCard(card)} style={{padding: 4}}>
+                                                            <Ionicons name="trash-outline" size={16} color={activePalette.red}/>
+                                                        </TouchableOpacity>
+                                                    </View>
+                                                </View>
                                             </View>
-                                            <View style={{flexDirection: 'row', gap: 4}}>
-                                                <TouchableOpacity onPress={() => { setEditingCard(card); setIsAddCardVisible(true); }} style={{padding: 4}}>
-                                                    <Ionicons name="create-outline" size={16} color={activePalette.darkest}/>
-                                                </TouchableOpacity>
-                                                <TouchableOpacity onPress={() => setDeletingCard(card)} style={{padding: 4}}>
-                                                    <Ionicons name="trash-outline" size={16} color={activePalette.red}/>
-                                                </TouchableOpacity>
+                                        ) : (
+                                            <View style={[styles.cardRow, {backgroundColor: isMobile ? activePalette.bg : activePalette.bg2}]}>
+                                                <View style={{flex: 1, paddingRight: 12}}>
+                                                    {/* @ts-ignore */}
+                                                    <Text style={{fontFamily: typography.fontFamilies.main, fontSize: 16, fontWeight: 'bold', color: activePalette.darkest, marginBottom: 4}} numberOfLines={1}>{card.front}</Text>
+                                                    <Text style={{fontFamily: typography.fontFamilies.secondary, color: activePalette.regular}} numberOfLines={2}>{card.back}</Text>
+                                                </View>
+                                                <View style={{flexDirection: 'row', alignItems: 'center', gap: 6}}>
+                                                    <View style={{paddingHorizontal: 6, paddingVertical: 2, borderRadius: 6, backgroundColor: activePalette.darker + '20'}}>
+                                                        <Text style={{color: activePalette.darker, fontSize: 10, fontWeight: 'bold'}}>{card.card_type.toUpperCase()}</Text>
+                                                    </View>
+                                                    <TouchableOpacity onPress={() => { setEditingCard(card); setIsAddCardVisible(true); }} style={{padding: 4}}>
+                                                        <Ionicons name="create-outline" size={18} color={activePalette.darkest}/>
+                                                    </TouchableOpacity>
+                                                    <TouchableOpacity onPress={() => setDeletingCard(card)} style={{padding: 4}}>
+                                                        <Ionicons name="trash-outline" size={18} color={activePalette.red}/>
+                                                    </TouchableOpacity>
+                                                </View>
                                             </View>
-                                        </View>
+                                        )}
                                     </View>
                                 ))}
                             </ScrollView>
@@ -546,48 +596,94 @@ export const Library = () => {
                         {allCards.length === 0 ? (
                                 <Text style={{color: activePalette.regular, fontFamily: typography.fontFamilies.secondary, marginTop: 10, fontStyle: 'italic'}}>Seems like you're yet to start learning.</Text>
                         ) : expandedSection === 'allCards' ? (
-                            <View style={{gap: 12}}>
+                            <View style={viewMode === 'grid' ? {flexDirection: 'row', flexWrap: 'wrap', gap: 16} : {gap: 12}}>
                                 {allCards.map(card => (
-                                    <View key={`allcard-${card.id}`} style={[styles.cardRow, {backgroundColor: activePalette.bg2}]}>
-                                        <View style={{flex: 1, paddingRight: 12}}>
-                                            {/* @ts-ignore */}
-                                            <Text style={{fontFamily: typography.fontFamilies.main, fontSize: 16, fontWeight: 'bold', color: activePalette.darkest, marginBottom: 4}} numberOfLines={1}>{card.front}</Text>
-                                            <Text style={{fontFamily: typography.fontFamilies.secondary, color: activePalette.regular}} numberOfLines={1}>{card.back}</Text>
-                                        </View>
-                                        <View style={{flexDirection: 'row', alignItems: 'center', gap: 6}}>
-                                            <View style={{paddingHorizontal: 6, paddingVertical: 2, borderRadius: 6, backgroundColor: activePalette.darker + '20'}}>
-                                                <Text style={{color: activePalette.darker, fontSize: 10, fontWeight: 'bold'}}>{card.card_type.toUpperCase()}</Text>
+                                    <View key={`allcard-${card.id}`} style={{width: viewMode === 'grid' ? (isMobile ? '46%' : 220) : '100%'}}>
+                                        {viewMode === 'grid' ? (
+                                            <View style={{padding: isMobile ? 12 : 16, borderRadius: 16, backgroundColor: isMobile ? activePalette.bg : activePalette.bg2}}>
+                                                {/* @ts-ignore */}
+                                                <Text style={{fontFamily: typography.fontFamilies.main, fontSize: 16, fontWeight: 'bold', color: activePalette.darkest, marginBottom: 4}} numberOfLines={1}>{card.front}</Text>
+                                                <Text style={{fontFamily: typography.fontFamilies.secondary, color: activePalette.regular}} numberOfLines={1}>{card.back}</Text>
+                                                <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 12}}>
+                                                    <View style={{paddingHorizontal: 6, paddingVertical: 2, borderRadius: 6, backgroundColor: activePalette.darker + '20'}}>
+                                                        <Text style={{color: activePalette.darker, fontSize: 10, fontWeight: 'bold'}}>{card.card_type.toUpperCase()}</Text>
+                                                    </View>
+                                                    <View style={{flexDirection: 'row', gap: 4}}>
+                                                        <TouchableOpacity onPress={() => { setEditingCard(card); setIsAddCardVisible(true); }} style={{padding: 4}}>
+                                                            <Ionicons name="create-outline" size={16} color={activePalette.darkest}/>
+                                                        </TouchableOpacity>
+                                                        <TouchableOpacity onPress={() => setDeletingCard(card)} style={{padding: 4}}>
+                                                            <Ionicons name="trash-outline" size={16} color={activePalette.red}/>
+                                                        </TouchableOpacity>
+                                                    </View>
+                                                </View>
                                             </View>
-                                            <TouchableOpacity onPress={() => { setEditingCard(card); setIsAddCardVisible(true); }} style={{padding: 4}}>
-                                                <Ionicons name="create-outline" size={18} color={activePalette.darkest}/>
-                                            </TouchableOpacity>
-                                            <TouchableOpacity onPress={() => setDeletingCard(card)} style={{padding: 4}}>
-                                                <Ionicons name="trash-outline" size={18} color={activePalette.red}/>
-                                            </TouchableOpacity>
-                                        </View>
+                                        ) : (
+                                            <View style={[styles.cardRow, {backgroundColor: isMobile ? activePalette.bg : activePalette.bg2}]}>
+                                                <View style={{flex: 1, paddingRight: 12}}>
+                                                    {/* @ts-ignore */}
+                                                    <Text style={{fontFamily: typography.fontFamilies.main, fontSize: 16, fontWeight: 'bold', color: activePalette.darkest, marginBottom: 4}} numberOfLines={1}>{card.front}</Text>
+                                                    <Text style={{fontFamily: typography.fontFamilies.secondary, color: activePalette.regular}} numberOfLines={2}>{card.back}</Text>
+                                                </View>
+                                                <View style={{flexDirection: 'row', alignItems: 'center', gap: 6}}>
+                                                    <View style={{paddingHorizontal: 6, paddingVertical: 2, borderRadius: 6, backgroundColor: activePalette.darker + '20'}}>
+                                                        <Text style={{color: activePalette.darker, fontSize: 10, fontWeight: 'bold'}}>{card.card_type.toUpperCase()}</Text>
+                                                    </View>
+                                                    <TouchableOpacity onPress={() => { setEditingCard(card); setIsAddCardVisible(true); }} style={{padding: 4}}>
+                                                        <Ionicons name="create-outline" size={18} color={activePalette.darkest}/>
+                                                    </TouchableOpacity>
+                                                    <TouchableOpacity onPress={() => setDeletingCard(card)} style={{padding: 4}}>
+                                                        <Ionicons name="trash-outline" size={18} color={activePalette.red}/>
+                                                    </TouchableOpacity>
+                                                </View>
+                                            </View>
+                                        )}
                                     </View>
                                 ))}
                             </View>
                         ) : (
                             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{gap: 12}}>
                                 {allCards.map(card => (
-                                    <View key={`allcard-${card.id}`} style={{width: isMobile ? 140 : 200, padding: isMobile ? 12 : 16, borderRadius: 16, backgroundColor: isMobile ? activePalette.bg : activePalette.bg2}}>
-                                        {/* @ts-ignore */}
-                                        <Text style={{fontFamily: typography.fontFamilies.main, fontSize: 16, fontWeight: 'bold', color: activePalette.darkest, marginBottom: 4}} numberOfLines={1}>{card.front}</Text>
-                                        <Text style={{fontFamily: typography.fontFamilies.secondary, color: activePalette.regular}} numberOfLines={1}>{card.back}</Text>
-                                        <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 12}}>
-                                            <View style={{paddingHorizontal: 6, paddingVertical: 2, borderRadius: 6, backgroundColor: activePalette.darker + '20'}}>
-                                                <Text style={{color: activePalette.darker, fontSize: 10, fontWeight: 'bold'}}>{card.card_type.toUpperCase()}</Text>
+                                    <View key={`allcard-${card.id}`} style={{width: viewMode === 'grid' ? (isMobile ? 140 : 200) : (isMobile ? 280 : 380)}}>
+                                        {viewMode === 'grid' ? (
+                                            <View style={{padding: isMobile ? 12 : 16, borderRadius: 16, backgroundColor: isMobile ? activePalette.bg : activePalette.bg2}}>
+                                                {/* @ts-ignore */}
+                                                <Text style={{fontFamily: typography.fontFamilies.main, fontSize: 16, fontWeight: 'bold', color: activePalette.darkest, marginBottom: 4}} numberOfLines={1}>{card.front}</Text>
+                                                <Text style={{fontFamily: typography.fontFamilies.secondary, color: activePalette.regular}} numberOfLines={1}>{card.back}</Text>
+                                                <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 12}}>
+                                                    <View style={{paddingHorizontal: 6, paddingVertical: 2, borderRadius: 6, backgroundColor: activePalette.darker + '20'}}>
+                                                        <Text style={{color: activePalette.darker, fontSize: 10, fontWeight: 'bold'}}>{card.card_type.toUpperCase()}</Text>
+                                                    </View>
+                                                    <View style={{flexDirection: 'row', gap: 4}}>
+                                                        <TouchableOpacity onPress={() => { setEditingCard(card); setIsAddCardVisible(true); }} style={{padding: 4}}>
+                                                            <Ionicons name="create-outline" size={16} color={activePalette.darkest}/>
+                                                        </TouchableOpacity>
+                                                        <TouchableOpacity onPress={() => setDeletingCard(card)} style={{padding: 4}}>
+                                                            <Ionicons name="trash-outline" size={16} color={activePalette.red}/>
+                                                        </TouchableOpacity>
+                                                    </View>
+                                                </View>
                                             </View>
-                                            <View style={{flexDirection: 'row', gap: 4}}>
-                                                <TouchableOpacity onPress={() => { setEditingCard(card); setIsAddCardVisible(true); }} style={{padding: 4}}>
-                                                    <Ionicons name="create-outline" size={16} color={activePalette.darkest}/>
-                                                </TouchableOpacity>
-                                                <TouchableOpacity onPress={() => setDeletingCard(card)} style={{padding: 4}}>
-                                                    <Ionicons name="trash-outline" size={16} color={activePalette.red}/>
-                                                </TouchableOpacity>
+                                        ) : (
+                                            <View style={[styles.cardRow, {backgroundColor: isMobile ? activePalette.bg : activePalette.bg2}]}>
+                                                <View style={{flex: 1, paddingRight: 12}}>
+                                                    {/* @ts-ignore */}
+                                                    <Text style={{fontFamily: typography.fontFamilies.main, fontSize: 16, fontWeight: 'bold', color: activePalette.darkest, marginBottom: 4}} numberOfLines={1}>{card.front}</Text>
+                                                    <Text style={{fontFamily: typography.fontFamilies.secondary, color: activePalette.regular}} numberOfLines={2}>{card.back}</Text>
+                                                </View>
+                                                <View style={{flexDirection: 'row', alignItems: 'center', gap: 6}}>
+                                                    <View style={{paddingHorizontal: 6, paddingVertical: 2, borderRadius: 6, backgroundColor: activePalette.darker + '20'}}>
+                                                        <Text style={{color: activePalette.darker, fontSize: 10, fontWeight: 'bold'}}>{card.card_type.toUpperCase()}</Text>
+                                                    </View>
+                                                    <TouchableOpacity onPress={() => { setEditingCard(card); setIsAddCardVisible(true); }} style={{padding: 4}}>
+                                                        <Ionicons name="create-outline" size={18} color={activePalette.darkest}/>
+                                                    </TouchableOpacity>
+                                                    <TouchableOpacity onPress={() => setDeletingCard(card)} style={{padding: 4}}>
+                                                        <Ionicons name="trash-outline" size={18} color={activePalette.red}/>
+                                                    </TouchableOpacity>
+                                                </View>
                                             </View>
-                                        </View>
+                                        )}
                                     </View>
                                 ))}
                             </ScrollView>
