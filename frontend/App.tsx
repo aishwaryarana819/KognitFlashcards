@@ -30,8 +30,6 @@ const MainContent = ()=> {
     const {activePalette} = useTheme();
     const {user, isLoading, profile} = useAuth();
 
-    console.log("Current Profile from django (for testing): ", profile);
-
     const [authScreen, setAuthScreen] = useState<
       'register' | 'login' | 'recovery' | 'profile'>('register');
 
@@ -89,6 +87,7 @@ const MainContent = ()=> {
 
     const goHome = () => setTestRoute('home');
 
+    // @ts-ignore
     if (testRoute === 'dashboard') return <Dashboard onBackTest={goHome}/>;
     if (testRoute === 'reviewSession') return <ReviewSession onBackTest={goHome}/>;
     if (testRoute === 'trash') return <Trash onBackTest={goHome}/>;
